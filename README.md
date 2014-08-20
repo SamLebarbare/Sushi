@@ -1,6 +1,6 @@
 [![QIBUD](http://static.tumblr.com/9o93btp/N51liyrau/qibud_100.png)](http://qibud.com/)
 
-[![Build Status](https://travis-ci.org/Loupio/qibud.svg?branch=master)](https://travis-ci.org/Loupio/qibud
+[![Build Status](https://travis-ci.org/Loupio/qibud.svg?branch=master)](https://travis-ci.org/Loupio/qibud)
 
 
 ## Qibud WebApp

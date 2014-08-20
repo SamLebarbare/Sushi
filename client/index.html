@@ -2,7 +2,7 @@
 <html lang="en" ng-app="koan">
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="KOAN Stack (Koa, Angular, Node.js) - A real-time full-stack JavaScript Web development framework.">
+  <meta name="description" content="QIBUD - Collaborative information management">
   <script>
     // if user logs in with oauth, user token will be in query string so look for it. otherwise, check browser storage for token
     var tokenParamMatch = RegExp('[?&]user=([^&]*)').exec(window.location.search),
@@ -112,7 +112,7 @@
   <hr>
   <footer>
     <p>
-      KOAN &copy; Teoman Soygul (MIT License) &middot;
+      QIBUD - stacked on KOAN &copy; Teoman Soygul (MIT License) &middot;
       <a type="button" href="https://github.com/soygul/koan" class="btn btn-success"><strong>View on GitHub</strong></a>
       <a type="button" href="https://github.com/soygul/koan/archive/master.zip" class="btn btn-primary"><strong>Download</strong></a>
       <button type="button" ng-click="common.clearDatabase()" class="btn btn-xs btn-warning pull-right"><strong>Clear Database</strong></button>
