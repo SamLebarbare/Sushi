@@ -1,6 +1,10 @@
-[![KOAN](https://raw.github.com/soygul/koan/master/client/images/koan_large.png)](http://koanjs.com/)
+[![QIBUD](http://static.tumblr.com/9o93btp/N51liyrau/qibud_100.png)](http://qibud.com/)
 
-[![Build Status](https://travis-ci.org/soygul/koan.svg?branch=master)](https://travis-ci.org/soygul/koan)
+[![Build Status](https://travis-ci.org/Loupio/qibud.svg?branch=master)](https://travis-ci.org/Loupio/qibud
+
+
+## Qibud WebApp
+Based on the best stack i found (thx Teoman Soygul):
 
 KOAN Stack is a boilerplate that provides a nice starting point for full stack JavaScript Web development with [Koa](http://koajs.com/), [AngularJS](http://angularjs.org/), and [Node.js](http://www.nodejs.org/) along with [MongoDB](https://www.mongodb.org/) and [WebSockets](https://developer.mozilla.org/en/docs/WebSockets). A summary of tech stack:
 * **Client**: AngularJS and Twitter Bootstrap with pure html partials (no server side rendering so it's fully static and CDN ready). Bower packages are located at `client\bower_packages`.
@@ -10,8 +14,6 @@ KOAN Stack is a boilerplate that provides a nice starting point for full stack J
 * Grunt tasks are used to facilitate development and testing.
 * MongoDB for persistence. Possibly more to be added.
 
-## Live Example
-Browse the live KOAN example on [http://koanjs.com](http://koanjs.com) which is a Facebook like real-time sharing app.
 
 ## Getting Started
 Make sure that you have Node.js (v0.11 or above) and MongoDB (running on the default port 27017) installed on your computer. To get started with KOAN stack, do following:
