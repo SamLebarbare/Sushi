@@ -24,15 +24,11 @@ var platformConfig = {
       url: 'mongodb://localhost:27017/koan-dev'
     },
     oauth: {
-      facebook: {
-        clientId: '231235687068678',
-        clientSecret: '4a90381c6bfa738bb18fb7d6046c14b8',
-        callbackUrl: 'http://localhost:3000/signin/facebook/callback'
-      },
-      google: {
-        clientId: '147832090796-ckhu1ehvsc8vv9nso7iefvu5fi7jrsou.apps.googleusercontent.com',
-        clientSecret: 'MGOwKgcLPEfCsLjcJJSPeFYu',
-        callbackUrl: 'http://localhost:3000/signin/google/callback'
+      linkedin: {
+        clientId: '77u90yjt9shkkx',
+        clientSecret: 'cy4SSvLboSiEDg6S',
+        callbackUrl: 'http://localhost:3000/signin/linkedin/callback',
+        scope : 'r_basicprofile%20r_emailaddress%20r_network'
       }
     }
   },
@@ -52,18 +48,14 @@ var platformConfig = {
       cacheTime: 7 * 24 * 60 * 60 * 1000 /* default caching time (7 days) for static files, calculated in milliseconds */
     },
     mongo: {
-      url: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/koan'
+      url: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/qibud'
     },
     oauth: {
-      facebook: {
-        clientId: '231235687068678',
-        clientSecret: '4a90381c6bfa738bb18fb7d6046c14b8',
-        callbackUrl: 'http://koanjs.com/signin/facebook/callback'
-      },
-      google: {
-        clientId: '147832090796-ckhu1ehvsc8vv9nso7iefvu5fi7jrsou.apps.googleusercontent.com',
-        clientSecret: 'MGOwKgcLPEfCsLjcJJSPeFYu',
-        callbackUrl: 'http://koanjs.com/signin/google/callback'
+      linkedin: {
+        clientId: '77u90yjt9shkkx',
+        clientSecret: 'cy4SSvLboSiEDg6S',
+        callbackUrl: 'http://localhost:3000/signin/linkedin/callback',
+        scope : 'r_basicprofile%20r_emailaddress%20r_network'
       }
     }
   }

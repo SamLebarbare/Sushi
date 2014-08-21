@@ -12,13 +12,11 @@ var qs = require('querystring'),
     config = require('../config/config'),
     mongo = require('../config/mongo');
 
-// register koa routes
+// register qibud routes
 exports.init = function (app) {
   app.use(route.post('/signin', signin));
-  app.use(route.get('/signin/facebook', facebooksignin));
-  app.use(route.get('/signin/facebook/callback', facebookCallback));
-  app.use(route.get('/signin/google', googlesignin));
-  app.use(route.get('/signin/google/callback', googleCallback));
+  app.use(route.get('/signin/linkedin', linkedinsignin));
+  app.use(route.get('/signin/linkedin/callback', linkedinCallback));
 };
 
 /**
@@ -45,96 +43,60 @@ function *signin() {
 }
 
 /**
- * Facebook OAuth 2.0 signin endpoint.
+ * Linkedin OAuth 2.0 signin endpoint.
  */
-function *facebooksignin() {
+function *linkedinsignin() {
   this.redirect(
-          'https://www.facebook.com/dialog/oauth?client_id=' + config.oauth.facebook.clientId +
-          '&redirect_uri=' + config.oauth.facebook.callbackUrl + '&response_type=code&scope=email');
+          'https://www.linkedin.com/uas/oauth2/authorization?' +
+          'client_id=' + config.oauth.linkedin.clientId +
+          '&redirect_uri=' + config.oauth.linkedin.callbackUrl +
+          '&response_type=code' +
+          '&state=' + Math.random().toString(36).substr(2) +
+          '&scope=' + config.oauth.linkedin.scope);
 }
 
 /**
- * Facebook OAuth 2.0 callback endpoint.
+ * Linkedin OAuth 2.0 callback endpoint.
  */
-function *facebookCallback() {
+function *linkedinCallback() {
+
   if (this.query.error) {
     this.redirect('/signin');
     return;
   }
 
-  // get an access token from facebook in exchange for oauth code
+  // get an access token from linked in exchange for oauth code
   var tokenResponse = yield request.get(
-          'https://graph.facebook.com/oauth/access_token?client_id=' + config.oauth.facebook.clientId +
-          '&redirect_uri=' + config.oauth.facebook.callbackUrl +
-          '&client_secret=' + config.oauth.facebook.clientSecret +
+          'https://www.linkedin.com/uas/oauth2/accessToken?' +
+          'grant_type=authorization_code' +
+          '&client_id=' + config.oauth.linkedin.clientId +
+          '&redirect_uri=' + config.oauth.linkedin.callbackUrl +
+          '&client_secret=' + config.oauth.linkedin.clientSecret +
           '&code=' + this.query.code);
-  var token = qs.parse(tokenResponse.body);
-  if (!token.access_token) {
-    this.redirect('/signin');
-    return;
-  }
 
-  // get user profile (including email address) from facebook and save user data in our database if necessary
-  var profileResponse = yield request.get('https://graph.facebook.com/me?fields=name,email,picture&access_token=' + token.access_token);
-  var profile = JSON.parse(profileResponse.body);
-  var user = yield mongo.users.findOne({email: profile.email}, {email: 1, name: 1});
-  if (!user) {
-    user = {
-      _id: (yield mongo.getNextSequence('userId')),
-      email: profile.email,
-      name: profile.name,
-      picture: (yield request.get(profile.picture.data.url, {encoding: 'base64'})).body
-    };
-    var results = yield mongo.users.insert(user);
-  }
 
-  // redirect the user to index page along with user profile object as query string
-  user.id = user._id;
-  delete user._id;
-  user.picture = 'api/users/' + user.id + '/picture';
-  var token = jwt.sign(user, config.app.secret, {expiresInMinutes: 90 * 24 * 60 /* 90 days */});
-  this.redirect('/?user=' + encodeURIComponent(JSON.stringify({token: token, user: user})));
-}
-
-/**
- * Google OAuth 2.0 signin endpoint.
- */
-function *googlesignin() {
-  this.redirect(
-          'https://accounts.google.com/o/oauth2/auth?client_id=' + config.oauth.google.clientId +
-          '&redirect_uri=' + config.oauth.google.callbackUrl + '&response_type=code&scope=profile%20email');
-}
-
-function *googleCallback() {
-  if (this.query.error) {
-    this.redirect('/signin');
-    return;
-  }
-
-  // get an access token from google in exchange for oauth code
-  var tokenResponse = yield request.post('https://accounts.google.com/o/oauth2/token', {form: {
-    code: this.query.code,
-    client_id: config.oauth.google.clientId,
-    client_secret: config.oauth.google.clientSecret,
-    redirect_uri: config.oauth.google.callbackUrl,
-    grant_type: 'authorization_code'
-  }});
   var token = JSON.parse(tokenResponse.body);
+  console.log (token);
   if (!token.access_token) {
     this.redirect('/signin');
     return;
   }
 
-  // get user profile (including email address) from facebook and save user data in our database if necessary
-  var profileResponse = yield request.get('https://www.googleapis.com/plus/v1/people/me?access_token=' + token.access_token);
+  // get user profile (including email address) from linkedin and save user data in our database if necessary
+  var profileResponse = yield request.get('https://api.linkedin.com/v1/people/~' +
+  ':(email-address,first-name,last-name,industry,picture-url)'+
+  '?format=json&oauth2_access_token=' + token.access_token);
+
+
   var profile = JSON.parse(profileResponse.body);
-  var user = yield mongo.users.findOne({email: profile.emails[0].value}, {email: 1, name: 1});
+  console.log (profile);
+  var user = yield mongo.users.findOne({email: profile.emailAddress}, {email: 1, name: 1});
   if (!user) {
     user = {
       _id: (yield mongo.getNextSequence('userId')),
-      email: profile.emails[0].value,
-      name: profile.displayName,
-      picture: (yield request.get(profile.image.url, {encoding: 'base64'})).body
+      email: profile.emailAddress,
+      name: profile.firstName + ' ' + profile.lastName,
+      picture: (yield request.get(profile.pictureUrl, {encoding: 'base64'})).body
     };
     var results = yield mongo.users.insert(user);
   }
