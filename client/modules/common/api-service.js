@@ -4,7 +4,7 @@
  * Service for providing access the backend API via HTTP and WebSockets.
  */
 
-angular.module('koan.common').factory('api', function ($rootScope, $http, $window) {
+angular.module('qibud.common').factory('api', function ($rootScope, $http, $window) {
 
   var apiBase = 'api' /* base /api uri */,
       token = ($window.sessionStorage.token || $window.localStorage.token),
@@ -52,17 +52,17 @@ angular.module('koan.common').factory('api', function ($rootScope, $http, $windo
   };
 
   // api http endpoints and websocket events
-  api.posts = {
+  api.buds = {
     list: function () {
-      return $http({method: 'GET', url: apiBase + '/posts', headers: headers});
+      return $http({method: 'GET', url: apiBase + '/buds', headers: headers});
     },
-    create: function (post) {
-      return $http({method: 'POST', url: apiBase + '/posts', data: post, headers: headers});
+    create: function (bud) {
+      return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
     },
     created: event(),
     comments: {
       create: function (postId, comment) {
-        return $http({method: 'POST', url: apiBase + '/posts/' + postId + '/comments', data: comment, headers: headers});
+        return $http({method: 'POST', url: apiBase + '/buds/' + postId + '/comments', data: comment, headers: headers});
       },
       created: event()
     }
