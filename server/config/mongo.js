@@ -16,8 +16,10 @@ module.exports = comongo;
 /**
  * Opens a new connection to the mongo database, closing the existing one if exists.
  */
-comongo.connect = function *() {
-  if (comongo.db) {
+comongo.connect = function *()
+{
+  if (comongo.db)
+  {
     yield comongo.db.close();
   }
 
@@ -26,15 +28,16 @@ comongo.connect = function *() {
 
   // export default collections
   comongo.counters = yield db.collection('counters');
-  comongo.users = yield db.collection('users');
-  comongo.posts = yield db.collection('posts');
+  comongo.users    = yield db.collection('users');
+  comongo.buds     = yield db.collection('buds');
 };
 
 /**
  * Retrieves the next sequence number for the given counter (indicated by @counterName).
  * Useful for generating sequential integer IDs for certain collections (i.e. user collection).
  */
-comongo.getNextSequence = function *(counterName) {
+comongo.getNextSequence = function *(counterName)
+{
   var results = yield comongo.counters.findAndModify(
       {_id: counterName},
       [],
