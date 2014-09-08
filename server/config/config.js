@@ -11,7 +11,7 @@ var baseConfig = {
   app: {
     root: path.normalize(__dirname + '/../..'),
     env: process.env.NODE_ENV,
-    secret: 'secret key' /* used in signing the jwt tokens */
+    secret: 'mi3nind803bbfnas3' /* used in signing the jwt tokens */
   }
 };
 
@@ -21,7 +21,7 @@ var platformConfig = {
       port: 3000
     },
     mongo: {
-      url: 'mongodb://localhost:27017/koan-dev'
+      url: 'mongodb://localhost:27017/qibud-dev'
     },
     oauth: {
       linkedin: {
@@ -38,7 +38,7 @@ var platformConfig = {
       port: 3001
     },
     mongo: {
-      url: 'mongodb://localhost:27017/koan-test'
+      url: 'mongodb://localhost:27017/qibud'
     }
   },
 
