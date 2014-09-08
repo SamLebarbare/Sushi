@@ -7,8 +7,8 @@
 angular
     .module('koan', [
       'ngRoute',
-      'koan.common',
-      'koan.home',
+      'qibud.common',
+      'qibud.home',
       'koan.profile'
     ])
 
