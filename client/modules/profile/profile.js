@@ -7,7 +7,7 @@
 angular
     .module('koan.profile', [
       'ngRoute',
-      'koan.common'
+      'qibud.common'
     ])
     .config(function ($routeProvider) {
       $routeProvider
