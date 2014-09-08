@@ -5,15 +5,15 @@
  */
 
 angular
-    .module('koan.home', [
+    .module('qibud.home', [
       'ngRoute',
       'monospaced.elastic',
-      'koan.common'
+      'qibud.common'
     ])
     .config(function ($routeProvider) {
       $routeProvider
           .when('/', {
-            title: 'KOAN Home',
+            title: 'Qibud Home',
             templateUrl: 'modules/home/home.html',
             controller: 'HomeCtrl'
           });

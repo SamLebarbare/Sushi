@@ -1,31 +1,68 @@
-<div class="message-box">
-  <form ng-submit="createPost($event)">
-    <textarea msd-elastic ng-model="postBox.message" class="form-control" name="message" placeholder="Type your post here..." ng-disabled="postBox.disabled"></textarea>
-
-    <div class="message-box-tools">
-      <input type="submit" class="btn btn-default btn-sm pull-right" value="Post">
+<form ng-submit="createBud($event)">
+  <section id="newbud">
+    <div class="page-header">
+        <h1>{{budBox.title}}</h1>
     </div>
-  </form>
-</div>
+    <div class="clear-fix">
+      <label for="requestTitle"><strong>Bud: </strong></label>
+      <div class="input">
+        <input
+        class="xlarge"
+        type="text"
+        name="budTitle"
+        ng-model="budBox.title"
+        size="60px"
+        maxlength="40"
+        class="required" />
+      </div>
+    </div>
+    <div class="clear-fix">
+      <label for="content"><strong>Content: </strong></label>
+      <div class="input">
+          <textarea
+          msd-elastic
+          ng-model="budBox.message"
+          class="form-control"
+          name="message"
+          placeholder="Type your bud here..."
+          ng-disabled="budBox.disabled">
+          </textarea>
+          <span class="help-block">
+              May the Qi be with you!
+          </span>
+      </div>
+    </div>
+    <div class="clear-fix">
+      <label for="file"><strong>Add file: </strong></label>
+      <div class="input">
+         <input class="input-file" type="file" name="file"/>
+      </div>
+    </div>
+    <div class="well">
+        <input class="btn btn-primary btn-xl" type="submit" />
+    </div>
+  </section>
+</form>
 
 <ul class="media-list posts">
-  <li class="media post" ng-repeat="post in posts" id="post_{{post.id}}">
+  <li class="media post" ng-repeat="bud in buds" id="bud_{{bud.id}}">
     <a href="#" class="pull-left">
-      <img class="media-object" ng-src="{{post.from.picture}}" alt="">
+      <img class="media-object" ng-src="{{bud.from.picture}}" alt="">
     </a>
     <div class="media-body post-body">
       <h5 class="media-heading">
-        <a href="#">{{post.from.name}}</a>
-        <span ng-if="post.to"><span class="glyphicon glyphicon-play"></span> <a href="#">{{post.to.name}}</a></span>
+        <a href="#">{{bud.title}}</a>
+        <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
+        <a href="#">{{bud.from.name}}</a></span>
       </h5>
-      {{post.message}}
+      {{bud.message}}
       <small class="post-tools">
         {{post.createdTime | date:'medium'}}
         &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
       </small>
       <ul class="media-list post-comments">
         <li class="media"><span class="arrow-up-small"></span></li>
-        <li class="media post-comment" ng-repeat="comment in post.comments">
+        <li class="media post-comment" ng-repeat="comment in bud.comments">
           <a href="#" class="pull-left">
             <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
           </a>
@@ -41,7 +78,14 @@
             <img class="media-object" ng-src="{{common.user.picture}}" alt="">
           </a>
           <div class="media-body post-comment-body">
-            <textarea msd-elastic ng-model="post.commentBox.message" ng-keypress="createComment($event, post)" ng-disabled="post.commentBox.disabled" class="form-control" placeholder="Write a comment..."></textarea>
+            <textarea
+            msd-elastic
+            ng-model="bud.commentBox.message"
+            ng-keypress="createComment($event, bud)"
+            ng-disabled="bud.commentBox.disabled"
+            class="form-control"
+            placeholder="Write a comment...">
+          </textarea>
           </div>
         </li>
       </ul>
