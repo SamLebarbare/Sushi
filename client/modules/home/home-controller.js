@@ -37,13 +37,13 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
     api.buds.create({title: $scope.budBox.title, message: $scope.budBox.message})
         .success(function (budId)
         {
-          // only add the post if we don't have it already in the buds list to avoid dupes
+          // only add the bud if we don't have it already in the buds list to avoid dupes
           if (!_.some($scope.buds, function (b)
           {
             return b.id === budId;
           }))
           {
-            $scope.posts.unshift(
+            $scope.buds.unshift(
             {
               id: budId,
               from: user,
@@ -55,8 +55,8 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
           }
 
           // clear the bud box and enable it
-          $scope.postBox.message = '';
-          $scope.postBox.disabled = false;
+          $scope.budBox.message = '';
+          $scope.budBox.disabled = false;
         })
         .error(function ()
         {
@@ -84,8 +84,8 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
     api.buds.comments.create(bud.id, {message: bud.commentBox.message})
         .success(function (commentId)
         {
-          // only add the comment if we don't have it already in the post's comments list to avoid dupes
-          if (!_.some(post.comments, function (c) {
+          // only add the comment if we don't have it already in the bud's comments list to avoid dupes
+          if (!_.some(bud.comments, function (c) {
             return c.id === commentId;
           }))
           {
@@ -114,7 +114,7 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
   // subscribe to websocket events to receive new buds, comments, etc.
   api.buds.created.subscribe($scope, function (bud)
   {
-    // only add the bud if we don't have it already in the posts list to avoid dupes
+    // only add the bud if we don't have it already in the buds list to avoid dupes
     if (!_.some($scope.buds, function (b)
     {
       return b.id === bud.id;
@@ -132,7 +132,7 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
       return bud.id === comment.budId;
     });
 
-    // only add the comment if we don't have it already in the post's comments list to avoid dupes
+    // only add the comment if we don't have it already in the bud's comments list to avoid dupes
     if (bud && !_.some(bud.comments, function (c)
     {
       return c.id === comment.id;
