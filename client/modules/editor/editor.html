@@ -1,0 +1,74 @@
+<form ng-submit="createBud($event)">
+  <section id="newbud">
+    <div class="page-header">
+        <h1>{{budBox.title}}</h1>
+    </div>
+    <div class="clear-fix">
+      <label for="requestTitle"><strong>Bud: </strong></label>
+      <div class="input">
+        <input
+        class="xlarge"
+        type="text"
+        name="budTitle"
+        ng-model="budBox.title"
+        size="60px"
+        maxlength="40"
+        class="required" />
+      </div>
+    </div>
+    <div class="clear-fix">
+      <label for="content"><strong>Content: </strong></label>
+      <div class="input">
+          <textarea
+          msd-elastic
+          ng-model="budBox.message"
+          class="form-control"
+          name="message"
+          placeholder="Type your bud here..."
+          ng-disabled="budBox.disabled">
+          </textarea>
+          <span class="help-block">
+              May the Qi be with you!
+          </span>
+      </div>
+    </div>
+    <div class="clear-fix">
+      <label for="file"><strong>Add file: </strong></label>
+      <div class="input">
+         <input class="input-file" type="file" name="file"/>
+      </div>
+    </div>
+    <div class="well">
+        <input class="btn btn-primary btn-xl" type="submit" />
+    </div>
+  </section>
+</form>
+
+
+<style type="text/css">
+  /* Message box */
+
+  .message-box {
+    background-color: #fdfdfd;
+    border-radius: 7px;
+  }
+
+  .message-box form {
+    padding-right: 10px;
+    padding-left: 10px;
+    margin-bottom: 10px;
+  }
+
+  .message-box form textarea {
+    resize: vertical;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    width: 100%;
+    box-sizing: border-box;
+    height: 65px;
+  }
+
+  .message-box-tools {
+    height: 31px;
+  }
+</style>

@@ -6,14 +6,16 @@
 
 angular
     .module('koan.profile', [
-      'ngRoute',
+      'ui.router',
       'qibud.common'
     ])
-    .config(function ($routeProvider) {
-      $routeProvider
-          .when('/profile', {
+    .config(function ($stateProvider, $urlRouterProvider) {
+      $urlRouterProvider.otherwise("/home");
+      $stateProvider
+          .state('profile', {
+            url: "/profile",
             title: 'User Profile',
             templateUrl: 'modules/profile/profile.html',
             controller: 'ProfileCtrl'
-          });
+      });
     });

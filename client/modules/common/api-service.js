@@ -56,13 +56,16 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     list: function () {
       return $http({method: 'GET', url: apiBase + '/buds', headers: headers});
     },
+    view: function (budId) {
+      return $http({method: 'GET', url: apiBase + '/buds/' + budId + '/view', headers: headers});
+    },
     create: function (bud) {
       return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
     },
     created: event(),
     comments: {
-      create: function (postId, comment) {
-        return $http({method: 'POST', url: apiBase + '/buds/' + postId + '/comments', data: comment, headers: headers});
+      create: function (budId, comment) {
+        return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});
       },
       created: event()
     }

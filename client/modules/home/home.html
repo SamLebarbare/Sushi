@@ -1,49 +1,3 @@
-<form ng-submit="createBud($event)">
-  <section id="newbud">
-    <div class="page-header">
-        <h1>{{budBox.title}}</h1>
-    </div>
-    <div class="clear-fix">
-      <label for="requestTitle"><strong>Bud: </strong></label>
-      <div class="input">
-        <input
-        class="xlarge"
-        type="text"
-        name="budTitle"
-        ng-model="budBox.title"
-        size="60px"
-        maxlength="40"
-        class="required" />
-      </div>
-    </div>
-    <div class="clear-fix">
-      <label for="content"><strong>Content: </strong></label>
-      <div class="input">
-          <textarea
-          msd-elastic
-          ng-model="budBox.message"
-          class="form-control"
-          name="message"
-          placeholder="Type your bud here..."
-          ng-disabled="budBox.disabled">
-          </textarea>
-          <span class="help-block">
-              May the Qi be with you!
-          </span>
-      </div>
-    </div>
-    <div class="clear-fix">
-      <label for="file"><strong>Add file: </strong></label>
-      <div class="input">
-         <input class="input-file" type="file" name="file"/>
-      </div>
-    </div>
-    <div class="well">
-        <input class="btn btn-primary btn-xl" type="submit" />
-    </div>
-  </section>
-</form>
-
 <ul class="media-list posts">
   <li class="media post" ng-repeat="bud in buds" id="bud_{{bud.id}}">
     <a href="#" class="pull-left">
@@ -51,13 +5,13 @@
     </a>
     <div class="media-body post-body">
       <h5 class="media-heading">
-        <a href="#">{{bud.title}}</a>
+        <a ui-sref="viewer({budId : bud.id})">{{bud.title}}</a>
         <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
         <a href="#">{{bud.from.name}}</a></span>
       </h5>
       {{bud.message}}
       <small class="post-tools">
-        {{post.createdTime | date:'medium'}}
+        {{bud.createdTime | date:'medium'}}
         &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
       </small>
       <ul class="media-list post-comments">

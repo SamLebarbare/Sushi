@@ -1,28 +1,21 @@
 'use strict';
 
 /**
- * Home controller simply lists all the buds from everyone on the front page.
+ * Viewer controller provide a good way to read buds
  */
 
-angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
+angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $stateParams, api)
 {
 
   var user       = $scope.common.user;
-  $scope.budBox  = {message: null, disabled: false};
-
-  // retrieve buds from server
-  api.buds.list().success(function (buds)
+  console.log ('viewer');
+  // retrieve one bud from server
+  api.buds.view($stateParams.budId).success(function (bud)
   {
-    buds.forEach(function (bud)
-    {
-      bud.commentBox = {message: '', disabled: false};
-      bud.comments   = bud.comments || [];
-    });
-
-    $scope.buds = buds;
+    bud.commentBox = {message: '', disabled: false};
+    bud.comments   = bud.comments || [];
+    $scope.bud = bud;
   });
-
-  
 
   $scope.createComment = function ($event, bud)
   {
@@ -70,29 +63,9 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
     $event.preventDefault();
   };
 
-  // subscribe to websocket events to receive new buds, comments, etc.
-  api.buds.created.subscribe($scope, function (bud)
-  {
-    // only add the bud if we don't have it already in the buds list to avoid dupes
-    if (!_.some($scope.buds, function (b)
-    {
-      return b.id === bud.id;
-    }))
-    {
-      bud.comments = [];
-      bud.commentBox = {message: '', disabled: false};
-      $scope.buds.unshift(bud);
-    }
-  });
-
   api.buds.comments.created.subscribe($scope, function (comment) {
-    var bud = _.find($scope.buds, function (bud)
-    {
-      return bud.id === comment.budId;
-    });
-
     // only add the comment if we don't have it already in the bud's comments list to avoid dupes
-    if (bud && !_.some(bud.comments, function (c)
+    if ($scope.bud && !_.some($scope.bud.comments, function (c)
     {
       return c.id === comment.id;
     }))

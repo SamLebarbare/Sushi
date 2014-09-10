@@ -1,11 +1,11 @@
 'use strict';
 
 /**
- * Home module for displaying home page content.
+ * Editor module for buds
  */
 
 angular
-    .module('qibud.home', [
+    .module('qibud.viewer', [
       'ui.router',
       'monospaced.elastic',
       'qibud.common'
@@ -13,10 +13,10 @@ angular
     .config(function ($stateProvider, $urlRouterProvider) {
       $urlRouterProvider.otherwise("/home");
       $stateProvider
-          .state('home', {
-            title: 'Qibud Editor',
-            url: "/home",
-            templateUrl: 'modules/home/home.html',
-            controller: 'HomeCtrl'
+          .state('viewer', {
+            url: "/viewer/:budId",
+            title: 'Qibud',
+            templateUrl: 'modules/viewer/viewer.html',
+            controller: 'ViewerCtrl'
       });
     });

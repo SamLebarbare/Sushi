@@ -13,6 +13,7 @@ var route = require('koa-route'),
 // register koa routes
 exports.init = function (app) {
   app.use(route.get('/api/buds', listBuds));
+  app.use(route.get('/api/buds/:budId/view', viewBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
@@ -34,6 +35,22 @@ function *listBuds()
   });
 
   this.body = buds;
+}
+
+/**
+ * Get one bud by id
+ */
+function *viewBud(budId)
+{
+  console.log('---------------------------in view bud');
+  budId   = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+
+  bud.id = bud._id;
+  delete bud._id;
+
+
+  this.body = bud;
 }
 
 /**
