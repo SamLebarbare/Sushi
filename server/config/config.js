@@ -54,7 +54,7 @@ var platformConfig = {
       linkedin: {
         clientId: '77u90yjt9shkkx',
         clientSecret: 'cy4SSvLboSiEDg6S',
-        callbackUrl: 'http://localhost:3000/signin/linkedin/callback',
+        callbackUrl: 'http://qibud.loup.io/signin/linkedin/callback',
         scope : 'r_basicprofile%20r_emailaddress%20r_network'
       }
     }
