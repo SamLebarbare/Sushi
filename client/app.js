@@ -5,13 +5,13 @@
  */
 
 angular
-    .module('koan', [
+    .module('qibud', [
       'ui.router',
       'qibud.common',
       'qibud.home',
       'qibud.viewer',
       'qibud.editor',
-      'koan.profile'
+      'qibud.profile'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {

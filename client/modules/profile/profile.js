@@ -5,12 +5,11 @@
  */
 
 angular
-    .module('koan.profile', [
+    .module('qibud.profile', [
       'ui.router',
       'qibud.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
-      $urlRouterProvider.otherwise("/home");
       $stateProvider
           .state('profile', {
             url: "/profile",

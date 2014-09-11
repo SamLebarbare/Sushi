@@ -11,7 +11,6 @@ angular
       'qibud.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
-      $urlRouterProvider.otherwise("/home");
       $stateProvider
           .state('editor', {
             title: 'Qibud Editor',
