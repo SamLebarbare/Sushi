@@ -6,10 +6,9 @@
 
 angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $location, api)
 {
-
   var user       = $scope.common.user;
   $scope.budBox  = {title: null, message: null, disabled: false};
-
+  $scope.editorOptions = {uiColor: '#000000'};
 
   // add bud creation functions to scope
   $scope.createBud = function ($event)

@@ -6,6 +6,7 @@
 
 angular
     .module('qibud', [
+      'ngSanitize',
       'ui.router',
       'qibud.common',
       'qibud.home',

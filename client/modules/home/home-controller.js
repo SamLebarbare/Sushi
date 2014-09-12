@@ -22,54 +22,6 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
     $scope.buds = buds;
   });
 
-  
-
-  $scope.createComment = function ($event, bud)
-  {
-    // submit the message in the comment box only if user hits 'Enter (keycode 13)'
-    if ($event.keyCode !== 13)
-    {
-      return;
-    }
-
-    // don't let the user type in blank lines or submit empty/whitespace only comment, or type in something when comment is being created
-    if (!bud.commentBox.message.length || bud.commentBox.disabled) {
-      $event.preventDefault();
-      return;
-    }
-
-    // disable the comment box and push the new comment to server
-    bud.commentBox.disabled = true;
-    api.buds.comments.create(bud.id, {message: bud.commentBox.message})
-        .success(function (commentId)
-        {
-          // only add the comment if we don't have it already in the bud's comments list to avoid dupes
-          if (!_.some(bud.comments, function (c) {
-            return c.id === commentId;
-          }))
-          {
-            bud.comments.push({
-              id: commentId,
-              from: user,
-              message: bud.commentBox.message,
-              createdTime: new Date()
-            });
-          }
-
-          // clear the comment field and enable it
-          bud.commentBox.message  = '';
-          bud.commentBox.disabled = false;
-        })
-        .error(function ()
-        {
-          // don't clear the comment box but enable it so the user can re-try
-          bud.commentBox.disabled = false;
-        });
-
-    // prevent default 'Enter' button behavior (create new line) as we want 'Enter' button to do submission
-    $event.preventDefault();
-  };
-
   // subscribe to websocket events to receive new buds, comments, etc.
   api.buds.created.subscribe($scope, function (bud)
   {
