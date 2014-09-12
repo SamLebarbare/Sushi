@@ -1,52 +1,57 @@
-<form ng-submit="createBud($event)">
-  <section id="newbud">
-    <div class="page-header">
-        <h1>{{budBox.title}}</h1>
-        <div ng-bind-html="budBox.message">
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 col-sm-6 col-md-8">
+      <form ng-submit="createBud($event)">
+          <div class="clear-fix">
+            <label for="requestTitle"><strong>Bud: </strong></label>
+            <div class="form-group">
+              <input
+              class="form-control" 
+              type="text"
+              name="budTitle"
+              ng-disabled="budBox.disabled"
+              ng-model="budBox.title"
+              class="required" />
+            </div>
+          </div>
+          <div class="clear-fix">
+            <label for="content"><strong>Content: </strong></label>
+            <div class="form-group">
+                <textarea
+                ckeditor="budbox.editorOptions"
+                msd-elastic
+                ng-model="budBox.message"
+                class="form-control"
+                name="message"
+                placeholder="Type your bud here..."
+                ng-disabled="budBox.disabled">
+                </textarea>
+                <span class="help-block">
+                    May the Qi be with you!
+                </span>
+            </div>
+          </div>
+          <div class="clear-fix">
+            <label for="file"><strong>Add file: </strong></label>
+            <div class="input">
+               <input class="input-file" type="file" name="file"/>
+            </div>
+          </div>
+          <div class="well">
+              <input class="btn btn-primary btn-xl" type="submit" />
+          </div>
+      </form>
+    </div>
+    <div class="col-xs-6 col-md-4">
+        <div class="page-header">
+            <h1>{{budBox.title}}</h1>
         </div>
+        <div ng-bind-html="budBox.message"></div>
+
     </div>
-    <div class="clear-fix">
-      <label for="requestTitle"><strong>Bud: </strong></label>
-      <div class="input">
-        <input
-        class="xlarge"
-        type="text"
-        name="budTitle"
-        ng-disabled="budBox.disabled"
-        ng-model="budBox.title"
-        size="60px"
-        maxlength="40"
-        class="required" />
-      </div>
-    </div>
-    <div class="clear-fix">
-      <label for="content"><strong>Content: </strong></label>
-      <div class="input">
-          <textarea
-          ckeditor="budbox.editorOptions"
-          msd-elastic
-          ng-model="budBox.message"
-          class="form-control"
-          name="message"
-          placeholder="Type your bud here..."
-          ng-disabled="budBox.disabled">
-          </textarea>
-          <span class="help-block">
-              May the Qi be with you!
-          </span>
-      </div>
-    </div>
-    <div class="clear-fix">
-      <label for="file"><strong>Add file: </strong></label>
-      <div class="input">
-         <input class="input-file" type="file" name="file"/>
-      </div>
-    </div>
-    <div class="well">
-        <input class="btn btn-primary btn-xl" type="submit" />
-    </div>
-  </section>
-</form>
+  </div>
+</div>
+
 
 
 <style type="text/css">

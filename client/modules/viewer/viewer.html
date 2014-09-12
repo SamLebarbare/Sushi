@@ -1,45 +1,46 @@
-<div class="hero-unit">
-    <h1>{{bud.title}}</h1>
-    <h5 class="media-heading">
-      <a href="#"></a>
-      <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
-      <a href="#">{{bud.from.name}}</a></span>
-    </h5>
-    <small class="post-tools">
-      {{bud.createdTime | date:'medium'}}
-      &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
-    </small>
-    <div ng-bind-html="bud.message"></div>
-    <ul class="media-list post-comments">
-      <li class="media"><span class="arrow-up-small"></span></li>
-      <li class="media post-comment" ng-repeat="comment in bud.comments">
-        <a href="#" class="pull-left">
-          <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
-        </a>
-        <div class="media-body story-comment-body">
-          <small><a href="#" class="bold">{{comment.from.name}}</a> {{comment.message}}</small>
-          <small class="post-comment-tools">
-            {{comment.createdTime | date:'short'}}
-          </small>
-        </div>
-      </li>
-      <li class="media post-comment comment-box">
-        <a href="#" class="pull-left">
-          <img class="media-object" ng-src="{{common.user.picture}}" alt="">
-        </a>
-        <div class="media-body post-comment-body">
-          <textarea
-          msd-elastic
-          ng-model="bud.commentBox.message"
-          ng-keypress="createComment($event, bud)"
-          ng-disabled="bud.commentBox.disabled"
-          class="form-control"
-          placeholder="Write a comment...">
-        </textarea>
-        </div>
-      </li>
-    </ul>
+<div class="page-header">
+  <h1>{{bud.title}}</h1>
+  <h5 class="media-heading">
+    <a href="#"></a>
+    <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
+    <a href="#">{{bud.from.name}}</a></span>
+  </h5>
+  <small class="post-tools">
+    {{bud.createdTime | date:'medium'}}
+    &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
+  </small>
 </div>
+<div ng-bind-html="bud.message"></div>
+<ul class="media-list post-comments">
+  <li class="media"><span class="arrow-up-small"></span></li>
+  <li class="media post-comment" ng-repeat="comment in bud.comments">
+    <a href="#" class="pull-left">
+      <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
+    </a>
+    <div class="media-body story-comment-body">
+      <small><a href="#" class="bold">{{comment.from.name}}</a> {{comment.message}}</small>
+      <small class="post-comment-tools">
+        {{comment.createdTime | date:'short'}}
+      </small>
+    </div>
+  </li>
+  <li class="media post-comment comment-box">
+    <a href="#" class="pull-left">
+      <img class="media-object" ng-src="{{common.user.picture}}" alt="">
+    </a>
+    <div class="media-body post-comment-body">
+      <textarea
+      msd-elastic
+      ng-model="bud.commentBox.message"
+      ng-keypress="createComment($event, bud)"
+      ng-disabled="bud.commentBox.disabled"
+      class="form-control"
+      placeholder="Write a comment...">
+    </textarea>
+    </div>
+  </li>
+</ul>
+
 
 <style type="text/css">
   /* Layout */
