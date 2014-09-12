@@ -60,7 +60,7 @@ function *createBud()
 {
   // it is best to validate bud body with something like node-validator here, before saving it in the database..
   var bud  = yield parse(this);
-  bud.from = this.user;
+  bud.creator = this.user;
   bud.createdTime = new Date();
   var results = yield mongo.buds.insert(bud);
 

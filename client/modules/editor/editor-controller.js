@@ -7,14 +7,14 @@
 angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $location, api)
 {
   var user       = $scope.common.user;
-  $scope.budBox  = {title: null, message: null, disabled: false};
+  $scope.budBox  = {title: null, content: null, disabled: false};
   $scope.editorOptions = {uiColor: '#000000'};
 
   // add bud creation functions to scope
   $scope.createBud = function ($event)
   {
     // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
-    if (!$scope.budBox.message.length || $scope.budBox.disabled)
+    if (!$scope.budBox.content.length || $scope.budBox.disabled)
     {
       $event.preventDefault();
       return;
@@ -22,7 +22,7 @@ angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $locat
 
     // disable the bud box and push the new bud to server
     $scope.budBox.disabled = true;
-    api.buds.create({title: $scope.budBox.title, message: $scope.budBox.message})
+    api.buds.create({title: $scope.budBox.title, content: $scope.budBox.content})
         .success(function (budId)
         {
           // only add the bud if we don't have it already in the buds list to avoid dupes

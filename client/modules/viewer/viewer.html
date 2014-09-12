@@ -10,7 +10,7 @@
     &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
   </small>
 </div>
-<div ng-bind-html="bud.message"></div>
+<div ng-bind-html="bud.content"></div>
 <ul class="media-list post-comments">
   <li class="media"><span class="arrow-up-small"></span></li>
   <li class="media post-comment" ng-repeat="comment in bud.comments">

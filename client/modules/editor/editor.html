@@ -6,7 +6,7 @@
             <label for="requestTitle"><strong>Bud: </strong></label>
             <div class="form-group">
               <input
-              class="form-control" 
+              class="form-control"
               type="text"
               name="budTitle"
               ng-disabled="budBox.disabled"
@@ -20,7 +20,7 @@
                 <textarea
                 ckeditor="budbox.editorOptions"
                 msd-elastic
-                ng-model="budBox.message"
+                ng-model="budBox.content"
                 class="form-control"
                 name="message"
                 placeholder="Type your bud here..."
@@ -46,7 +46,7 @@
         <div class="page-header">
             <h1>{{budBox.title}}</h1>
         </div>
-        <div ng-bind-html="budBox.message"></div>
+        <div ng-bind-html="budBox.content"></div>
 
     </div>
   </div>

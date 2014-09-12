@@ -55,8 +55,8 @@ var buds = [
   {
     _id: new ObjectID(),
     title: 'Just a bud from your admin...',
-    from: {_id: 1, name: 'Qibud Admin', picture: '/api/users/1/picture'},
-    message: 'Welcome to Qibud',
+    creator: {_id: 1, name: 'Qibud Admin', picture: '/api/users/1/picture'},
+    content: '<h1>Welcome to Qibud</h1>',
     createdTime: getTime(-97),
     comments: []
   }

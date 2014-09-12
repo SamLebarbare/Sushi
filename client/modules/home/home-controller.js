@@ -8,7 +8,7 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
 {
 
   var user       = $scope.common.user;
-  $scope.budBox  = {message: null, disabled: false};
+  $scope.budBox  = {content: null, disabled: false};
 
   // retrieve buds from server
   api.buds.list().success(function (buds)
