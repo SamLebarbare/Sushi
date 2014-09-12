@@ -3,11 +3,12 @@
   <h5 class="media-heading">
     <a href="#"></a>
     <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
-    <a href="#">{{bud.from.name}}</a></span>
+    <a href="#">{{bud.creator.name}}</a></span>
   </h5>
   <small class="post-tools">
+    <span class="label label-default">{{bud.privacy}}</span>
     {{bud.createdTime | date:'medium'}}
-    &middot; <span class="glyphicon glyphicon-{{post.to ? 'envelope' : 'globe'}}"></span>
+    &middot; <span class="glyphicon glyphicon-{{bud.to ? 'envelope' : 'globe'}}"></span>
   </small>
 </div>
 <div ng-bind-html="bud.content"></div>

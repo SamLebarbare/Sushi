@@ -22,30 +22,34 @@ angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $locat
 
     // disable the bud box and push the new bud to server
     $scope.budBox.disabled = true;
-    api.buds.create({title: $scope.budBox.title, content: $scope.budBox.content})
-        .success(function (budId)
-        {
-          // only add the bud if we don't have it already in the buds list to avoid dupes
-          if (!_.some($scope.buds, function (b)
-          {
-            return b.id === budId;
-          }))
-          {
+    api.buds.create({
+      title: $scope.budBox.title,
+      content: $scope.budBox.content,
+      privacy: $scope.budBox.privacy,
+    })
+    .success(function (budId)
+    {
+      // only add the bud if we don't have it already in the buds list to avoid dupes
+      if (!_.some($scope.buds, function (b)
+      {
+        return b.id === budId;
+      }))
+      {
 
-          }
+      }
 
-          // clear the bud box and enable it
-          $scope.budBox.title = '';
-          $scope.budBox.message = '';
-          $scope.budBox.disabled = false;
-          //redirect
-          $location.path('/viewer/' + budId);
-        })
-        .error(function ()
-        {
-          // don't clear the bud box but enable it so the user can re-try
-          $scope.budBox.disabled = false;
-        });
+      // clear the bud box and enable it
+      $scope.budBox.title = '';
+      $scope.budBox.content = '';
+      $scope.budBox.disabled = false;
+      //redirect
+      $location.path('/viewer/' + budId);
+    })
+    .error(function ()
+    {
+      // don't clear the bud box but enable it so the user can re-try
+      $scope.budBox.disabled = false;
+    });
   };
 
   // subscribe to websocket events to receive new buds, comments, etc.

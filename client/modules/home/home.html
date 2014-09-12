@@ -1,13 +1,12 @@
 <ul class="media-list posts">
   <li class="media post" ng-repeat="bud in buds" id="bud_{{bud.id}}">
     <a href="#" class="pull-left">
-      <img class="media-object" ng-src="{{bud.from.picture}}" alt="">
+      <img class="media-object" ng-src="{{bud.creator.picture}}" alt="">
+      <span class="label label-default">{{bud.privacy}} </span>
     </a>
     <div class="media-body post-body">
       <h5 class="media-heading">
         <a ui-sref="viewer({budId : bud.id})">{{bud.title}}</a>
-        <span ng-if="bud.to"><span class="glyphicon glyphicon-play"></span>
-        <a href="#">{{bud.from.name}}</a></span>
       </h5>
       <small class="post-tools">
         {{bud.createdTime | date:'medium'}}

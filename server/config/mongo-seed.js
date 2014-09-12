@@ -54,9 +54,10 @@ function getTime(h)
 var buds = [
   {
     _id: new ObjectID(),
-    title: 'Just a bud from your admin...',
-    creator: {_id: 1, name: 'Qibud Admin', picture: '/api/users/1/picture'},
-    content: '<h1>Welcome to Qibud</h1>',
+    title: 'center of the universe',
+    creator: {_id: 1, name: 'Chuck Norris', picture: '/api/users/1/picture'},
+    content: 'And at universe creation, chuck added the root bud...',
+    privacy: 'Private',
     createdTime: getTime(-97),
     comments: []
   }
