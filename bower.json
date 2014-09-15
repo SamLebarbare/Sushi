@@ -8,6 +8,7 @@
     "bootstrap-social": "~4",
     "angular": "~1",
     "angular-sanitize": "~1",
+    "angular-bootstrap": "~0.11.0",
     "angular-ui-router": "~0.2.11",
     "angular-elastic": "~2",
     "lodash": "~2",
