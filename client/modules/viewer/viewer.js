@@ -7,6 +7,7 @@
 angular
     .module('qibud.viewer', [
       'ui.router',
+      'ui.bootstrap',
       'monospaced.elastic',
       'qibud.common'
     ])
