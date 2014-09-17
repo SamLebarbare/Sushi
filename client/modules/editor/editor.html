@@ -20,7 +20,7 @@
           </div>
           <div class="clear-fix">
             <label for="content"><strong>Content: </strong></label>
-            <div class="form-group">
+            <div ng-cloak ng-show="editorIsReady" class="form-group">
                 <textarea
                 ckeditor="budbox.editorOptions"
                 msd-elastic

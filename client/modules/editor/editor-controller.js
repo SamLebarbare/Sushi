@@ -34,6 +34,11 @@ function ($scope, $stateParams, $location, api)
     };
   }
 
+  $scope.$on("ckeditor.ready", function( event ) {
+    $scope.editorIsReady = true;
+  });
+
+
 
   $scope.editorOptions = {uiColor: '#000000'};
 
