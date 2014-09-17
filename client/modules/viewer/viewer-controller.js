@@ -17,6 +17,34 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
     $scope.bud = bud;
   });
 
+  $scope.canShare = function ()
+  {
+    var sharable = false;
+    var creatorId = $scope.bud.creator.id;
+
+    //TODO: Add a watch on privacy changes check actor
+    switch($scope.bud.privacy)
+    {
+      case 'Private':
+        if(creatorId === user.id)
+        {
+          sharable = true;
+        }
+      break;
+      case 'Private2Share':
+        if(creatorId === user.id)
+        {
+          sharable = true;
+        }
+      break;
+    case 'Free2Share':
+        sharable = true;
+      break;
+    }
+
+    return sharable;
+  };
+
   $scope.createComment = function ($event, bud)
   {
     // submit the message in the comment box only if user hits 'Enter (keycode 13)'

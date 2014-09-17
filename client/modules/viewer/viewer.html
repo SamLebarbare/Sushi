@@ -5,16 +5,18 @@
 
         <h2>
           <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
-          <a ui-sref="editor({budId : bud.id})" class="btn btn-danger">Edit</a>
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
+            <a ui-sref="editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id"class="btn btn-danger">Edit</a>
+            <a ng-if="canShare()" class="btn btn-success">Share</a>
           </div>
         </h2>
         <small class="pull-right">
           <h4>Creator: {{bud.creator.name}}
           </h4>
-          {{bud.createdTime | date:'medium'}}
-          &middot; <span class="glyphicon glyphicon-{{bud.to ? 'envelope' : 'globe'}}"></span>
+          created at: {{bud.createdTime | date:'medium'}}
+          <br/>
+          last update:{{bud.lastUpdate | date:'medium'}}
         </small>
         <br/>
         <div class="btn-group btn-group-xs">
