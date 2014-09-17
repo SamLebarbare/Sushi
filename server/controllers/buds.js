@@ -14,6 +14,7 @@ var route = require('koa-route'),
 exports.init = function (app) {
   app.use(route.get('/api/buds', listBuds));
   app.use(route.get('/api/buds/:budId/view', viewBud));
+  app.use(route.put('/api/buds/:budId/update', updateBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
@@ -42,13 +43,11 @@ function *listBuds()
  */
 function *viewBud(budId)
 {
-  console.log('---------------------------in view bud');
   budId   = new ObjectID(budId);
   var bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
   delete bud._id;
-
 
   this.body = bud;
 }
@@ -71,6 +70,40 @@ function *createBud()
   bud.id = bud._id;
   delete bud._id;
   ws.notify('buds.created', bud);
+}
+
+/**
+ * Update a bud in the database after proper validations.
+ */
+function *updateBud()
+{
+  var bud  = yield parse(this);
+
+  if(bud.creator.id !== this.user.id)
+  {
+    this.throw(403, 'You are not the creator of this bud');
+  }
+
+  bud.lastUpdate = new Date();
+  if(bud.revision)
+  {
+    bud.revision++;
+  }
+  else
+  {
+    bud.revision = 1
+  }
+
+  bud._id = new ObjectID(bud.id);
+  var results = yield mongo.buds.save(bud, {w: 1});
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  ws.notify('buds.updated', bud);
 }
 
 /**
