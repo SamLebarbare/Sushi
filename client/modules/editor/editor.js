@@ -15,7 +15,7 @@ angular
       $stateProvider
           .state('editor', {
             title: 'Qibud Editor',
-            url: "/editor",
+            url: "/editor/:budId",
             templateUrl: 'modules/editor/editor.html',
             controller: 'EditorCtrl'
       });

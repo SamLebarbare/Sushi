@@ -4,10 +4,37 @@
  * Editor controller provide a good way to edit/write buds
  */
 
-angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $location, api)
+angular.module('qibud.editor').controller('EditorCtrl',
+function ($scope, $stateParams, $location, api)
 {
   var user       = $scope.common.user;
-  $scope.budBox  = {title: null, content: null, disabled: false};
+
+  if($stateParams.budId)
+  {
+    api.buds.view($stateParams.budId).success(function (bud)
+    {
+      $scope.editedBud = bud;
+      $scope.budBox = {
+        title: bud.title,
+        content: bud.content,
+        privacy: bud.privacy,
+        disabled: false,
+        action: 'update'
+      };
+    });
+  }
+  else
+  {
+    $scope.budBox  = {
+      title: null,
+      content: null,
+      disabled: false,
+      privacy: 'Private',
+      action: 'create'
+    };
+  }
+
+
   $scope.editorOptions = {uiColor: '#000000'};
 
   // add bud creation functions to scope
@@ -29,21 +56,13 @@ angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $locat
     })
     .success(function (budId)
     {
-      // only add the bud if we don't have it already in the buds list to avoid dupes
-      if (!_.some($scope.buds, function (b)
-      {
-        return b.id === budId;
-      }))
-      {
-
-      }
-
       // clear the bud box and enable it
       $scope.budBox.title = '';
       $scope.budBox.content = '';
       $scope.budBox.disabled = false;
+
       //redirect
-      $location.path('/viewer/' + budId);
+      $location.path('/viewer/' + bud.id);
     })
     .error(function ()
     {
@@ -51,6 +70,36 @@ angular.module('qibud.editor').controller('EditorCtrl', function ($scope, $locat
       $scope.budBox.disabled = false;
     });
   };
+
+  $scope.updateBud = function ($event)
+  {
+    // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
+    if (!$scope.budBox.content.length || $scope.budBox.disabled)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    // disable the bud box and push the new bud to server
+    $scope.budBox.disabled = true;
+
+    $scope.editedBud.title = $scope.budBox.title;
+    $scope.editedBud.content = $scope.budBox.content;
+    $scope.editedBud.privacy = $scope.budBox.privacy;
+
+    api.buds.update($scope.editedBud).success(function (bud)
+    {
+      //redirect
+      $location.path('/viewer/' + $scope.editedBud.id);
+    })
+    .error(function ()
+    {
+      // don't clear the bud box but enable it so the user can re-try
+      $scope.budBox.disabled = false;
+    });
+  };
+
+
 
   // subscribe to websocket events to receive new buds, comments, etc.
   api.buds.created.subscribe($scope, function (bud)

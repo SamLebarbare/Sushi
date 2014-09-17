@@ -5,6 +5,7 @@
 
         <h2>
           <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
+          <a ui-sref="editor({budId : bud.id})" class="btn btn-danger">Edit</a>
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
           </div>

@@ -58,9 +58,17 @@
                 </div>
               </div>
               <input
+              ng-if="budBox.action == 'create'"
               class="btn btn-primary btn-xl"
               type="submit"
               value="Create bud"
+              ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+              />
+              <input
+              ng-if="budBox.action == 'update'"
+              class="btn btn-primary btn-xl"
+              ng-click="updateBud($event)"
+              value="Update bud"
               ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
               />
           </div>

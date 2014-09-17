@@ -74,4 +74,11 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
     }
   });
 
+  api.buds.updated.subscribe($scope, function (bud) {
+    if ($scope.bud && c.id === bud.id)
+    {
+      $scope.bud = bud;
+    }
+  });
+
 });
