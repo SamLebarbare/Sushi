@@ -3,6 +3,10 @@
 var mongo = require('./mongo'),
     ObjectID = mongo.ObjectID;
 
+var fromStream = require('co-from-stream');
+var cypher = require('cypher-stream')('http://localhost:7474');
+
+
 /**
  * Populates the database with seed data.
  * @param overwrite Overwrite existing database even if it is not empty.
@@ -30,6 +34,32 @@ module.exports = function *(overwrite)
     yield mongo.counters.insert({_id: 'userId', seq: users.length});
     yield mongo.users.insert(users);
     yield mongo.buds.insert(buds);
+
+
+    // first remove all neo4j graph nodes
+    var deleteAll = fromStream(cypher('MATCH (n) '
+                                    + 'OPTIONAL MATCH (n)-[r]-() '
+                                    + 'DELETE n,r'));
+    while(yield deleteAll());
+
+    // create neo4j nodes for buds
+    var seed = yield mongo.buds.find({}).toArray();
+    var data;
+    var bud = seed[0];
+
+    var params = { data :
+      {
+        id : bud._id,
+        creatorId : bud.creator._id,
+        privacy : bud.privacy
+      }
+    };
+
+    var create = fromStream(cypher('CREATE (b:Bud { data } )',params));
+
+    while(data = yield create());
+    yield create(true);
+    console.log('QIBUD SEED INSTALLED');
   }
 };
 
