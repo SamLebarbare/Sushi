@@ -55,10 +55,32 @@ module.exports = function *(overwrite)
       }
     };
 
-    var create = fromStream(cypher('CREATE (b:Bud { data } )',params));
+    var createBud = fromStream(cypher('CREATE (b:Bud { data } )',params));
 
-    while(data = yield create());
-    yield create(true);
+    while(data = yield createBud());
+    yield createBud(true);
+
+    // create user
+    params = { data :
+      {
+        id : users[0]._id,
+      }
+    };
+
+
+    var createUser = fromStream(cypher('CREATE (u:User { data } )',params));
+
+    while(data = yield createUser());
+    yield createUser(true);
+
+    var query = "MATCH (a:Bud),(b:User) "
+    +"WHERE a.id = '" + bud._id + "'AND b.id = " + users[0]._id
+    +" CREATE (b)-[:CREATED]->(a)";
+
+    var createRel = fromStream(cypher(query));
+    while(data = yield createRel());
+    yield createRel(true);
+
     console.log('QIBUD SEED INSTALLED');
   }
 };
