@@ -2,10 +2,9 @@
 
 var mongo = require('./mongo'),
     ObjectID = mongo.ObjectID;
-
-var fromStream = require('co-from-stream');
-var cypher = require('cypher-stream')('http://localhost:7474');
-
+var createUser = require('../graph-entities/userNode');
+var createBudWithUser = require('../graph-entities/userCreateBud');
+var clearGraph = require('../graph-entities/clearGraph');
 
 /**
  * Populates the database with seed data.
@@ -36,50 +35,21 @@ module.exports = function *(overwrite)
     yield mongo.buds.insert(buds);
 
 
-    // first remove all neo4j graph nodes
-    var deleteAll = fromStream(cypher('MATCH (n) '
-                                    + 'OPTIONAL MATCH (n)-[r]-() '
-                                    + 'DELETE n,r'));
-    while(yield deleteAll());
+    // clear neo4j
+    yield clearGraph();
 
     // create neo4j nodes for buds
     var seed = yield mongo.buds.find({}).toArray();
-    var data;
     var bud = seed[0];
+    var user = users[0];
 
-    var params = { data :
-      {
-        id : bud._id,
-        creatorId : bud.creator._id,
-        privacy : bud.privacy
-      }
-    };
+    //clean mongo id before graph insertion
+    bud.id = bud._id;
+    user.id = user._id;
+    
+    yield createUser (user);
+    yield createBudWithUser (user, bud);
 
-    var createBud = fromStream(cypher('CREATE (b:Bud { data } )',params));
-
-    while(data = yield createBud());
-    yield createBud(true);
-
-    // create user
-    params = { data :
-      {
-        id : users[0]._id,
-      }
-    };
-
-
-    var createUser = fromStream(cypher('CREATE (u:User { data } )',params));
-
-    while(data = yield createUser());
-    yield createUser(true);
-
-    var query = "MATCH (a:Bud),(b:User) "
-    +"WHERE a.id = '" + bud._id + "'AND b.id = " + users[0]._id
-    +" CREATE (b)-[:CREATED]->(a)";
-
-    var createRel = fromStream(cypher(query));
-    while(data = yield createRel());
-    yield createRel(true);
 
     console.log('QIBUD SEED INSTALLED');
   }
@@ -106,7 +76,7 @@ function getTime(h)
 var buds = [
   {
     _id: new ObjectID(),
-    title: 'center of the universe',
+    title: 'Center of the universe',
     creator: {_id: 1, name: 'Chuck Norris', picture: '/api/users/1/picture'},
     content: 'And at universe creation, chuck added the root bud...',
     privacy: 'Private',

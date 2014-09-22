@@ -8,13 +8,29 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
 {
 
   var user       = $scope.common.user;
-  console.log ('viewer');
+  $scope.followersCount = 0;
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
     bud.commentBox = {message: '', disabled: false};
     bud.comments   = bud.comments || [];
     $scope.bud = bud;
+    if(bud.followers)
+    {
+        $scope.followersCount = bud.followers.length;
+        if(bud.followers.indexOf(user.id)!== -1)
+        {
+          $scope.follower = true;
+        }
+        else
+        {
+          $scope.follower = false;
+        }
+    }
+    else
+    {
+      $scope.follower = false;
+    }
   });
 
   $scope.canShare = function ()
@@ -44,6 +60,51 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
 
     return sharable;
   };
+
+
+  $scope.followBud = function ($event)
+  {
+    if(!$scope.follower)
+    {
+      api.buds.follow($scope.bud)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+    else
+    {
+      api.buds.unfollow($scope.bud)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+  }
+
+  api.buds.followersChanged.subscribe($scope, function (followerNotification) {
+    if ($scope.bud.id === followerNotification.id)
+    {
+      $scope.bud.followers = followerNotification.followers;
+      $scope.followersCount = bud.followers.length;
+      if(bud.followers.indexOf(user.id)!== -1)
+      {
+        $scope.follower = true;
+      }
+      else
+      {
+        $scope.follower = false;
+      }
+    }
+  });
 
   $scope.createComment = function ($event, bud)
   {
@@ -103,7 +164,7 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
   });
 
   api.buds.updated.subscribe($scope, function (bud) {
-    if ($scope.bud && c.id === bud.id)
+    if ($scope.bud.id === bud.id)
     {
       $scope.bud = bud;
     }

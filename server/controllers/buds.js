@@ -1,12 +1,15 @@
 'use strict';
 
 /**
- * Posts controller for serving user posts.
+ * Buds controller.
  */
 
 var route = require('koa-route'),
     parse = require('co-body'),
     mongo = require('../config/mongo'),
+    createBudInGraph = require('../graph-entities/userCreateBud'),
+    followBudInGraph = require('../graph-entities/userFollowBud'),
+    unfollowBudInGraph = require('../graph-entities/userUnFollowBud'),
     ws = require('../config/ws'),
     ObjectID = mongo.ObjectID;
 
@@ -15,6 +18,8 @@ exports.init = function (app) {
   app.use(route.get('/api/buds', listBuds));
   app.use(route.get('/api/buds/:budId/view', viewBud));
   app.use(route.put('/api/buds/:budId/update', updateBud));
+  app.use(route.put('/api/buds/:budId/follow', followBud));
+  app.use(route.put('/api/buds/:budId/unfollow', unfollowBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
@@ -53,7 +58,7 @@ function *viewBud(budId)
 }
 
 /**
- * Saves a new post in the database after proper validations.
+ * Saves a new bud in the database after proper validations.
  */
 function *createBud()
 {
@@ -63,12 +68,15 @@ function *createBud()
   bud.createdTime = new Date();
   var results = yield mongo.buds.insert(bud);
 
-  this.status = 201;
-  this.body = results[0]._id.toString(); // we need .toString() here to return text/plain response
-
-  // now notify everyone about this new post
   bud.id = bud._id;
   delete bud._id;
+
+  //add bud in graph
+  yield createBudInGraph (this.user, bud);
+  this.status = 201;
+  this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
+
+  // now notify everyone about this new bud
   ws.notify('buds.created', bud);
 }
 
@@ -104,6 +112,79 @@ function *updateBud()
   delete bud._id;
 
   ws.notify('buds.updated', bud);
+}
+
+
+/**
+ * Follow a bud
+ */
+function *followBud()
+{
+  var bud   = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(bud.creator.id === this.user.id)
+  {
+    this.throw(403, 'You are the creator of this bud');
+  }
+
+  if(bud.followers && bud.followers.indexOf(this.user.id) !== -1)
+  {
+    this.throw(403, 'You already follow this bud');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {followers: this.user.id}}
+  );
+
+
+  yield followBudInGraph(this.user, bud);
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  var followerNotification = {
+    id : bud.id,
+    followers : result[0].followers
+  };
+
+  ws.notify('buds.followersChanged', followerNotification);
+}
+
+
+/**
+ * Follow a bud
+ */
+function *unfollowBud()
+{
+  var bud  = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(!bud.followers || bud.followers.indexOf(this.user.id) === -1)
+  {
+    this.throw(403, 'You are not follower');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$pull: {followers: this.user.id}}
+  );
+
+  yield unfollowBudInGraph(this.user, bud);
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  var followerNotification = {
+    id : bud.id,
+    followers : result[0].followers
+  };
+  ws.notify('buds.followersChanged', followerNotification);
 }
 
 /**

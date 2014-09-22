@@ -20,11 +20,11 @@
         </small>
         <br/>
         <div class="btn-group btn-group-xs">
-          <button class="btn btn-danger" ng-model="follower" btn-checkbox>
+          <button class="btn btn-danger" ng-click="followBud($event)" btn-checkbox>
               {{follower ? 'Unfollow' : 'Follow'}}
           </button>
           <button class="btn btn-default" disabled>
-              0 follower
+              {{followersCount}} followers
           </button>
         </div>
         <div class="btn-group btn-group-xs">

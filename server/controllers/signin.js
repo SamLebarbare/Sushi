@@ -10,6 +10,7 @@ var qs = require('querystring'),
     jwt = require('koa-jwt'),
     request = require('co-request'),
     config = require('../config/config'),
+    createUserInGraph = require('../graph-entities/userNode'),
     mongo = require('../config/mongo');
 
 // register qibud routes
@@ -99,6 +100,8 @@ function *linkedinCallback() {
       picture: (yield request.get(profile.pictureUrl, {encoding: 'base64'})).body
     };
     var results = yield mongo.users.insert(user);
+    user.id = user._id;
+    yield createUserInGraph(user);
   }
 
   // redirect the user to index page along with user profile object as query string

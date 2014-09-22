@@ -67,6 +67,13 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
     },
     created: event(),
+    follow : function(bud) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/follow', data: bud, headers: headers});
+    },
+    unfollow : function(bud) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unfollow', data: bud, headers: headers});
+    },
+    followersChanged: event(),
     comments: {
       create: function (budId, comment) {
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});
