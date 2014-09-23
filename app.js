@@ -33,5 +33,7 @@ app.init = co(function *() {
 
 // auto init if this app is not being initialized by another module (i.e. using require('./app').init();)
 if (!module.parent) {
-  app.init();
+  app.init(function(err){
+    console.log(JSON.stringify(err));
+  });
 }

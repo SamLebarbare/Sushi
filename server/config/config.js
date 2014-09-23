@@ -24,7 +24,7 @@ var platformConfig = {
       url: 'mongodb://localhost:27017/qibud-dev'
     },
     neo4j: {
-      url: 'http://localhost:7474'
+      url: 'http://localhost:7474/'
     },
     oauth: {
       linkedin: {
@@ -44,7 +44,7 @@ var platformConfig = {
       url: 'mongodb://localhost:27017/qibud'
     },
     neo4j: {
-      url: 'http://localhost:7474'
+      url: 'http://localhost:7474/'
     },
   },
 
@@ -57,7 +57,7 @@ var platformConfig = {
       url: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/qibud'
     },
     neo4j: {
-      url: process.env.GRAPHENEDB_URL
+      url: process.env.GRAPHENEDB_URL + '/'
     },
     oauth: {
       linkedin: {
