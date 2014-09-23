@@ -6,4 +6,4 @@ env:
 services:
   - mongodb
 before_script:
-  - sh tests/start-neo4j.sh
+  - sh test/start-neo4j.sh
