@@ -11,11 +11,8 @@ var config = require('./server/config/config'),
     ws = require('./server/config/ws'),
     co = require('co'),
     koa = require('koa'),
-    cors = require('koa-cors'),
     app = koa();
 
-// CORS
-app.use(cors());
 
 module.exports = app;
 
