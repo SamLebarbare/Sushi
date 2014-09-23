@@ -140,18 +140,15 @@ function *followBud()
 
 
   yield followBudInGraph(this.user, bud);
-  this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
   delete bud._id;
 
-  var followerNotification = {
-    id : bud.id,
-    followers : result[0].followers
-  };
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('buds.followersChanged', followerNotification);
+  ws.notify('buds.followersChanged', bud);
 }
 
 
@@ -173,18 +170,18 @@ function *unfollowBud()
       {$pull: {followers: this.user.id}}
   );
 
+
   yield unfollowBudInGraph(this.user, bud);
-  this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
   delete bud._id;
 
-  var followerNotification = {
-    id : bud.id,
-    followers : result[0].followers
-  };
-  ws.notify('buds.followersChanged', followerNotification);
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+
+  ws.notify('buds.followersChanged', bud);
 }
 
 /**

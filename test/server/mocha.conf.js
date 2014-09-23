@@ -9,14 +9,14 @@ var config = require('../../server/config/config'),
     request = supertest(baseUrl);
 
 // create a valid jwt token to be sent with every request
-var token = jwt.sign({id: 2, name: 'Chuck Norris', mail: 'chuck@koanjs.com'}, config.app.secret);
+var token = jwt.sign({id: 2, name: 'Chuck Norris', mail: 'chuck@qibud.com'}, config.app.secret);
 token = 'Bearer ' + token;
 
 // make request and token objects available
 exports.request = request;
 exports.token = token;
 
-// initiate KOAN server before each test is run
+// initiate QIBUD server before each test is run
 // also drop and re-seed the test database before each run
 console.log('Mocha starting to run server tests on port ' + config.app.port);
 beforeEach(function (done) {

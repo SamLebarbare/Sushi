@@ -90,10 +90,10 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
     }
   }
 
-  api.buds.followersChanged.subscribe($scope, function (followerNotification) {
-    if ($scope.bud.id === followerNotification.id)
+  api.buds.followersChanged.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
     {
-      $scope.bud.followers = followerNotification.followers;
+      $scope.bud.followers = bud.followers;
       $scope.followersCount = bud.followers.length;
       if(bud.followers.indexOf(user.id)!== -1)
       {
