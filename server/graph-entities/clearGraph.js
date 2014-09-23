@@ -1,6 +1,7 @@
 'use strict';
+var config = require('../config/config');
 var fromStream = require('co-from-stream');
-var cypher = require('cypher-stream')('http://localhost:7474');
+var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**

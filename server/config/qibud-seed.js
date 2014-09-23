@@ -46,7 +46,7 @@ module.exports = function *(overwrite)
     //clean mongo id before graph insertion
     bud.id = bud._id;
     user.id = user._id;
-    
+
     yield createUser (user);
     yield createBudWithUser (user, bud);
 

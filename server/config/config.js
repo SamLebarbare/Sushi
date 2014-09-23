@@ -23,6 +23,9 @@ var platformConfig = {
     mongo: {
       url: 'mongodb://localhost:27017/qibud-dev'
     },
+    neo4j: {
+      url: 'http://localhost:7474'
+    },
     oauth: {
       linkedin: {
         clientId: '77u90yjt9shkkx',
@@ -39,7 +42,10 @@ var platformConfig = {
     },
     mongo: {
       url: 'mongodb://localhost:27017/qibud'
-    }
+    },
+    neo4j: {
+      url: 'http://localhost:7474'
+    },
   },
 
   production: {
@@ -49,6 +55,9 @@ var platformConfig = {
     },
     mongo: {
       url: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/qibud'
+    },
+    neo4j: {
+      url: process.env.GRAPHENEDB_URL || 'http://localhost:7474'
     },
     oauth: {
       linkedin: {
