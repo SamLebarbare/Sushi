@@ -2,7 +2,7 @@
 
 /* https://github.com/angular/protractor/blob/master/docs/getting-started.md */
 
-describe('KOAN app', function() {
+describe('QIBUD app', function() {
 
   browser.get('index.html');
 

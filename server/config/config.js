@@ -57,7 +57,7 @@ var platformConfig = {
       url: process.env.MONGOHQ_URL || process.env.MONGOLAB_URI || 'mongodb://localhost:27017/qibud'
     },
     neo4j: {
-      url: process.env.GRAPHENEDB_URL || 'http://localhost:7474'
+      url: process.env.GRAPHENEDB_URL
     },
     oauth: {
       linkedin: {
