@@ -5,4 +5,5 @@ env:
   - NODE_ENV=test
 services:
   - mongodb
-  - neo4j
+before_script:
+  - sh tests/start-neo4j.sh
