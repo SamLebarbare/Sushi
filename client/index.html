@@ -21,10 +21,132 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
-  <link rel="stylesheet" href="/app.css">
+  <link rel="stylesheet" href="/responsive-dashboard/css/dashboard/dashboard.css"/>
+  <!-- <link rel="stylesheet" href="/app.css"> -->
+
 </head>
 
-<body>
+<body ng-controller="DashboardCtrl">
+  <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
+
+    <!-- Sidebar -->
+
+    <div id="sidebar-wrapper">
+      <ul class="sidebar">
+        <li class="sidebar-main">
+          <a href="#" ng-click="toggleSidebar()">
+            QiBud Menu
+            <span class="menu-icon glyphicon glyphicon-transfer"></span>
+          </a>
+        </li>
+        <li class="sidebar-title"><span>NAVIGATION</span></li>
+        <li class="sidebar-list" ui-sref-active="active">
+          <a ui-sref="home">Dashboard <span class="menu-icon fa fa-tachometer"></span></a>
+        </li>
+        <li class="sidebar-list" ui-sref-active="active">
+          <a ui-sref="editor">Editor <span class="menu-icon fa fa-pencil-square-o"></span></a>
+        </li>
+        <li class="sidebar-title separator"><span>FAVORITE</span></li>
+        <li class="sidebar-list">
+          <!-- <a href="#" target="_blank">Forums <span class="menu-icon fa fa-external-link"></span></a> -->
+        </li>
+      </ul>
+      <div class="sidebar-footer">
+        <div class="col-xs-4">
+          <a href="https://github.com/Loupio/qibud" target="_blank">
+            Github
+          </a>
+        </div>
+        <div class="col-xs-4">
+          <a href="#" target="_blank">
+            About
+          </a>
+        </div>
+        <div class="col-xs-4">
+          <a href="http://www.qibud.com">
+            Support
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- End Sidebar -->
+
+    <div id="content-wrapper">
+      <div class="page-content">
+
+        <!-- Header Bar -->
+
+        <div class="row header">
+          <div class="col-xs-12">
+            <div class="user pull-right">
+              <div class="item dropdown">
+                <a href="#" class="dropdown-toggle">
+                  <img ng-src="{{common.user.picture}}" alt="">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="dropdown-header">
+                    {{common.user.name}}
+                  </li>
+                  <li class="divider"></li>
+                  <li class="link">
+                    <a ui-sref="profile">
+                      Profile
+                    </a>
+                  </li>
+                  <li class="link">
+                    <a href="#">
+                      Menu Item
+                    </a>
+                  </li>
+                  <li class="link">
+                    <a href="#">
+                      Menu Item
+                    </a>
+                  </li>
+                  <li class="divider"></li>
+                  <li class="link">
+                    <a href="#">
+                      Logout
+                    </a>
+                  </li>
+                </ul>
+              </div>
+              <div class="item dropdown">
+               <a href="#" class="dropdown-toggle">
+                  <i class="fa fa-bell-o"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li class="dropdown-header">
+                    Notifications
+                  </li>
+                  <li class="divider"></li>
+                  <li>
+                    <a href="#">...</a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="meta" breadcrumbs>
+              <div class="page">
+                {{breadcrumbs[0].text}}
+              </div>
+              <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
+                <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- End Header Bar -->
+
+        <!-- Main Content -->
+        <section data-ui-view></section>
+      </div><!-- End Page Content -->
+    </div><!-- End Content Wrapper -->
+  </div><!-- End Page Wrapper -->
+
+<!-- OLD THEME
 <div class="navbar navbar-default navbar-fixed-top">
   <div class="container">
     <div class="navbar-header">
@@ -117,7 +239,8 @@
       <button type="button" ng-click="common.clearDatabase()" class="btn btn-xs btn-warning pull-right"><strong>Clear Database</strong></button>
     </p>
   </footer>
-</div>
+
+</div> -->
 
 <script src="/bower_components/jquery/dist/jquery.js"></script>
 <script src="/bower_components/lodash/dist/lodash.js"></script>
@@ -126,7 +249,9 @@
 <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="/bower_components/angular-ui-router-breadcrumbs/dist/angular-ui-router-breadcrumbs.js"></script>
 <script src="/bower_components/angular-elastic/elastic.js"></script>
+<script src="/bower_components/angular-cookies/angular-cookies.js"></script>
 <script src="/bower_components/ng-ckeditor/ng-ckeditor.min.js"></script>
 <script src="/bower_components/bootstrap/dist/js/bootstrap.js"></script>
 <script src="/app.js"></script>

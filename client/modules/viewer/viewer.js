@@ -16,6 +16,11 @@ angular
           .state('viewer', {
             url: "/viewer/:budId",
             title: 'Qibud',
+            breadcrumb: {
+              class: 'highlight',
+              text: 'Bud Viewer',
+              stateName: 'viewer'
+            },
             templateUrl: 'modules/viewer/viewer.html',
             controller: 'ViewerCtrl'
       });

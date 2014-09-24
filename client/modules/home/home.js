@@ -13,7 +13,12 @@ angular
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
           .state('home', {
-            title: 'Qibud Editor',
+            title: 'Dashboard',
+            breadcrumb: {
+              class: 'highlight',
+              text: 'Dashboard',
+              stateName: 'home'
+            },
             url: "/home",
             templateUrl: 'modules/home/home.html',
             controller: 'HomeCtrl'

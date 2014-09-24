@@ -4,9 +4,9 @@
  * Home controller simply lists all the buds from everyone on the front page.
  */
 
-angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
+angular.module('qibud.home').controller('HomeCtrl',
+function ($scope, api)
 {
-
   var user       = $scope.common.user;
   $scope.budBox  = {content: null, disabled: false};
 
@@ -52,5 +52,5 @@ angular.module('qibud.home').controller('HomeCtrl', function ($scope, api)
       bud.comments.push(comment);
     }
   });
-
+  
 });

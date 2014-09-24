@@ -14,6 +14,11 @@ angular
           .state('profile', {
             url: "/profile",
             title: 'User Profile',
+            breadcrumb: {
+              class: 'highlight',
+              text: 'User Profile',
+              stateName: 'profile'
+            },
             templateUrl: 'modules/profile/profile.html',
             controller: 'ProfileCtrl'
       });
