@@ -1,4 +1,4 @@
-<div class="container">
+<div class="container" ng-cloak ng-show="editorIsReady">
   <div class="row">
     <div class="col-xs-12 col-sm-6 col-md-8">
       <form ng-submit="createBud($event)">
@@ -20,7 +20,7 @@
           </div>
           <div class="clear-fix">
             <label for="content"><strong>Content: </strong></label>
-            <div ng-cloak ng-show="editorIsReady" class="form-group">
+            <div class="form-group">
                 <textarea
                 ckeditor="budbox.editorOptions"
                 msd-elastic
