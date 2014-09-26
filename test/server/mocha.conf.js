@@ -20,6 +20,7 @@ exports.token = token;
 // also drop and re-seed the test database before each run
 console.log('Mocha starting to run server tests on port ' + config.app.port);
 beforeEach(function (done) {
+  this.timeout(5000); // sometimes travis ci takes too long here
   qibudSeed(true);
   app.init(done);
 });
