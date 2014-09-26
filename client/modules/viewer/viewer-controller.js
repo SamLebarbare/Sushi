@@ -9,6 +9,7 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
 
   var user       = $scope.common.user;
   $scope.followersCount = 0;
+  $scope.sponsorsCount = 0;
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
@@ -30,6 +31,23 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
     else
     {
       $scope.follower = false;
+    }
+
+    if(bud.sponsors)
+    {
+      $scope.sponsorsCount = bud.sponsors.length;
+      if(bud.sponsors.indexOf(user.id)!== -1)
+      {
+        $scope.sponsorer = true;
+      }
+      else
+      {
+        $scope.sponsorer = false;
+      }
+    }
+    else
+    {
+      $scope.sponsorer = false;
     }
   });
 
@@ -90,6 +108,34 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
     }
   }
 
+  $scope.sponsorBud = function ($event)
+  {
+    if(!$scope.sponsorer)
+    {
+      api.buds.sponsor($scope.bud)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+    else
+    {
+      api.buds.unsponsor($scope.bud)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+  }
+
   api.buds.followersChanged.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
@@ -102,6 +148,22 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
       else
       {
         $scope.follower = false;
+      }
+    }
+  });
+
+  api.buds.sponsorsChanged.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
+    {
+      $scope.bud.sponsors = bud.sponsors;
+      $scope.sponsorsCount = bud.sponsors.length;
+      if(bud.sponsors.indexOf(user.id)!== -1)
+      {
+        $scope.sponsorer = true;
+      }
+      else
+      {
+        $scope.sponsorer = false;
       }
     }
   });

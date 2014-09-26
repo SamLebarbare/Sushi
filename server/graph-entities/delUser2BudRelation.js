@@ -5,17 +5,17 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
 
 
 /**
- * Create User - FOLLOW -> Bud
+ * Remove User - *REL -> Bud
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
  * @param bud mongodb bud entity
  */
-module.exports = function *(user, bud)
+module.exports = function *(user, bud, rel)
 {
-  var query = "MATCH (b:Bud),(u:User) "
-  +"WHERE b.id = '" + bud.id + "' AND u.id = " + user.id
-  +" CREATE (u)-[:FOLLOW]->(b)";
+  var query = "MATCH (u:User { id: " + user.id
+  + " })-[r:" + rel +"]->(b:Bud { id: '" + bud.id + "' }) "
+  +"DELETE r";
   console.log(query);
-  var createRel = fromStream(cypher(query));
-  yield createRel(true);
+  var deleteRel = fromStream(cypher(query));
+  yield deleteRel(true);
 };

@@ -7,9 +7,9 @@
 var route = require('koa-route'),
     parse = require('co-body'),
     mongo = require('../config/mongo'),
-    createBudInGraph = require('../graph-entities/userCreateBud'),
-    followBudInGraph = require('../graph-entities/userFollowBud'),
-    unfollowBudInGraph = require('../graph-entities/userUnFollowBud'),
+    createBudInGraph  = require('../graph-entities/userCreateBud'),
+    createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
+    removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     ws = require('../config/ws'),
     ObjectID = mongo.ObjectID;
 
@@ -20,6 +20,8 @@ exports.init = function (app) {
   app.use(route.put('/api/buds/:budId/update', updateBud));
   app.use(route.put('/api/buds/:budId/follow', followBud));
   app.use(route.put('/api/buds/:budId/unfollow', unfollowBud));
+  app.use(route.put('/api/buds/:budId/sponsor', sponsorBud));
+  app.use(route.put('/api/buds/:budId/unsponsor', unsponsorBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
@@ -116,6 +118,75 @@ function *updateBud()
 
 
 /**
+ * Sponsor a bud
+ */
+function *sponsorBud()
+{
+  var bud   = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(bud.creator.id === this.user.id)
+  {
+    this.throw(403, 'You are the creator of this bud');
+  }
+
+  if(bud.sponsors && bud.sponsors.indexOf(this.user.id) !== -1)
+  {
+    this.throw(403, 'You already sponsor this bud');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {sponsors: this.user.id}}
+  );
+
+
+  yield createUser2BudRel(this.user, bud, 'SPONSOR');
+  bud = yield mongo.buds.findOne({_id : budId});
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  ws.notify('buds.sponsorsChanged', bud);
+}
+
+/**
+ * Unsponsor a bud
+ */
+function *unsponsorBud()
+{
+  var bud  = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(!bud.sponsors || bud.sponsors.indexOf(this.user.id) === -1)
+  {
+    this.throw(403, 'You are not sponsorer');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$pull: {sponsors: this.user.id}}
+  );
+
+
+  yield removeUser2BudRel(this.user, bud, 'SPONSOR');
+  bud = yield mongo.buds.findOne({_id : budId});
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+
+  ws.notify('buds.sponsorsChanged', bud);
+}
+
+
+/**
  * Follow a bud
  */
 function *followBud()
@@ -139,7 +210,7 @@ function *followBud()
   );
 
 
-  yield followBudInGraph(this.user, bud);
+  yield createUser2BudRel(this.user, bud, 'FOLLOW');
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
@@ -153,7 +224,7 @@ function *followBud()
 
 
 /**
- * Follow a bud
+ * Unfollow a bud
  */
 function *unfollowBud()
 {
@@ -171,7 +242,7 @@ function *unfollowBud()
   );
 
 
-  yield unfollowBudInGraph(this.user, bud);
+  yield removeUser2BudRel(this.user, bud, 'FOLLOW');
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;

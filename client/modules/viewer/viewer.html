@@ -28,11 +28,11 @@
           </button>
         </div>
         <div class="btn-group btn-group-xs">
-          <button class="btn btn-primary" ng-model="sponsor" btn-checkbox><i class="glyphicon glyphicon-tint"></i>
-            {{sponsor ? 'Unsponsorize' : 'Sponsorize'}}
+          <button class="btn btn-primary" ng-click="sponsorBud($event)"><i class="glyphicon glyphicon-tint"></i>
+            {{sponsorer ? 'Unsponsorize' : 'Sponsorize'}}
           </button>
           <button class="btn btn-default" disabled>
-              0 sponsor
+            {{sponsorsCount}} sponsors
           </button>
         </div>
       </div>
