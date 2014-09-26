@@ -10,6 +10,7 @@ var route = require('koa-route'),
     createBudInGraph  = require('../graph-entities/userCreateBud'),
     createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
+    getUserBuds       = require('../graph-entities/getUserBuds'),
     ws = require('../config/ws'),
     ObjectID = mongo.ObjectID;
 
@@ -31,10 +32,10 @@ exports.init = function (app) {
  */
 function *listBuds()
 {
+  var userBudsIds = yield getUserBuds(this.user);
+  console.log(userBudsIds);
   var buds = yield mongo.buds.find(
-      {},
-      {comments: {$slice: -15 /* only get last x many comments for each post */}},
-      {limit: 15, sort: {_id: -1}} /* only get last 15 posts by last updated */).toArray();
+      {_id: { $in: userBudsIds }}).toArray();
 
   buds.forEach(function (bud)
   {

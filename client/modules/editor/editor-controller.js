@@ -5,7 +5,7 @@
  */
 
 angular.module('qibud.editor').controller('EditorCtrl',
-function ($scope, $stateParams, $location, api)
+function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;
 
@@ -67,7 +67,7 @@ function ($scope, $stateParams, $location, api)
       $scope.budBox.disabled = false;
 
       //redirect
-      $location.path('/viewer/' + bud.id);
+      $state.go('home');
     })
     .error(function ()
     {
