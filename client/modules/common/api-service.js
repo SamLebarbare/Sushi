@@ -81,11 +81,20 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unsponsor', data: bud, headers: headers});
     },
     sponsorsChanged: event(),
+    share : function(bud, users) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
+    },
     comments: {
       create: function (budId, comment) {
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});
       },
       created: event()
+    }
+  };
+
+  api.users = {
+    list: function () {
+      return $http({method: 'GET', url: apiBase + '/users', headers: headers});
     }
   };
 

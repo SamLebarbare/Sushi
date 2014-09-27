@@ -77,7 +77,7 @@ var buds = [
   {
     _id: new ObjectID(),
     title: 'Center of the universe',
-    creator: {_id: 1, name: 'Chuck Norris', picture: '/api/users/1/picture'},
+    creator: {id: 1, name: 'Chuck Norris', picture: '/api/users/1/picture'},
     content: 'And at universe creation, chuck added the root bud...',
     privacy: 'Private',
     createdTime: getTime(-97),

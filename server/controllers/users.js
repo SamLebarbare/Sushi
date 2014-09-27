@@ -11,6 +11,7 @@ var route = require('koa-route'),
 // register koa routes
 exports.init = function (app) {
   app.use(route.post('/api/users', createUser));
+  app.use(route.get('/api/users', listUsers));
 };
 
 /**
@@ -28,4 +29,20 @@ function *createUser() {
 
   this.status = 201;
   this.body = results[0]._id.toString(); // we need .toString() here to return text/plain response
+}
+
+/**
+ * List available users
+ */
+function *listUsers() {
+  var users = yield mongo.users.find(
+      {}).toArray();
+
+  users.forEach(function (user)
+  {
+    user.id = user._id;
+    delete user._id;
+  });
+
+  this.body = users;
 }

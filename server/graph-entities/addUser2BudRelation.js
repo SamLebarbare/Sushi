@@ -5,7 +5,7 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
 
 
 /**
- * Create User - *REL -> Bud
+ * Create Bud - *REL -> User
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
  * @param bud mongodb bud entity

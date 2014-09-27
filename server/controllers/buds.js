@@ -9,9 +9,11 @@ var route = require('koa-route'),
     mongo = require('../config/mongo'),
     createBudInGraph  = require('../graph-entities/userCreateBud'),
     createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
+    createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
     ws = require('../config/ws'),
+    foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
 
 // register koa routes
@@ -19,6 +21,7 @@ exports.init = function (app) {
   app.use(route.get('/api/buds', listBuds));
   app.use(route.get('/api/buds/:budId/view', viewBud));
   app.use(route.put('/api/buds/:budId/update', updateBud));
+  app.use(route.put('/api/buds/:budId/share', shareBud));
   app.use(route.put('/api/buds/:budId/follow', followBud));
   app.use(route.put('/api/buds/:budId/unfollow', unfollowBud));
   app.use(route.put('/api/buds/:budId/sponsor', sponsorBud));
@@ -117,6 +120,33 @@ function *updateBud()
   ws.notify('buds.updated', bud);
 }
 
+
+/**
+ * Share a bud
+ */
+function *shareBud(budId)
+{
+  var users   = yield parse(this);
+  budId      = new ObjectID(budId);
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {shares: users}}
+  );
+
+  var bud = yield mongo.buds.findOne({_id : budId});
+  bud.id = bud._id;
+  delete bud._id;
+
+  yield * foreach(users, function * (user) {
+    yield createBud2UserRel(user, bud, 'SHARED_TO');
+  });
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  //ws.notify('buds.sponsorsChanged', bud);
+}
 
 /**
  * Sponsor a bud

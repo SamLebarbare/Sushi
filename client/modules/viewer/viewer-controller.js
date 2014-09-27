@@ -4,7 +4,8 @@
  * Viewer controller provide a good way to read buds
  */
 
-angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $stateParams, api)
+angular.module('qibud.viewer').controller('ViewerCtrl',
+function ($scope, $stateParams, $modal, api)
 {
 
   var user       = $scope.common.user;
@@ -50,6 +51,33 @@ angular.module('qibud.viewer').controller('ViewerCtrl', function ($scope, $state
       $scope.sponsorer = false;
     }
   });
+
+
+  $scope.share = function () {
+    api.users.list().success(function (users)
+    {
+      var modalInstance = $modal.open({
+        templateUrl: 'sharebox.html',
+        controller: 'ShareboxCtrl',
+        size: 'lg',
+        resolve: {
+          users: function () {
+            return users;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (users) {
+        //share to ->
+        api.buds.share($scope.bud, users).success(function (bud) {
+
+        });
+
+      }, function () {
+        //dismiss
+      });
+    });
+  };
 
   $scope.canShare = function ()
   {
