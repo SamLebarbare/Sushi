@@ -56,6 +56,8 @@ function ($scope, $stateParams, $modal, api)
   $scope.share = function () {
     api.users.list().success(function (users)
     {
+      _.remove(users, function(u) { return u.id === user.id; });
+      
       var modalInstance = $modal.open({
         templateUrl: 'sharebox.html',
         controller: 'ShareboxCtrl',

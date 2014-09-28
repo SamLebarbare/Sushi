@@ -32,7 +32,7 @@ function *createUser() {
 }
 
 /**
- * List available users
+ * List other available users
  */
 function *listUsers() {
   var users = yield mongo.users.find(
@@ -44,5 +44,6 @@ function *listUsers() {
     delete user._id;
   });
 
+  this.status = 201;
   this.body = users;
 }

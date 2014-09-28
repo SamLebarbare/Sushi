@@ -7,6 +7,12 @@ angular.module('qibud.viewer').controller('ShareboxCtrl', function ($scope, $mod
 
   $scope.addUser = function (user) {
     $scope.selectedUsers.push(user);
+    _.remove($scope.users, function(u) { return u.id === user.id; });
+  };
+
+  $scope.rmUser = function (user) {
+    $scope.users.push(user);
+    _.remove($scope.selectedUsers, function(u) { return u.id === user.id; });
   };
 
   $scope.ok = function () {
