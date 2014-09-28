@@ -18,6 +18,10 @@ module.exports = function *(user)
   var data;
   var query = "MATCH (bud:Bud) " +
               "WHERE bud.creatorId = " + user.id + " " +
+              "RETURN bud.id " +
+              "UNION " +
+              "MATCH (bud:Bud)-[:SHARED_TO]->(user:User) " +
+              "WHERE user.id = " + user.id + " " +
               "RETURN bud.id";
 
 
