@@ -8,6 +8,7 @@ angular
     .module('qibud', [
       'ngSanitize',
       'ngCookies',
+      'ui.tinymce',
       'ui.router',
       'ui.router.breadcrumbs',
       'qibud.common',

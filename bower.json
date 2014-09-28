@@ -14,8 +14,7 @@
     "angular-ui-router-breadcrumbs": "~0.0.2",
     "angular-elastic": "~2",
     "lodash": "~2",
-    "ckeditor": "~4",
-    "ng-ckeditor": "~0.2.1"
+    "angular-ui-tinymce": "latest"
   },
   "devDependencies": {
     "angular-mocks": "~1",

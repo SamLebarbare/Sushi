@@ -34,12 +34,6 @@ function ($scope, $state, $stateParams, $location, api)
     };
   }
 
-  $scope.$on("ckeditor.ready", function( event ) {
-    $scope.editorIsReady = true;
-  });
-
-
-
   $scope.editorOptions = {uiColor: '#000000'};
 
   // add bud creation functions to scope
