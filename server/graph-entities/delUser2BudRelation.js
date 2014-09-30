@@ -17,5 +17,6 @@ module.exports = function *(user, bud, rel)
   +"DELETE r";
   console.log(query);
   var deleteRel = fromStream(cypher(query));
-  yield deleteRel(true);
+  while (yield deleteRel());
+  
 };

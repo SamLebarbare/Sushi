@@ -4,7 +4,7 @@
       <div class="media-heading">
 
         <h2>
-          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
+          <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i> {{bud.title}}
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
             <a ui-sref="editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id"class="btn btn-danger">Edit</a>
@@ -20,7 +20,7 @@
         </small>
         <br/>
         <div class="btn-group btn-group-xs">
-          <button class="btn btn-danger" ng-click="followBud($event)">
+          <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id">
               {{follower ? 'Unfollow' : 'Follow'}}
           </button>
           <button class="btn btn-default" disabled>
@@ -28,7 +28,7 @@
           </button>
         </div>
         <div class="btn-group btn-group-xs">
-          <button class="btn btn-primary" ng-click="sponsorBud($event)"><i class="glyphicon glyphicon-tint"></i>
+          <button class="btn btn-primary" ng-click="sponsorBud($event)" ng-disabled="bud.creator.id == common.user.id"><i class="glyphicon glyphicon-tint"></i>
             {{sponsorer ? 'Unsponsorize' : 'Sponsorize'}}
           </button>
           <button class="btn btn-default" disabled>
@@ -37,8 +37,9 @@
         </div>
       </div>
       <div class="btn-group btn-group-xs">
-        <button class="btn btn-success" disabled>Support</button>
-        <rating class="btn btn-default" ng-model="supportRate"
+        <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id">{{supporter ? 'Unsupport' : 'Support'}}</button>
+        <rating class="btn btn-default"
+        ng-model="supportValue"
         max="5"
         readonly="false"
         on-hover="hoveringOver(value)"
@@ -46,7 +47,7 @@
         state-on="'glyphicon-leaf'"
         >
         </rating>
-        <button class="btn btn-default" disabled>+{{supportRate}} Qi</button>
+        <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
       </div>
       <br/>
     </div>

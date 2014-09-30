@@ -22,12 +22,6 @@ module.exports = function *(user, bud)
   };
 
   var createBud = fromStream(cypher('CREATE (b:Bud { data } )',params));
-  yield createBud(true);
-
-  var query = "MATCH (b:Bud),(u:User) "
-  +"WHERE b.id = '" + bud.id + "' AND u.id = " + user.id
-  +" CREATE (u)-[:CREATED]->(b)";
-  console.log(query);
-  var createRel = fromStream(cypher(query));
-  yield createRel(true);
+  while (yield createBud());
+  console.log('BUD CREATED');
 };

@@ -11,6 +11,7 @@ function ($scope, $stateParams, $modal, api)
   var user       = $scope.common.user;
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
+  $scope.supportersCount = 0;
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
@@ -50,6 +51,23 @@ function ($scope, $stateParams, $modal, api)
     {
       $scope.sponsorer = false;
     }
+
+    if(bud.supporters)
+    {
+      $scope.supportersCount = bud.supporters.length;
+      if(bud.supporters.indexOf(user.id)!== -1)
+      {
+        $scope.supporter = true;
+      }
+      else
+      {
+        $scope.supporter = false;
+      }
+    }
+    else
+    {
+      $scope.supporter = false;
+    }
   });
 
 
@@ -57,7 +75,7 @@ function ($scope, $stateParams, $modal, api)
     api.users.list().success(function (users)
     {
       _.remove(users, function(u) { return u.id === user.id; });
-      
+
       var modalInstance = $modal.open({
         templateUrl: 'sharebox.html',
         controller: 'ShareboxCtrl',
@@ -138,6 +156,34 @@ function ($scope, $stateParams, $modal, api)
     }
   }
 
+  $scope.supportBud = function ($event)
+  {
+    if(!$scope.supporter)
+    {
+      api.buds.support($scope.bud,$scope.supportValue)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+    else
+    {
+      api.buds.unsupport($scope.bud)
+          .success(function (budId)
+          {
+
+          })
+          .error(function ()
+          {
+
+          });
+    }
+  }
+
   $scope.sponsorBud = function ($event)
   {
     if(!$scope.sponsorer)
@@ -182,12 +228,29 @@ function ($scope, $stateParams, $modal, api)
     }
   });
 
+  api.buds.supportersChanged.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
+    {
+      $scope.bud.supporters = bud.supporters;
+      $scope.supportersCount = bud.supporters.length;
+
+      if(bud.supporters.indexOf(user.id) !== -1)
+      {
+        $scope.supporter = true;
+      }
+      else
+      {
+        $scope.supporter = false;
+      }
+    }
+  });
+
   api.buds.sponsorsChanged.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
       $scope.bud.sponsors = bud.sponsors;
       $scope.sponsorsCount = bud.sponsors.length;
-      if(bud.sponsors.indexOf(user.id)!== -1)
+      if(bud.sponsors.indexOf(user.id) !== -1)
       {
         $scope.sponsorer = true;
       }
@@ -259,6 +322,13 @@ function ($scope, $stateParams, $modal, api)
     if ($scope.bud.id === bud.id)
     {
       $scope.bud = bud;
+    }
+  });
+
+  api.qi.updated.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
+    {
+      $scope.bud.qi = bud.qi;
     }
   });
 

@@ -12,6 +12,7 @@ var route = require('koa-route'),
     createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
+    updateQi          = require('../graph-entities/updateQiOnBud'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -26,6 +27,8 @@ exports.init = function (app) {
   app.use(route.put('/api/buds/:budId/unfollow', unfollowBud));
   app.use(route.put('/api/buds/:budId/sponsor', sponsorBud));
   app.use(route.put('/api/buds/:budId/unsponsor', unsponsorBud));
+  app.use(route.put('/api/buds/:budId/support/:supportValue', supportBud));
+  app.use(route.put('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
@@ -79,10 +82,13 @@ function *createBud()
 
   //add bud in graph
   yield createBudInGraph (this.user, bud);
+  yield createUser2BudRel (this.user, bud, 'CREATED');
+  bud.qi = yield updateQi(this.user, bud, 0);
   this.status = 201;
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
 
   // now notify everyone about this new bud
+  ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
 }
 
@@ -140,12 +146,15 @@ function *shareBud(budId)
 
   yield * foreach(users, function * (user) {
     yield createBud2UserRel(user, bud, 'SHARED_TO');
+
   });
+
+  bud.qi = yield updateQi(this.user, bud, 1);
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  //ws.notify('buds.sponsorsChanged', bud);
+  ws.notify('qi.updated', bud);
 }
 
 /**
@@ -173,6 +182,8 @@ function *sponsorBud()
 
 
   yield createUser2BudRel(this.user, bud, 'SPONSOR');
+  bud.qi = yield updateQi(this.user, bud, 0);
+
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
@@ -181,6 +192,7 @@ function *sponsorBud()
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
+  ws.notify('qi.updated', bud);
   ws.notify('buds.sponsorsChanged', bud);
 }
 
@@ -204,6 +216,89 @@ function *unsponsorBud()
 
 
   yield removeUser2BudRel(this.user, bud, 'SPONSOR');
+  bud.qi = yield updateQi(this.user, bud, 0);
+
+  bud = yield mongo.buds.findOne({_id : budId});
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  ws.notify('qi.updated', bud);
+  ws.notify('buds.sponsorsChanged', bud);
+}
+
+/**
+ * Add Support a bud
+ */
+function *supportBud(budId, supportValue)
+{
+  if(supportValue > 5)
+  {
+    this.throw(403, 'Support value is not valid');
+  }
+
+  var bud   = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(bud.creator.id === this.user.id)
+  {
+    this.throw(403, 'You are the creator of this bud');
+  }
+
+  if(bud.supporters && bud.supporters.indexOf(this.user.id) !== -1)
+  {
+    this.throw(403, 'You have already supported this bud');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {supporters: this.user.id}}
+  );
+
+
+  yield createUser2BudRel(this.user, bud, 'SUPPORT');
+  bud.qi = yield updateQi(this.user, bud, supportValue);
+
+
+  bud = yield mongo.buds.findOne({_id : budId});
+
+  bud.id = bud._id;
+  delete bud._id;
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  ws.notify('qi.updated', bud);
+  ws.notify('buds.supportersChanged', bud);
+}
+
+/**
+ * Unsupport a bud
+ */
+function *unsupportBud()
+{
+  var bud  = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(!bud.supporters || bud.supporters.indexOf(this.user.id) === -1)
+  {
+    this.throw(403, 'You are not supporter');
+  }
+
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$pull: {supporter: this.user.id}}
+  );
+
+
+  yield removeUser2BudRel(this.user, bud, 'SUPPORT');
+  bud.qi = yield updateQi(this.user, bud, 0);
+  ws.notify('qi.updated', bud);
+
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
@@ -213,9 +308,8 @@ function *unsponsorBud()
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
 
-  ws.notify('buds.sponsorsChanged', bud);
+  ws.notify('buds.supportersChanged', bud);
 }
-
 
 /**
  * Follow a bud
@@ -242,6 +336,8 @@ function *followBud()
 
 
   yield createUser2BudRel(this.user, bud, 'FOLLOW');
+  bud.qi = yield updateQi(this.user, bud, 0);
+  ws.notify('qi.updated', bud);
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
@@ -274,6 +370,8 @@ function *unfollowBud()
 
 
   yield removeUser2BudRel(this.user, bud, 'FOLLOW');
+  bud.qi = yield updateQi(this.user, bud, 0);
+  ws.notify('qi.updated', bud);
   bud = yield mongo.buds.findOne({_id : budId});
 
   bud.id = bud._id;
@@ -303,6 +401,12 @@ function *createComment(budId)
       {$push: {comments: comment}}
   );
 
+  var bud = {
+    id : budId
+  };
+  bud.qi = yield updateQi(this.user, bud, 1);
+
+
   this.status = 201;
   this.body = commentId.toString(); // we need .toString() here to return text/plain response
 
@@ -310,5 +414,6 @@ function *createComment(budId)
   comment.id = comment._id;
   comment.budId = budId;
   delete comment._id;
+  ws.notify('qi.updated', bud);
   ws.notify('buds.comments.created', comment);
 }

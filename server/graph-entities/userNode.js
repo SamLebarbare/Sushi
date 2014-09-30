@@ -19,5 +19,5 @@ module.exports = function *(user)
   };
 
   var createUser = fromStream(cypher('CREATE (u:User { data } )',params));
-  yield createUser(true);
+  while (yield createUser());
 };

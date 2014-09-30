@@ -17,5 +17,5 @@ module.exports = function *(user, bud, rel)
   +" CREATE (u)-[:" + rel + "]->(b)";
   console.log(query);
   var createRel = fromStream(cypher(query));
-  yield createRel(true);
+  while(yield createRel());
 };

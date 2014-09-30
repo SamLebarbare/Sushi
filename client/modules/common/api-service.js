@@ -81,6 +81,13 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unsponsor', data: bud, headers: headers});
     },
     sponsorsChanged: event(),
+    support : function(bud, value) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/support/' + value, data: bud, headers: headers});
+    },
+    unsupport : function(bud) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unsupport', data: bud, headers: headers});
+    },
+    supportersChanged: event(),
     share : function(bud, users) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
     },
@@ -90,6 +97,10 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       },
       created: event()
     }
+  };
+
+  api.qi = {
+    updated: event()
   };
 
   api.users = {

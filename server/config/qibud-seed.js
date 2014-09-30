@@ -5,6 +5,7 @@ var mongo = require('./mongo'),
 var createUser = require('../graph-entities/userNode');
 var createBudWithUser = require('../graph-entities/userCreateBud');
 var clearGraph = require('../graph-entities/clearGraph');
+var createUser2BudRel = require('../graph-entities/addUser2BudRelation');
 
 /**
  * Populates the database with seed data.
@@ -49,7 +50,7 @@ module.exports = function *(overwrite)
 
     yield createUser (user);
     yield createBudWithUser (user, bud);
-
+    yield createUser2BudRel (user, bud, 'CREATED');
 
     console.log('QIBUD SEED INSTALLED');
   }

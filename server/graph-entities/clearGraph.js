@@ -15,6 +15,4 @@ module.exports = function *()
                                   + 'OPTIONAL MATCH (n)-[r]-() '
                                   + 'DELETE n,r'));
   while(yield deleteAll());
-
-  yield deleteAll(true);
 };
