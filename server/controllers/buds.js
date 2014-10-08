@@ -10,6 +10,7 @@ var route = require('koa-route'),
     createBudInGraph  = require('../graph-entities/userCreateBud'),
     createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
     createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
+    createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
@@ -30,6 +31,7 @@ exports.init = function (app) {
   app.use(route.put('/api/buds/:budId/support/:supportValue', supportBud));
   app.use(route.put('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
+  app.use(route.post('/api/buds/:parentBudId', createSubBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
 };
 
@@ -90,6 +92,59 @@ function *createBud()
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
+}
+
+/**
+ * Saves a new bud linked to a parent bud
+ */
+function *createSubBud(parentBudId)
+{
+  //get parent
+  parentBudId = new ObjectID(parentBudId);
+  var parentBud = yield mongo.buds.findOne({_id : parentBudId});
+  if(parentBud === null)
+  {
+    this.throw(404, 'Unable to find parent bud from id');
+  }
+
+  parentBud.id = parentBud._id;
+  delete parentBud._id;
+
+  //create bud
+  var bud  = yield parse(this);
+  bud.creator = this.user;
+  bud.createdTime = new Date();
+  bud.parentBud = parentBud;
+
+  var results = yield mongo.buds.insert(bud);
+
+  //embbed sub bud in document
+  yield mongo.buds.update(
+      {_id: parentBudId},
+      {$push: {subBuds: bud}}
+  );
+
+  bud.id = bud._id;
+  delete bud._id;
+  this.status = 201;
+  this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
+
+
+  //add bud in graph
+  yield createBudInGraph  (this.user, bud);
+  yield createUser2BudRel (this.user, bud, 'CREATED');
+  yield createBud2BudRel  (bud, parentBud, 'PARENT');
+  yield createBud2BudRel  (parentBud,bud, 'CHILD');
+  //update qi
+  bud.qi       = yield updateQi (this.user, bud, 0);
+  parentBud.qi = yield updateQi (this.user, parentBud, 0);
+
+
+  // now notify everyone about this new bud
+  ws.notify('qi.updated', bud);
+  ws.notify('qi.updated', parentBud);
+  ws.notify('buds.created', bud);
+  ws.notify('buds.updated', parentBud);
 }
 
 /**

@@ -23,8 +23,10 @@ module.exports = function *(user, bud, addedQi)
               "(user:User)-[sp:SPONSOR]->(bud:Bud) " +
               "WHERE bud.id = '" + bud.id + "' " +
               "WITH user, bud, " +
-              "count(*) AS qi " +
-              "SET bud.qi = qi + " + addedQi;
+              "count(su) AS su_qi, " +
+              "count(fo) AS fo_qi, " +
+              "count(sp) AS sp_qi " +
+              "SET bud.qi = su_qi + fo_qi + sp_qi + " + addedQi;
 
 
 
