@@ -14,7 +14,7 @@ angular
       $stateProvider
           .state('editor', {
             title: 'Qibud Editor',
-            url: "/editor/:budId",
+            url: "/editor?budId&parentBud",
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Editor',

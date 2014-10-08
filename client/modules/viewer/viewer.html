@@ -1,14 +1,18 @@
-<div class="panel panel-default">
-  <div class="panel-body">
-    <div class="page-header">
-      <div class="media-heading">
-
+<div class="row" ng-if="ready">
+  <div class="col-xs-12 col-sm-6 col-md-8">
+    <div class="widget">
+      <div class="widget-header">
+        <i class="fa fa-edit"></i> Header
+        <a href="#" class="pull-right">Help</a>
+      </div>
+      <div class="widget-body">
         <h2>
-          <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i> {{bud.title}}
+          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
             <a ui-sref="editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id"class="btn btn-danger">Edit</a>
             <a ng-if="canShare()" ng-click="share()" class="btn btn-success">Share</a>
+            <a ng-click="editSubBud()" class="btn btn-info">Add a bud here</a>
           </div>
         </h2>
         <small class="pull-right">
@@ -19,6 +23,7 @@
           last update:{{bud.lastUpdate | date:'medium'}}
         </small>
         <br/>
+        <div class="clear-fix"></div>
         <div class="btn-group btn-group-xs">
           <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id">
               {{follower ? 'Unfollow' : 'Follow'}}
@@ -27,6 +32,7 @@
               {{followersCount}} followers
           </button>
         </div>
+        <div class="clear-fix"></div>
         <div class="btn-group btn-group-xs">
           <button class="btn btn-primary" ng-click="sponsorBud($event)" ng-disabled="bud.creator.id == common.user.id"><i class="glyphicon glyphicon-tint"></i>
             {{sponsorer ? 'Unsponsorize' : 'Sponsorize'}}
@@ -35,61 +41,95 @@
             {{sponsorsCount}} sponsors
           </button>
         </div>
+        <div class="clear-fix"></div>
+        <div class="btn-group btn-group-xs">
+          <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id">{{supporter ? 'Unsupport' : 'Support'}}</button>
+          <rating class="btn btn-default"
+          ng-model="supportValue"
+          max="5"
+          readonly="false"
+          on-hover="hoveringOver(value)"
+          on-leave="overStar = null"
+          state-on="'glyphicon-leaf'"
+          >
+          </rating>
+          <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
+        </div>
+        <br/>
       </div>
-      <div class="btn-group btn-group-xs">
-        <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id">{{supporter ? 'Unsupport' : 'Support'}}</button>
-        <rating class="btn btn-default"
-        ng-model="supportValue"
-        max="5"
-        readonly="false"
-        on-hover="hoveringOver(value)"
-        on-leave="overStar = null"
-        state-on="'glyphicon-leaf'"
-        >
-        </rating>
-        <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
-      </div>
-      <br/>
     </div>
-
-    <div ng-bind-html="bud.content"></div>
+    <div class="clear-fix"></div>
+    <div class="widget">
+      <div class="widget-header">
+        <i class="fa fa-edit"></i> Content
+        <a href="#" class="pull-right">Help</a>
+      </div>
+      <div class="widget-body">
+        <div ng-bind-html="bud.content"></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xs-6 col-md-4">
+    <div class="widget" ng-if="bud.subBuds || bud.parentBud">
+      <div class="widget-header">
+        <i class="fa fa-edit"></i> Bud family
+        <a href="#" class="pull-right">Help</a>
+      </div>
+      <div class="widget-body">
+        <div class="btn-group btn-group-xs">
+          <button class="btn btn-info" ng-if="bud.parentBud"
+                  ui-sref="viewer({budId : bud.parentBud.id})">
+            <i class="glyphicon glyphicon-leaf"></i>  Parent bud
+          </button>
+        </div>
+        <div class="btn-group btn-group-xs" ng-repeat="sbud in bud.subBuds">
+            <button class="btn btn-default" ui-sref="viewer({budId : sbud._id})">
+                <i class="glyphicon glyphicon-leaf"></i>  {{sbud.title}}
+            </button>
+          </span>
+        </div>
+      </div>
+    </div>
+    <div class="clear-fix"></div>
+    <div class="widget">
+      <div class="widget-header">
+        <i class="fa fa-edit"></i> Comments
+        <a href="#" class="pull-right">Help</a>
+      </div>
+      <div class="widget-body">
+        <ul class="media-list post-comments">
+          <li class="media"><span class="arrow-up-small"></span></li>
+          <li class="media post-comment" ng-repeat="comment in bud.comments">
+            <a href="#" class="pull-left">
+              <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
+            </a>
+            <div class="media-body story-comment-body">
+              <small><a href="#" class="bold">{{comment.from.name}}</a> {{comment.message}}</small>
+              <small class="post-comment-tools">
+                {{comment.createdTime | date:'short'}}
+              </small>
+            </div>
+          </li>
+          <li class="media post-comment comment-box">
+            <a href="#" class="pull-left">
+              <img class="media-object" ng-src="{{common.user.picture}}" alt="">
+            </a>
+            <div class="media-body post-comment-body">
+              <textarea
+              msd-elastic
+              ng-model="bud.commentBox.message"
+              ng-keypress="createComment($event, bud)"
+              ng-disabled="bud.commentBox.disabled"
+              class="form-control"
+              placeholder="Write a comment...">
+            </textarea>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
 </div>
-<div class="panel panel-default">
-  <div class="panel-heading">Comments</div>
-  <div class="panel-body">
-    <ul class="media-list post-comments">
-      <li class="media"><span class="arrow-up-small"></span></li>
-      <li class="media post-comment" ng-repeat="comment in bud.comments">
-        <a href="#" class="pull-left">
-          <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
-        </a>
-        <div class="media-body story-comment-body">
-          <small><a href="#" class="bold">{{comment.from.name}}</a> {{comment.message}}</small>
-          <small class="post-comment-tools">
-            {{comment.createdTime | date:'short'}}
-          </small>
-        </div>
-      </li>
-      <li class="media post-comment comment-box">
-        <a href="#" class="pull-left">
-          <img class="media-object" ng-src="{{common.user.picture}}" alt="">
-        </a>
-        <div class="media-body post-comment-body">
-          <textarea
-          msd-elastic
-          ng-model="bud.commentBox.message"
-          ng-keypress="createComment($event, bud)"
-          ng-disabled="bud.commentBox.disabled"
-          class="form-control"
-          placeholder="Write a comment...">
-        </textarea>
-        </div>
-      </li>
-    </ul>
-  </div>
-</div>
-
 
 <script type="text/ng-template" id="sharebox.html">
     <div class="modal-header">

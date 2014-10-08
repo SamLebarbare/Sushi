@@ -39,12 +39,10 @@
                   </span>
               </div>
             </div>
-
         </form>
       </div>
     </div>
-  </div>
-  <div class="col-xs-6 col-md-4">
+    <div class="clear-fix"></div>
     <div class="widget">
       <div class="widget-header">
         <i class="fa fa-key"></i> Choose privacy model
@@ -87,9 +85,28 @@
             value="Update bud"
             ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
             />
+            <input
+            ng-if="budBox.action == 'subbud'"
+            class="btn btn-primary btn-xl"
+            ng-click="createSubBud($event)"
+            value="Create child bud"
+            ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+            />
         </div>
       </div>
     </div>
+  </div>
+  <div class="col-xs-6 col-md-4">
+    <div class="widget" ng-if="parentBud">
+      <div class="widget-header">
+        <i class="fa fa-leaf"> Parent bud: {{parentBud.title}}</i>
+        <a href="#" class="pull-right">Help</a>
+      </div>
+      <div class="widget-body">
+        <div ng-bind-html="parentBud.content"></div>
+      </div>
+    </div>
+    <div class="clear-fix"></div>
     <div class="widget">
       <div class="widget-header">
         <i class="fa fa-eye"></i> Bud preview

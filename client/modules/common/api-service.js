@@ -66,6 +66,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     create: function (bud) {
       return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
     },
+    createSub: function (parentBudId, bud) {
+      return $http({method: 'POST', url: apiBase + '/buds/' + parentBudId, data: bud, headers: headers});
+    },
     created: event(),
     follow : function(bud) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/follow', data: bud, headers: headers});

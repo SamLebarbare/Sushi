@@ -34,6 +34,12 @@ function ($scope, $state, $stateParams, $location, api)
     };
   }
 
+  if($stateParams.parentBud)
+  {
+    $scope.parentBud = $stateParams.parentBud;
+    $scope.budBox.action = 'subbud';
+  }
+
   $scope.editorOptions = {uiColor: '#000000'};
 
   // add bud creation functions to scope
@@ -49,6 +55,39 @@ function ($scope, $state, $stateParams, $location, api)
     // disable the bud box and push the new bud to server
     $scope.budBox.disabled = true;
     api.buds.create({
+      title: $scope.budBox.title,
+      content: $scope.budBox.content,
+      privacy: $scope.budBox.privacy,
+    })
+    .success(function (budId)
+    {
+      // clear the bud box and enable it
+      $scope.budBox.title = '';
+      $scope.budBox.content = '';
+      $scope.budBox.disabled = false;
+
+      //redirect
+      $state.go('home');
+    })
+    .error(function ()
+    {
+      // don't clear the bud box but enable it so the user can re-try
+      $scope.budBox.disabled = false;
+    });
+  };
+
+  $scope.createSubBud = function ($event)
+  {
+    // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
+    if (!$scope.budBox.content.length || $scope.budBox.disabled)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    // disable the bud box and push the new bud to server
+    $scope.budBox.disabled = true;
+    api.buds.createSub($scope.parentBud.id,{
       title: $scope.budBox.title,
       content: $scope.budBox.content,
       privacy: $scope.budBox.privacy,

@@ -5,10 +5,11 @@
  */
 
 angular.module('qibud.viewer').controller('ViewerCtrl',
-function ($scope, $stateParams, $modal, api)
+function ($scope, $state, $stateParams, $modal, api)
 {
 
   var user       = $scope.common.user;
+  $scope.ready = false;
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
   $scope.supportersCount = 0;
@@ -68,8 +69,13 @@ function ($scope, $stateParams, $modal, api)
     {
       $scope.supporter = false;
     }
+
+    $scope.ready = true;
   });
 
+  $scope.editSubBud = function () {
+    $state.go('editor',{parentBud : $scope.bud});
+  };
 
   $scope.share = function () {
     api.users.list().success(function (users)
