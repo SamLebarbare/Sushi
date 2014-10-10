@@ -121,7 +121,7 @@ function *createSubBud(parentBudId)
   //embbed sub bud in document
   yield mongo.buds.update(
       {_id: parentBudId},
-      {$push: {subBuds: bud}}
+      {$push: {subBuds: {id: bud._id, title: bud.title} } }
   );
 
   bud.id = bud._id;
@@ -169,8 +169,20 @@ function *updateBud()
     bud.revision = 1
   }
 
+
+
   bud._id = new ObjectID(bud.id);
   var results = yield mongo.buds.save(bud, {w: 1});
+
+  if(bud.parentBud)
+  {
+    var parentBudId = new ObjectID(bud.parentBud.id);
+    var r=yield mongo.buds.update(
+        {_id: parentBudId, 'subBuds.id' : bud._id},
+        {$set: {'subBuds.$.title': bud.title } }
+    );
+    console.log(JSON.stringify(r));
+  }
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
@@ -346,7 +358,7 @@ function *unsupportBud()
 
   var result = yield mongo.buds.update(
       {_id: budId},
-      {$pull: {supporter: this.user.id}}
+      {$pull: {supporters: this.user.id}}
   );
 
 

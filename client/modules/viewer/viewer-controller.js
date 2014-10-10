@@ -10,9 +10,11 @@ function ($scope, $state, $stateParams, $modal, api)
 
   var user       = $scope.common.user;
   $scope.ready = false;
+  $scope.actionInProgress = false;
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
   $scope.supportersCount = 0;
+  $scope.supportValue = 0;
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
@@ -136,85 +138,107 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.followBud = function ($event)
   {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    $scope.actionInProgress = true;
     if(!$scope.follower)
     {
       api.buds.follow($scope.bud)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
     else
     {
       api.buds.unfollow($scope.bud)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
   }
 
   $scope.supportBud = function ($event)
   {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    $scope.actionInProgress = true;
+
     if(!$scope.supporter)
     {
       api.buds.support($scope.bud,$scope.supportValue)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
     else
     {
       api.buds.unsupport($scope.bud)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
   }
 
   $scope.sponsorBud = function ($event)
   {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+    $scope.actionInProgress = true;
+
     if(!$scope.sponsorer)
     {
       api.buds.sponsor($scope.bud)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
     else
     {
       api.buds.unsponsor($scope.bud)
-          .success(function (budId)
-          {
-
-          })
-          .error(function ()
-          {
-
-          });
+        .success(function (budId)
+        {
+          $scope.actionInProgress = false;
+        })
+        .error(function ()
+        {
+          $scope.actionInProgress = false;
+        });
     }
   }
 
