@@ -67,7 +67,7 @@ function ($scope, $state, $stateParams, $location, api)
       $scope.budBox.disabled = false;
 
       //redirect
-      $state.go('home');
+      $state.go('bud.home');
     })
     .error(function ()
     {
@@ -100,7 +100,7 @@ function ($scope, $state, $stateParams, $location, api)
       $scope.budBox.disabled = false;
 
       //redirect
-      $state.go('home');
+      $state.go('bud.home');
     })
     .error(function ()
     {
@@ -128,7 +128,7 @@ function ($scope, $state, $stateParams, $location, api)
     api.buds.update($scope.editedBud).success(function (bud)
     {
       //redirect
-      $location.path('/viewer/' + $scope.editedBud.id);
+      $state.go('bud.viewer', {budId: $scope.editedBud.id});
     })
     .error(function ()
     {

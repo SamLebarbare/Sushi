@@ -76,7 +76,7 @@ function ($scope, $state, $stateParams, $modal, api)
   });
 
   $scope.editSubBud = function () {
-    $state.go('editor',{parentBud : $scope.bud});
+    $state.go('bud.editor',{parentBud : $scope.bud});
   };
 
   $scope.share = function () {
@@ -183,7 +183,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
     if(!$scope.supporter)
     {
-      api.buds.support($scope.bud,$scope.supportValue)
+      api.buds.support($scope.bud, $scope.supportValue)
         .success(function (budId)
         {
           $scope.actionInProgress = false;

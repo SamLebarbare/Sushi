@@ -13,13 +13,13 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('viewer', {
+          .state('bud.viewer', {
             url: "/viewer/:budId",
             title: 'Qibud',
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Viewer',
-              stateName: 'viewer'
+              stateName: 'bud.viewer'
             },
             templateUrl: 'modules/viewer/viewer.html',
             controller: 'ViewerCtrl'

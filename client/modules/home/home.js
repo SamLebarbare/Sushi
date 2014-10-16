@@ -12,12 +12,12 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('home', {
+          .state('bud.home', {
             title: 'Dashboard',
             breadcrumb: {
               class: 'highlight',
-              text: 'Dashboard',
-              stateName: 'home'
+              text: 'Qibud',
+              stateName: 'bud.home'
             },
             url: "/home",
             templateUrl: 'modules/home/home.html',

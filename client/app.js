@@ -15,13 +15,16 @@ angular
       'qibud.home',
       'qibud.viewer',
       'qibud.editor',
-      'qibud.profile'
+      'qibud.profile',
+      'qibud.org.teams'
     ])
 
     .controller('DashboardCtrl', ['$scope', '$cookieStore', DashboardCtrl])
 
     .config(function ($stateProvider, $urlRouterProvider) {
       $urlRouterProvider.otherwise("/home");
+      $stateProvider
+          .state('bud', { abstract: true, url: '/buds', template: '<div data-ui-view></div>'});
     })
 
     .run(function ($location, $rootScope, $window, api) {
