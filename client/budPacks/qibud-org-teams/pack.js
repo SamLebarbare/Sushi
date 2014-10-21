@@ -20,5 +20,14 @@ angular
               text: 'Bud Team',
               stateName: 'bud.viewer.team'
             },
+          })
+          .state('bud.editor.team', {
+            url: '/team',
+            templateUrl: 'budPacks/qibud-org-teams/edit.html',
+            breadcrumb: {
+              class: 'highlight',
+              text: 'Bud Team Editor',
+              stateName: 'bud.editor.team'
+            },
           });
     });

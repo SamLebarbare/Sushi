@@ -18,6 +18,7 @@ function ($scope, $state, $stateParams, $location, api)
         title: bud.title,
         content: bud.content,
         privacy: bud.privacy,
+        type : bud.type || 'bud',
         disabled: false,
         action: 'update'
       };
@@ -28,6 +29,7 @@ function ($scope, $state, $stateParams, $location, api)
     $scope.budBox  = {
       title: null,
       content: null,
+      type: 'bud',
       disabled: false,
       privacy: 'Private',
       action: 'create'
@@ -41,6 +43,21 @@ function ($scope, $state, $stateParams, $location, api)
   }
 
   $scope.editorOptions = {uiColor: '#000000'};
+  $scope.availableTypes = [];
+
+  api.types.list().success(function (types)
+  {
+    console.log(types);
+    $scope.availableTypes = types;
+  });
+
+  $scope.setType = function (type) {
+    if(type === 'bud') {
+      $state.go('bud.editor');
+    } else {
+      $state.go('bud.editor.' + type);
+    }
+  };
 
   // add bud creation functions to scope
   $scope.createBud = function ($event)
@@ -121,9 +138,14 @@ function ($scope, $state, $stateParams, $location, api)
     // disable the bud box and push the new bud to server
     $scope.budBox.disabled = true;
 
-    $scope.editedBud.title = $scope.budBox.title;
+    $scope.editedBud.title   = $scope.budBox.title;
     $scope.editedBud.content = $scope.budBox.content;
     $scope.editedBud.privacy = $scope.budBox.privacy;
+    $scope.editedBud.type    = $scope.budBox.type === 'bud' ?
+                                '' : $scope.budBox.type;
+
+
+
 
     api.buds.update($scope.editedBud).success(function (bud)
     {

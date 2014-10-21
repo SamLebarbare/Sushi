@@ -7,7 +7,7 @@
       </div>
       <div class="widget-body">
         <h2>
-          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
+          <i class="glyphicon glyphicon-leaf"></i> {{bud.type}} {{bud.title}}
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
             <a ui-sref="bud.editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id"class="btn btn-danger">Edit</a>
@@ -71,25 +71,6 @@
     </div>
   </div>
   <div class="col-xs-6 col-md-4">
-    <div class="widget">
-      <div class="widget-header">
-        <i class="fa fa-edit"></i> Type
-        <a href="#" class="pull-right">Help</a>
-      </div>
-      <div class="widget-body">
-        <div class="btn-group btn-group-xs">
-          <button class="btn btn-info"
-                  ui-sref="bud.viewer">
-            <i class="glyphicon glyphicon-leaf"></i>  Bud
-          </button>
-          <button class="btn btn-info"
-                  ui-sref="bud.viewer.team">
-            <i class="glyphicon glyphicon-leaf"></i>  Team
-          </button>
-        </div>
-      </div>
-    </div>
-    <div class="clear-fix"></div>
     <div class="widget" ng-if="bud.subBuds || bud.parentBud">
       <div class="widget-header">
         <i class="fa fa-edit"></i> Bud family

@@ -14,6 +14,7 @@ var route = require('koa-route'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
+    setType           = require('../graph-entities/setTypeOnBud'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -29,6 +30,7 @@ exports.init = function (app) {
   app.use(route.put('/api/buds/:budId/sponsor', sponsorBud));
   app.use(route.put('/api/buds/:budId/unsponsor', unsponsorBud));
   app.use(route.put('/api/buds/:budId/support/:supportValue', supportBud));
+  app.use(route.put('/api/buds/:budId/evolve/:type', evolveBud));
   app.use(route.put('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:parentBudId', createSubBud));
@@ -193,6 +195,43 @@ function *updateBud()
   ws.notify('buds.updated', bud);
 }
 
+
+/**
+ * Add Type to bud
+ */
+function *evolveBud(budId, type)
+{
+  if(!type)
+  {
+    this.throw(403, 'type is not valid');
+  }
+
+  var bud   = yield parse(this);
+  var budId = new ObjectID(bud.id);
+
+  if(bud.creator.id !== this.user.id)
+  {
+    this.throw(403, 'You are not the creator of this bud');
+  }
+
+  if(bud.type && bud.types.indexOf(type) !== -1)
+  {
+    this.throw(403, 'You have already evolved with this type');
+  }
+
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {types: type}},
+      {type: type}
+  );
+
+  yield setType(this.user, bud, type);
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  ws.notify('buds.evolved', bud);
+}
 
 /**
  * Share a bud
