@@ -17,7 +17,7 @@ function ($scope, $state, $stateParams, $location, api)
   {
     $scope.users = users;
 
-    api.buds.packdatas.get($scope.editedBud.id, 'team')
+    api.buds.budPacksData.get($scope.editedBud.id, 'team')
       .success(function (packData)
       {
 
@@ -28,7 +28,7 @@ function ($scope, $state, $stateParams, $location, api)
             _.remove($scope.users, function(u) { return u.id === user.id; });
           });
         } else {
-          api.buds.packdatas.create($scope.editedBud.id, $scope.packData, 'team');
+          api.buds.budPacksData.create($scope.editedBud.id, $scope.packData, 'team');
         }
       })
       .error(function ()
@@ -40,14 +40,15 @@ function ($scope, $state, $stateParams, $location, api)
   $scope.addUser = function (user) {
     $scope.packData.members.push(user);
     _.remove($scope.users, function(u) { return u.id === user.id; });
-    api.buds.packdatas.set($scope.editedBud.id, $scope.packData, 'team');
+    api.buds.budPacksData.set($scope.editedBud.id, $scope.packData, 'team');
+    api.links.createU2B(user.id,'MEMBER',$scope.editedBud.id);
   };
 
   $scope.rmUser = function (user) {
     $scope.users.push(user);
     _.remove($scope.packData.members, function(u) { return u.id === user.id; });
-    api.buds.packdatas.set($scope.editedBud.id, $scope.packData, 'team');
-
+    api.buds.budPacksData.set($scope.editedBud.id, $scope.packData, 'team');
+    api.links.deleteU2B(user.id,'MEMBER',$scope.editedBud.id);
   };
 
 
