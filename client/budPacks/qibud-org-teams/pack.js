@@ -14,6 +14,7 @@ angular
       $stateProvider
           .state('bud.viewer.team', {
             url: '/team',
+            controller: 'TeamViewerCtrl',
             templateUrl: 'budPacks/qibud-org-teams/view.html',
             breadcrumb: {
               class: 'highlight',
@@ -23,6 +24,7 @@ angular
           })
           .state('bud.editor.team', {
             url: '/team',
+            controller: 'TeamEditorCtrl',
             templateUrl: 'budPacks/qibud-org-teams/edit.html',
             breadcrumb: {
               class: 'highlight',

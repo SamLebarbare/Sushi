@@ -21,20 +21,23 @@ var route = require('koa-route'),
 
 // register koa routes
 exports.init = function (app) {
-  app.use(route.get('/api/buds', listBuds));
-  app.use(route.get('/api/buds/:budId/view', viewBud));
-  app.use(route.put('/api/buds/:budId/update', updateBud));
-  app.use(route.put('/api/buds/:budId/share', shareBud));
-  app.use(route.put('/api/buds/:budId/follow', followBud));
-  app.use(route.put('/api/buds/:budId/unfollow', unfollowBud));
-  app.use(route.put('/api/buds/:budId/sponsor', sponsorBud));
-  app.use(route.put('/api/buds/:budId/unsponsor', unsponsorBud));
-  app.use(route.put('/api/buds/:budId/support/:supportValue', supportBud));
-  app.use(route.put('/api/buds/:budId/evolve/:type', evolveBud));
-  app.use(route.put('/api/buds/:budId/unsupport', unsupportBud));
+  app.use(route.get ('/api/buds', listBuds));
+  app.use(route.get ('/api/buds/:budId/view', viewBud));
+  app.use(route.put ('/api/buds/:budId/update', updateBud));
+  app.use(route.put ('/api/buds/:budId/share', shareBud));
+  app.use(route.put ('/api/buds/:budId/follow', followBud));
+  app.use(route.put ('/api/buds/:budId/unfollow', unfollowBud));
+  app.use(route.put ('/api/buds/:budId/sponsor', sponsorBud));
+  app.use(route.put ('/api/buds/:budId/unsponsor', unsponsorBud));
+  app.use(route.put ('/api/buds/:budId/support/:supportValue', supportBud));
+  app.use(route.put ('/api/buds/:budId/evolve/:type', evolveBud));
+  app.use(route.put ('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:parentBudId', createSubBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
+  app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
+  app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
+  app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
 };
 
 /**
@@ -94,6 +97,21 @@ function *createBud()
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
+  if(bud.type) {
+    var packData = {
+      type : bud.type,
+      data : {}
+    };
+
+    var result = yield mongo.buds.update(
+        {_id: bud.id},
+        {$push: {types: bud.type, packDatas: packData}}
+    );
+
+    yield setType(this.user, bud, bud.type);
+
+    ws.notify('buds.evolved', bud);
+  }
 }
 
 /**
@@ -147,6 +165,21 @@ function *createSubBud(parentBudId)
   ws.notify('qi.updated', parentBud);
   ws.notify('buds.created', bud);
   ws.notify('buds.updated', parentBud);
+  if(bud.type) {
+    var packData = {
+      type : bud.type,
+      data : {}
+    };
+
+    var result = yield mongo.buds.update(
+        {_id: bud.id},
+        {$push: {types: bud.type, packDatas: packData}}
+    );
+
+    yield setType(this.user, bud, bud.type);
+
+    ws.notify('buds.evolved', bud);
+  }
 }
 
 /**
@@ -155,7 +188,7 @@ function *createSubBud(parentBudId)
 function *updateBud()
 {
   var bud  = yield parse(this);
-
+  console.log(JSON.stringify(bud.packDatas));
   if(bud.creator.id !== this.user.id)
   {
     this.throw(403, 'You are not the creator of this bud');
@@ -174,7 +207,16 @@ function *updateBud()
 
 
   bud._id = new ObjectID(bud.id);
-  var results = yield mongo.buds.save(bud, {w: 1});
+  var results = yield mongo.buds.update(
+    {_id: bud._id},
+    {$set: {
+      title: bud.title,
+      content: bud.content,
+      privacy: bud.privacy,
+      type: bud.type,
+      revision: bud.revision,
+      lastUpdate: bud.lastUpdate
+    }});
 
   if(bud.parentBud)
   {
@@ -183,7 +225,6 @@ function *updateBud()
         {_id: parentBudId, 'subBuds.id' : bud._id},
         {$set: {'subBuds.$.title': bud.title } }
     );
-    console.log(JSON.stringify(r));
   }
 
   this.status = 201;
@@ -219,9 +260,14 @@ function *evolveBud(budId, type)
     this.throw(403, 'You have already evolved with this type');
   }
 
+  var packData = {
+    type : type,
+    data : {}
+  };
+
   var result = yield mongo.buds.update(
       {_id: budId},
-      {$push: {types: type}},
+      {$push: {types: type, packDatas: packData}},
       {type: type}
   );
 
@@ -491,8 +537,8 @@ function *unfollowBud()
 }
 
 /**
- * Appends a new comment to a given post.
- * @param postId - Post ID.
+ * Appends a new comment to a given bud.
+ * @param budId - Bud ID.
  */
 function *createComment(budId)
 {
@@ -500,7 +546,7 @@ function *createComment(budId)
   var comment   = yield parse(this);
   var commentId = new ObjectID();
 
-  // update post document with the new comment
+  // update bud document with the new comment
   comment = {_id: commentId, from: this.user, createdTime: new Date(), message: comment.message};
   var result = yield mongo.buds.update(
       {_id: budId},
@@ -522,4 +568,76 @@ function *createComment(budId)
   delete comment._id;
   ws.notify('qi.updated', bud);
   ws.notify('buds.comments.created', comment);
+}
+
+
+/**
+ * Create a new packData for a given typed bud.
+ * @param budId - Bud ID.
+ */
+function *createPackData(budId, type)
+{
+  budId      = new ObjectID(budId);
+
+  var result = yield mongo.buds.findOne({_id : budId,'packDatas.type' : type});
+  if(result) {
+    this.throw(403, 'Packdata already initialized');
+  }
+  var packData   = {
+    type: type,
+    data: yield parse(this)
+  };
+  // update bud document with the new packData
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$push: {packDatas: packData}}
+  );
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  ws.notify('buds.packdatas.created', bud.id.toString());
+}
+
+/**
+ * Set packData for a given typed bud.
+ * @param budId - Bud ID.
+ */
+function *setPackData(budId, type)
+{
+  budId         = new ObjectID(budId);
+  var packData   = yield parse(this);
+  // update bud document with the new packData
+  var result = yield mongo.buds.update(
+      {_id: budId,'packDatas.type' : type},
+      {$set: {'packDatas.$.data': packData}}
+  );
+  console.log(result);
+  this.status = 201;
+  this.body = result;
+  ws.notify('buds.packdatas.updated', budId);
+}
+
+/**
+* Get packData for a given typed bud.
+* @param budId - Bud ID.
+ */
+function *getPackData(budId, type)
+{
+  budId        = new ObjectID(budId);
+  var result   = yield mongo.buds.findOne({_id : budId,'packDatas.type' : type});
+  var packData = {};
+  console.log(JSON.stringify(result, ' '));
+  if(result) {
+    result.packDatas.forEach(function (pack){
+      if(pack.type === type) {
+        packData = pack.data;
+        console.log ('packdata found!');
+        return;
+      }
+    });
+  }
+
+  this.status = 201;
+  this.body = packData;
 }

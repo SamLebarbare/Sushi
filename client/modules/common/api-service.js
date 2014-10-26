@@ -98,6 +98,19 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     share : function(bud, users) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
     },
+    packdatas: {
+      create : function (budId, packData, type) {
+        return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
+      },
+      get: function (budId, type) {
+        return $http({method: 'GET', url: apiBase + '/buds/' + budId + '/packdata/' + type, headers: headers});
+      },
+      set: function (budId, packData, type) {
+        return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
+      },
+      created: event(),
+      updated: event()
+    },
     comments: {
       create: function (budId, comment) {
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});

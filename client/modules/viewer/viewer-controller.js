@@ -72,6 +72,9 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.supporter = false;
     }
 
+    if (bud.type && bud.type !== 'bud') {
+      $state.go('bud.viewer.' + bud.type);
+    }
     $scope.ready = true;
   });
 

@@ -4,6 +4,8 @@
     <a href="#" class="pull-right">Help</a>
   </div>
   <div class="widget-body">
-
+    <div ng-repeat="user in packData.members">
+      <img ng-src="/api/users/{{user.id}}/picture" alt="">
+    </div>
   </div>
 </div>

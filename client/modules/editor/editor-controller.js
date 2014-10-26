@@ -22,6 +22,10 @@ function ($scope, $state, $stateParams, $location, api)
         disabled: false,
         action: 'update'
       };
+
+      if (bud.type) {
+        $state.go ('bud.editor.' + bud.type);
+      }
     });
   }
   else
@@ -47,16 +51,15 @@ function ($scope, $state, $stateParams, $location, api)
 
   api.types.list().success(function (types)
   {
-    console.log(types);
     $scope.availableTypes = types;
   });
 
   $scope.setType = function (type) {
-    if(type === 'bud') {
+    /*if(type === 'bud') {
       $state.go('bud.editor');
     } else {
       $state.go('bud.editor.' + type);
-    }
+    }*/
   };
 
   // add bud creation functions to scope
@@ -75,6 +78,7 @@ function ($scope, $state, $stateParams, $location, api)
       title: $scope.budBox.title,
       content: $scope.budBox.content,
       privacy: $scope.budBox.privacy,
+      type   : $scope.budBox.type
     })
     .success(function (budId)
     {
@@ -108,6 +112,7 @@ function ($scope, $state, $stateParams, $location, api)
       title: $scope.budBox.title,
       content: $scope.budBox.content,
       privacy: $scope.budBox.privacy,
+      type   : $scope.budBox.type
     })
     .success(function (budId)
     {

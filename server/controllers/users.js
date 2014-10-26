@@ -26,7 +26,6 @@ function *createUser() {
   // this is exceptional to user creation as we want user ids to be sequential numbers and not standard mongo guids
   user._id = yield mongo.getNextSequence('userId');
   var results = yield mongo.users.insert(user);
-
   this.status = 201;
   this.body = results[0]._id.toString(); // we need .toString() here to return text/plain response
 }
@@ -42,6 +41,7 @@ function *listUsers() {
   {
     user.id = user._id;
     delete user._id;
+    delete user.picture;
   });
 
   this.status = 201;
