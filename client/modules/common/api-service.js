@@ -98,7 +98,7 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     share : function(bud, users) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
     },
-    packdatas: {
+    budPacksData: {
       create : function (budId, packData, type) {
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
       },
@@ -121,6 +121,21 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
 
   api.qi = {
     updated: event()
+  };
+
+  api.links = {
+    createB2B : function (budId, type, budId2) {
+      return $http({method: 'POST', url: apiBase + '/links/b2b/' + budId + '/' + type + '/' + budId2, headers: headers});
+    },
+    createB2U : function (budId, type, userId) {
+      return $http({method: 'POST', url: apiBase + '/links/b2u/' + budId + '/' + type + '/' + userId, headers: headers});
+    },
+    createU2B : function (userId, type, budId) {
+      return $http({method: 'POST', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+    },
+    deleteU2B : function (userId, type, budId) {
+      return $http({method: 'DELETE', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+    }
   };
 
   api.users = {
