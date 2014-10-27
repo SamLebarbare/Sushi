@@ -10,18 +10,20 @@
           <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
           <div class="btn-group btn-group-xs pull-right">
             <button class="btn btn-default" disabled>{{bud.privacy}}</button>
-            <a ui-sref="bud.editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id"class="btn btn-danger">Edit</a>
+            <a ui-sref="bud.editor({budId : bud.id})" ng-if="bud.creator.id == common.user.id" class="btn btn-danger">Edit</a>
             <a ng-if="canShare()" ng-click="share()" class="btn btn-success">Share</a>
             <a ng-click="editSubBud()" class="btn btn-info">Add a bud here</a>
           </div>
         </h2>
-        <h3 ng-if="bud.type">Type: <a ui-sref="bud.viewer.{{bud.type}}">{{bud.type}}</a></h3>
+        <h3 ng-if="bud.type != 'bud'">Type: <a ui-sref="bud.viewer.{{bud.type}}">{{bud.type}}</a></h3>
         <small class="pull-right">
           <h4>Creator: {{bud.creator.name}}
           </h4>
           created at: {{bud.createdTime | date:'medium'}}
           <br/>
           last update:{{bud.lastUpdate | date:'medium'}}
+          <br/>
+          <a ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)" ng-click="delete()" class="btn-danger">Delete</a>
         </small>
         <br/>
         <div class="clear-fix"></div>
@@ -107,9 +109,9 @@
               <img class="media-object" ng-src="{{comment.from.picture}}" alt="">
             </a>
             <div class="media-body story-comment-body">
-              <small><a href="#" class="bold">{{comment.from.name}}</a> {{comment.message}}</small>
+              <small><a href="#" class="bold">{{comment.from.name}}</a><br/> {{comment.message}}</small>
               <small class="post-comment-tools">
-                {{comment.createdTime | date:'short'}}
+               {{comment.createdTime | date:'short'}} <a href="" ng-click="budify(comment.message)">Budify</a>
               </small>
             </div>
           </li>

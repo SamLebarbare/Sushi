@@ -46,6 +46,11 @@ function ($scope, $state, $stateParams, $location, api)
     $scope.budBox.action = 'subbud';
   }
 
+  if($stateParams.content)
+  {
+    $scope.budBox.content = $stateParams.content;
+  }
+
   $scope.editorOptions = {uiColor: '#000000'};
   $scope.availableTypes = [];
 

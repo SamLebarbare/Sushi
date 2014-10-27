@@ -82,6 +82,16 @@ function ($scope, $state, $stateParams, $modal, api)
     $state.go('bud.editor',{parentBud : $scope.bud});
   };
 
+  $scope.budify = function (content) {
+    $state.go('bud.editor',{parentBud : $scope.bud, content: content});
+  };
+
+  $scope.delete = function () {
+    api.buds.delete($scope.bud.id).success(function (){
+      $state.go('bud.home');
+    });    
+  };
+
   $scope.share = function () {
     api.users.list().success(function (users)
     {

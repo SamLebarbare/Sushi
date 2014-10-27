@@ -63,6 +63,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/update', data: bud, headers: headers});
     },
     updated: event(),
+    delete: function (budId) {
+      return $http({method: 'DELETE', url: apiBase + '/buds/' + budId, headers: headers});
+    },
     create: function (bud) {
       return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
     },
@@ -71,7 +74,7 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     },
     created: event(),
     evolve: function (bud, type) {
-      return $http({method: 'PUT', url: apiBase + '/buds' + bud.id + '/evolve/' + type, data: bud, headers: headers});
+      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/evolve/' + type, data: bud, headers: headers});
     },
     evolved: event(),
     follow : function(bud) {

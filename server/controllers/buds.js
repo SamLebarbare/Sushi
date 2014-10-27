@@ -15,6 +15,7 @@ var route = require('koa-route'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
     setType           = require('../graph-entities/setTypeOnBud'),
+    clearBud          = require('../graph-entities/clearBud'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -38,6 +39,7 @@ exports.init = function (app) {
   app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
   app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
   app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
+  app.use(route.delete ('/api/buds/:budId', deleteBud));
 };
 
 /**
@@ -639,4 +641,36 @@ function *getPackData(budId, type)
 
   this.status = 201;
   this.body = packData;
+}
+
+
+/**
+ * Delete bud by id
+ */
+function *deleteBud(budId)
+{
+  budId   = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+  bud.id = bud._id;
+  delete bud.id;
+  if(!bud)
+  {
+    this.throw(403, 'Unable to find bud');
+  }
+  if(bud.creator.id !== this.user.id)
+  {
+    this.throw(403, 'You are not the creator of this bud');
+  }
+  if(bud.parentBud) {
+    //embbed sub bud in document
+    var parentBudId = bud.parentBud.id;
+    yield mongo.buds.update(
+        {_id: parentBudId},
+        {$pull: {subBuds: {id: bud._id, title: bud.title} } }
+    );
+  }
+  yield clearBud  (bud);
+  yield mongo.buds.remove({_id : budId});
+
+  this.status = 201;
 }
