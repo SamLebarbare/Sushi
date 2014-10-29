@@ -13,6 +13,6 @@ module.exports = function *()
   // first remove all neo4j graph nodes
   var deleteAll = fromStream(cypher('MATCH (n) '
                                   + 'OPTIONAL MATCH (n)-[r]-() '
-                                  + 'DELETE n,r'));
+                                  + 'DELETE n,r;'));
   while(yield deleteAll());
 };

@@ -15,13 +15,13 @@ module.exports = function *(user, bud)
   // create neo4j nodes for buds
   var params = { data :
     {
-      id : bud.id,
+      bid : bud.id,
       creatorId : user.id,
       privacy : bud.privacy
     }
   };
 
-  var createBud = fromStream(cypher('CREATE (b:Bud { data } )',params));
+  var createBud = fromStream(cypher('CREATE (b:Bud { data } );',params));
   while (yield createBud());
   console.log('BUD CREATED');
 };

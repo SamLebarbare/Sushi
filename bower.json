@@ -12,6 +12,7 @@
     "angular-bootstrap": "~0.11.0",
     "angular-ui-router": "~0.2.11",
     "angular-ui-router-breadcrumbs": "~0.0.2",
+    "ui-router-extras": "latest",
     "angular-elastic": "~2",
     "lodash": "~2",
     "angular-ui-tinymce": "latest"

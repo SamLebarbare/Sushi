@@ -15,7 +15,7 @@
             <a ng-click="editSubBud()" class="btn btn-info">Add a bud here</a>
           </div>
         </h2>
-        <h3 ng-if="bud.type != 'bud'">Type: <a ui-sref="bud.viewer.{{bud.type}}">{{bud.type}}</a></h3>
+        <h3 ng-if="bud.type != 'Bud'">Type: <a ui-sref="bud.viewer.{{bud.type}}">{{bud.type}}</a></h3>
         <small class="pull-right">
           <h4>Creator: {{bud.creator.name}}
           </h4>
@@ -72,7 +72,7 @@
       </div>
     </div>
     <div class="clear-fix"></div>
-    <div ui-view></div>
+    <div ui-view="summary"></div>
   </div>
   <div class="col-xs-6 col-md-4">
     <div class="widget" ng-if="bud.subBuds || bud.parentBud">

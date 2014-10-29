@@ -18,7 +18,7 @@ function ($scope, $state, $stateParams, $location, api)
         title: bud.title,
         content: bud.content,
         privacy: bud.privacy,
-        type : bud.type || 'bud',
+        type : bud.type || 'Bud',
         disabled: false,
         action: 'update'
       };
@@ -33,7 +33,7 @@ function ($scope, $state, $stateParams, $location, api)
     $scope.budBox  = {
       title: null,
       content: null,
-      type: 'bud',
+      type: 'Bud',
       disabled: false,
       privacy: 'Private',
       action: 'create'
@@ -151,7 +151,7 @@ function ($scope, $state, $stateParams, $location, api)
     $scope.editedBud.title   = $scope.budBox.title;
     $scope.editedBud.content = $scope.budBox.content;
     $scope.editedBud.privacy = $scope.budBox.privacy;
-    $scope.editedBud.type    = $scope.budBox.type === 'bud' ?
+    $scope.editedBud.type    = $scope.budBox.type === 'Bud' ?
                                 '' : $scope.budBox.type;
 
 

@@ -16,17 +16,17 @@ module.exports = function *(user, bud, addedQi)
 
  var data, result = [];
  var query =  "MATCH (bud:Bud) " +
-		          "WHERE bud.id = '" + bud.id + "' " +
+		          "WHERE bud.bid = '" + bud.id + "' " +
 			        "OPTIONAL MATCH " +
               "(user:User)-[su:SUPPORT]->(bud:Bud), " +
               "(user:User)-[fo:FOLLOW]->(bud:Bud), " +
               "(user:User)-[sp:SPONSOR]->(bud:Bud) " +
-              "WHERE bud.id = '" + bud.id + "' " +
+              "WHERE bud.bid = '" + bud.id + "' " +
               "WITH user, bud, " +
               "count(su) AS su_qi, " +
               "count(fo) AS fo_qi, " +
               "count(sp) AS sp_qi " +
-              "SET bud.qi = su_qi + fo_qi + sp_qi + " + addedQi;
+              "SET bud.qi = su_qi + fo_qi + sp_qi + " + addedQi + ";";
 
 
 

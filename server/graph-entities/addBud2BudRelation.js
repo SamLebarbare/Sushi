@@ -13,9 +13,9 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
 module.exports = function *(bud1, bud2, rel)
 {
   var query = "MATCH (b:Bud),(s:Bud) "
-  +"WHERE b.id = '" + bud1.id + "' "
-  +"AND   s.id = '" + bud2.id + "' "
-  +" CREATE (b)-[:" + rel + "]->(s)";
+  +"WHERE b.bid = '" + bud1.id + "' "
+  +"AND   s.bid = '" + bud2.id + "' "
+  +" CREATE (b)-[:" + rel + "]->(s);";
   console.log(query);
   var createRel = fromStream(cypher(query));
   while(yield createRel());

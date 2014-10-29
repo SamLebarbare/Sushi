@@ -1,12 +1,12 @@
 'use strict';
 
 var mongo = require('./mongo'),
-    ObjectID = mongo.ObjectID;
-var createUser = require('../graph-entities/userNode');
+    ObjectID          = mongo.ObjectID;
+var createUser        = require('../graph-entities/userNode');
 var createBudWithUser = require('../graph-entities/userCreateBud');
-var clearGraph = require('../graph-entities/clearGraph');
+var clearGraph        = require('../graph-entities/clearGraph');
 var createUser2BudRel = require('../graph-entities/addUser2BudRelation');
-
+var createIndexes     = require('../graph-entities/createIndexes');
 /**
  * Populates the database with seed data.
  * @param overwrite Overwrite existing database even if it is not empty.
@@ -47,7 +47,7 @@ module.exports = function *(overwrite)
     //clean mongo id before graph insertion
     bud.id = bud._id;
     user.id = user._id;
-
+    yield createIndexes();
     yield createUser (user);
     yield createBudWithUser (user, bud);
     yield createUser2BudRel (user, bud, 'CREATED');

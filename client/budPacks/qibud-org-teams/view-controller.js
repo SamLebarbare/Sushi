@@ -11,7 +11,7 @@ function ($scope, $state, $stateParams, $location, api)
   $scope.packData = {
     members : []
   };
-  api.buds.budPacksData.get($scope.bud.id, 'team')
+  api.buds.budPacksData.get($scope.bud.id, 'Team')
     .success(function (packData)
     {
       if(packData.members) {

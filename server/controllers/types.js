@@ -18,7 +18,7 @@ exports.init = function (app) {
  * List types
  */
 function *listTypes() {
-  var types = [{id:'bud'},{id:'team'}];
+  var types = [{id:'Bud'},{id:'Team'}];
   //TODO: dynload budPacks
   this.status = 201;
   this.body = types;

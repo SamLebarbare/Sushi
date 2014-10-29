@@ -18,18 +18,18 @@ module.exports = function *(user)
   var data;
   var query = "MATCH (bud:Bud) " +
               "WHERE bud.creatorId = " + user.id + " " +
-              "RETURN bud.id " +
+              "RETURN bud.bid " +
               "UNION " +
               "MATCH (bud:Bud)-[:SHARED_TO]->(user:User) " +
-              "WHERE user.id = " + user.id + " " +
-              "RETURN bud.id";
+              "WHERE user.uid = " + user.id + " " +
+              "RETURN bud.bid;";
 
 
   var userBuds = fromStream(cypher(query));
 
   while (data = yield userBuds())
   {
-    result.push(new ObjectID(data['bud.id']));
+    result.push(new ObjectID(data['bud.bid']));
   }
   return result;
 

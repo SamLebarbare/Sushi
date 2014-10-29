@@ -14,10 +14,10 @@ module.exports = function *(user)
   // create user
   var params = { data :
     {
-      id : user.id,
+      uid : user.id,
     }
   };
 
-  var createUser = fromStream(cypher('CREATE (u:User { data } )',params));
+  var createUser = fromStream(cypher('CREATE (u:User { data } );',params));
   while (yield createUser());
 };

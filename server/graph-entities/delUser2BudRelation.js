@@ -12,11 +12,11 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
  */
 module.exports = function *(user, bud, rel)
 {
-  var query = "MATCH (u:User { id: " + user.id
-  + " })-[r:" + rel +"]->(b:Bud { id: '" + bud.id + "' }) "
-  +"DELETE r";
+  var query = "MATCH (u:User { uid: " + user.id
+  + " })-[r:" + rel +"]->(b:Bud { bid: '" + bud.id + "' }) "
+  +"DELETE r;";
   console.log(query);
   var deleteRel = fromStream(cypher(query));
   while (yield deleteRel());
-  
+
 };

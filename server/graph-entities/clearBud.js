@@ -9,9 +9,9 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
  */
 module.exports = function *(bud)
 {
-  var deleteBud = fromStream(cypher("MATCH (n) "
-                                  + "WHERE n.id = '" + bud.id + "' "
+  var deleteBud = fromStream(cypher("MATCH (n:Bud) "
+                                  + "WHERE n.bid = '" + bud.id + "' "
                                   + "OPTIONAL MATCH (n)-[r]-() "
-                                  + "DELETE n,r"));
+                                  + "DELETE n,r;"));
   while(yield deleteBud());
 };

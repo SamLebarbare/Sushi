@@ -50,6 +50,12 @@
         <li class="sidebar-list">
           <a href="#" target="_blank">{{bud.title}} <span class="menu-icon fa fa-leaf"></span></a>
         </li>
+        <li class="sidebar-title separator"><span>Actions</span></li>
+        <li class="sidebar-list">
+          <div ui-view="Team">
+          </div>
+        </li>
+
       </ul>
       <div class="sidebar-footer">
         <div class="col-xs-4">
@@ -154,6 +160,7 @@
 <script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
 <script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
 <script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
+<script src="/bower_components/ui-router-extras/release/ct-ui-router-extras.min.js"></script>
 <script src="/bower_components/angular-ui-router-breadcrumbs/dist/angular-ui-router-breadcrumbs.js"></script>
 <script src="/bower_components/angular-elastic/elastic.js"></script>
 <script src="/bower_components/angular-cookies/angular-cookies.js"></script>
@@ -163,10 +170,10 @@
 <script src="/budPacks/qibud-org-teams/pack.js"></script>
 <script src="/budPacks/qibud-org-teams/edit-controller.js"></script>
 <script src="/budPacks/qibud-org-teams/view-controller.js"></script>
-
 <script src="/app.js"></script>
 <script src="/modules/common/common.js"></script>
 <script src="/modules/common/api-service.js"></script>
+<script src="/modules/dashboard/dashboard.js"></script>
 <script src="/modules/home/home.js"></script>
 <script src="/modules/home/home-controller.js"></script>
 <script src="/modules/editor/editor.js"></script>

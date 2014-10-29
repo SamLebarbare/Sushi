@@ -10,26 +10,30 @@ angular
       'ui.bootstrap',
       'qibud.common'
     ])
-    .config(function ($stateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $stickyStateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('bud.viewer.team', {
+          .state('bud.viewer.Team', {
             url: '/team',
-            controller: 'TeamViewerCtrl',
-            templateUrl: 'budPacks/qibud-org-teams/view.html',
+            views: {
+              'summary':{
+                templateUrl: 'budPacks/qibud-org-teams/view.html',
+                controller: 'TeamViewerCtrl'
+              }
+            },
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Team',
-              stateName: 'bud.viewer.team'
+              stateName: 'bud.viewer.Team'
             },
           })
-          .state('bud.editor.team', {
+          .state('bud.editor.Team', {
             url: '/team',
             controller: 'TeamEditorCtrl',
             templateUrl: 'budPacks/qibud-org-teams/edit.html',
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Team Editor',
-              stateName: 'bud.editor.team'
+              stateName: 'bud.editor.Team'
             },
           });
     });

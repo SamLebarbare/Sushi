@@ -596,9 +596,7 @@ function *createPackData(budId, type)
   );
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-
-  ws.notify('buds.budPacksData.created', bud.id.toString());
+  ws.notify('buds.budPacksData.created');
 }
 
 /**

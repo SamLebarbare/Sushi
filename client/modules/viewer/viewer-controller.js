@@ -14,7 +14,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
   $scope.supportersCount = 0;
-  $scope.supportValue = 0;
+  $scope.supportValue = 0;  
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
@@ -72,7 +72,7 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.supporter = false;
     }
 
-    if (bud.type && bud.type !== 'bud') {
+    if (bud.type && bud.type !== 'Bud') {
       $state.go('bud.viewer.' + bud.type);
     }
     $scope.ready = true;
@@ -89,7 +89,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.delete = function () {
     api.buds.delete($scope.bud.id).success(function (){
       $state.go('bud.home');
-    });    
+    });
   };
 
   $scope.share = function () {
