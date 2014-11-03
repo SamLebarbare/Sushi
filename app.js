@@ -5,6 +5,7 @@
  */
 
 var config = require('./server/config/config'),
+    mail  = require('./server/services/emails'),
     mongo = require('./server/config/mongo'),
     qibudSeed = require('./server/config/qibud-seed'),
     koaConfig = require('./server/config/koa'),
@@ -30,6 +31,8 @@ app.init = co(function *() {
   if (config.app.env !== 'test') {
     console.log('Qibud listening on port ' + config.app.port);
   }
+
+  mail.init();
 });
 
 // auto init if this app is not being initialized by another module (i.e. using require('./app').init();)

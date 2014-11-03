@@ -24,7 +24,16 @@ var platformConfig = {
       url: 'mongodb://localhost:27017/qibud-dev'
     },
     neo4j: {
-      url: 'http://localhost:7474'    
+      url: 'http://localhost:7474'
+    },
+    mailin: {
+      port: 2500,
+      webhook: 'http://localhost:3000/api/mailboxes/incoming',
+      disableWebhook: false,
+      logFile: '/dev/null',
+      logLevel: 'warn',
+      smtpOptions: {},
+      SMTPBanner: 'Qibud Email Service'
     },
     oauth: {
       linkedin: {
@@ -58,6 +67,15 @@ var platformConfig = {
     },
     neo4j: {
       url: process.env.GRAPHENEDB_URL + '/'
+    },
+    mailin: {
+      port: 25,
+      webhook: 'http://qibud.loup.io/mailboxes/incoming',
+      disableWebhook: false,
+      logFile: '/some/local/path',
+      logLevel: 'info',
+      smtpOptions: {},
+      SMTPBanner: 'Qibud Email Service'
     },
     oauth: {
       linkedin: {
