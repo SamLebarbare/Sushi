@@ -69,10 +69,10 @@ var platformConfig = {
       url: process.env.GRAPHENEDB_URL + '/'
     },
     mailin: {
-      port: 25,
+      port: 2500,
       webhook: 'http://qibud.loup.io/mailboxes/incoming',
       disableWebhook: false,
-      logFile: '/some/local/path',
+      logFile: '/dev/null',
       logLevel: 'info',
       smtpOptions: {},
       SMTPBanner: 'Qibud Email Service'
