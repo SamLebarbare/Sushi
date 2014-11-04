@@ -25,16 +25,17 @@ exports.init = function (app) {
 
 function *incomingPost() {
   var incomingMail = this.request.body;
-  console.log(JSON.stringify(incomingMail, ' ', 2));
-  if(incomingMail.hasOwnProperty(fields)) {
-    var mail = {
-      to : incomingMail.fields.headers[Cc],
-      content: incomingMail.fields.html
-    };
+  console.log(JSON.stringify(incomingMail));
 
-    var results = yield mongo.emails.insert(mail);
-    console.log(JSON.stringify(results, ' ', 2));
-  }
+  var mail = {
+    to : incomingMail.fields.headers[Cc],
+    content: incomingMail.fields.html
+  };
+  console.log(JSON.stringify(mail));
+
+  var results = yield mongo.emails.insert(mail);
+  console.log(JSON.stringify(results));
+
 
   this.status = 200;
 }
