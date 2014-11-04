@@ -31,8 +31,11 @@ app.init = co(function *() {
   if (config.app.env !== 'test') {
     console.log('Qibud listening on port ' + config.app.port);
   }
+  //dont use mailin in prod
+  if (config.app.env !== 'production') {
+    mail.init();
+  }
 
-  mail.init();
 });
 
 // auto init if this app is not being initialized by another module (i.e. using require('./app').init();)

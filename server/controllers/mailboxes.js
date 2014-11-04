@@ -24,7 +24,17 @@ exports.init = function (app) {
  }
 
 function *incomingPost() {
-  var mail = this.request.body;
-  console.log(JSON.stringify(mail, ' ', 2));
+  var incomingMail = this.request.body;
+  console.log(JSON.stringify(incomingMail, ' ', 2));
+  if(incomingMail.hasOwnProperty(fields)) {
+    var mail = {
+      to : incomingMail.fields.headers[Cc],
+      content: incomingMail.fields.html
+    };
+
+    var results = yield mongo.emails.insert(mail);
+    console.log(JSON.stringify(results, ' ', 2));
+  }
+
   this.status = 200;
 }
