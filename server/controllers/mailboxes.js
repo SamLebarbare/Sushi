@@ -28,8 +28,9 @@ function *incomingPost() {
   console.log(JSON.stringify(incomingMail));
 
   var mail = {
-    to : incomingMail.fields.headers[Cc],
-    content: incomingMail.fields.html
+    to :     incomingMail.fields['headers[To]'],
+    subject: incomingMail.fields['headers[Subject]'],
+    content: incomingMail.fields['html']
   };
   console.log(JSON.stringify(mail));
 
