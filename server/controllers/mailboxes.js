@@ -5,12 +5,10 @@
  */
 var _ = require('lodash'),
     route = require('koa-route'),
-    body = require('koa-better-body'),
     mongo = require('../config/mongo');
 
 // register koa routes
 exports.init = function (app) {
-  app.use(body({multipart: true}));
   app.use(route.head('/api/mailboxes/incoming', incomingHead));
   app.use(route.post('/api/mailboxes/incoming', incomingPost));
   app.use(route.get ('/api/mailboxes/emails'  , getEmails));
@@ -50,7 +48,7 @@ function *incomingPost() {
   this.status = 200;
 }
 
-
+//Extract from here!!! security issue
 function *getEmails(user) {
   var emails = yield mongo.emails.find(
       {}).toArray();

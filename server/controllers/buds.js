@@ -84,6 +84,7 @@ function *createBud()
   var bud  = yield parse(this);
   bud.creator = this.user;
   bud.createdTime = new Date();
+
   var results = yield mongo.buds.insert(bud);
 
   bud.id = bud._id;
