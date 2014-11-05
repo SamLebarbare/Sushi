@@ -5,6 +5,7 @@
  */
 var _ = require('lodash'),
     route = require('koa-route'),
+    formidable = require('koa-formidable'),
     mongo = require('../config/mongo');
 
 // register koa routes
@@ -24,7 +25,7 @@ exports.init = function (app) {
  }
 
 function *incomingPost() {
-  var incomingMail = this.request.body;
+  var incomingMail = yield formidable.parse(this);
   console.log(JSON.stringify(incomingMail));
   var toEmails = incomingMail.fields['headers[To]'].split(',');
   var to = [];
