@@ -1,3 +1,82 @@
+<section>
+  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">
+          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
+        </a>
+      </div>
+      <div class="btn-group navbar-right" dropdown>
+        <button type="button" class="btn btn-default navbar-btn">Actions</button>
+        <button type="button" class="btn btn-default navbar-btn dropdown-toggle">
+          <span class="caret"></span>
+          <span class="sr-only">Split button!</span>
+        </button>
+        <ul class="dropdown-menu" role="menu">
+          <li><a href="#" ng-click="editSubBud()" >Add a bud here</a></li>
+          <li class="divider"></li>
+          <li ng-if="canShare()"><a href="#" ng-click="share()">Share</a></li>
+          <li ng-if="bud.creator.id == common.user.id"><a ui-sref="bud.editor({budId : bud.id})">Edit</a></li>
+          <li class="divider"></li>
+          <li><a ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)" ng-click="delete()">Delete</a></li>
+        </ul>
+      </div>
+    </div>
+    <br>
+    <tabset style="background-color: white;">
+      <tab ng-repeat="type in common.availableTypes" heading="{{type.id}}" active="type.active" disabled="type.disabled">
+        <div ng-switch on="type.id">
+          <div ng-switch-when="Bud">
+            <br>
+            <div class="clear-fix"></div>
+            <div style="background-color: white;" class="well">
+              <div class="btn-group btn-group-xs">
+                <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">
+                    {{follower ? 'Unfollow' : 'Follow'}}
+                </button>
+                <button class="btn btn-group-xs" disabled>
+                    {{followersCount}} followers
+                </button>
+              </div>
+              <div class="btn-group btn-group-xs">
+                <button class="btn btn-primary" ng-click="sponsorBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress"><i class="glyphicon glyphicon-tint"></i>
+                  {{sponsorer ? 'Unsponsorize' : 'Sponsorize'}}
+                </button>
+                <button class="btn btn-default" disabled>
+                  {{sponsorsCount}} sponsors
+                </button>
+              </div>
+              <div class="btn-group btn-group-xs">
+                <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">{{supporter ? 'Unsupport' : 'Support'}}</button>
+                <rating class="btn btn-default"
+                ng-model="supportValue"
+                max="5"
+                readonly="false"
+                on-hover="hoveringOver(value)"
+                on-leave="overStar = null"
+                state-on="'glyphicon-leaf'"
+                >
+                </rating>
+                <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
+              </div>
+              <div ng-bind-html="bud.content"></div>
+            </div>
+          </div>
+          <div ng-switch-default>
+            <div ui-view="summary"></div>
+          </div>
+        </div>
+      </tab>
+    </tabset>
+  </nav>
+  <nav class="navbar navbar-default " role="navigation">
+    <div class="container">
+      <p class="navbar-text">Creator {{bud.creator.name}} <small></small></p>
+      <p class="navbar-text navbar-right">{{bud.privacy}}</p>
+    </div>
+  </nav>
+</section>
+<!--
 <div class="row" ng-if="ready">
   <div class="col-xs-12 col-sm-6 col-md-8">
     <div class="widget">
@@ -27,37 +106,11 @@
         </small>
         <br/>
         <div class="clear-fix"></div>
-        <div class="btn-group btn-group-xs">
-          <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">
-              {{follower ? 'Unfollow' : 'Follow'}}
-          </button>
-          <button class="btn btn-default" disabled>
-              {{followersCount}} followers
-          </button>
-        </div>
+
         <div class="clear-fix"></div>
-        <div class="btn-group btn-group-xs">
-          <button class="btn btn-primary" ng-click="sponsorBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress"><i class="glyphicon glyphicon-tint"></i>
-            {{sponsorer ? 'Unsponsorize' : 'Sponsorize'}}
-          </button>
-          <button class="btn btn-default" disabled>
-            {{sponsorsCount}} sponsors
-          </button>
-        </div>
+
         <div class="clear-fix"></div>
-        <div class="btn-group btn-group-xs">
-          <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">{{supporter ? 'Unsupport' : 'Support'}}</button>
-          <rating class="btn btn-default"
-          ng-model="supportValue"
-          max="5"
-          readonly="false"
-          on-hover="hoveringOver(value)"
-          on-leave="overStar = null"
-          state-on="'glyphicon-leaf'"
-          >
-          </rating>
-          <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
-        </div>
+
         <br/>
       </div>
     </div>
@@ -135,7 +188,7 @@
     </div>
   </div>
 </div>
-
+-->
 <script type="text/ng-template" id="sharebox.html">
     <div class="modal-header">
         <h3 class="modal-title">Sharebox</h3>

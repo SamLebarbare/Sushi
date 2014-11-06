@@ -1,5 +1,4 @@
 <div class="row" ng-cloak>
-  <div class="col-xs-12 col-sm-6 col-md-8">
     <div class="widget">
       <div class="widget-header">
         <i class="fa fa-edit"></i> Edit your {{bud.type ? bud.type : 'bud'}}
@@ -102,8 +101,6 @@
         </div>
       </div>
     </div>
-  </div>
-  <div class="col-xs-6 col-md-4">
     <div class="widget" ng-if="parentBud">
       <div class="widget-header">
         <i class="fa fa-leaf"> Parent bud: {{parentBud.title}}</i>
@@ -125,7 +122,6 @@
         <div ng-bind-html="budBox.content"></div>
       </div>
     </div>
-  </div>
 </div>
 
 
