@@ -1,11 +1,4 @@
-<div class="widget">
-  <div class="widget-header">
-    <i class="fa fa-edit"></i> Team
-    <a href="#" class="pull-right">Help</a>
-  </div>
-  <div class="widget-body">
-    <div ng-repeat="user in packData.members">
-      <img ng-src="/api/users/{{user.id}}/picture" alt="">
-    </div>
-  </div>
+<h1>Team members</h1>
+<div ng-repeat="user in packData.members">
+  <img ng-src="/api/users/{{user.id}}/picture" alt="">
 </div>

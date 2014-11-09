@@ -14,7 +14,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
   $scope.supportersCount = 0;
-  $scope.supportValue = 0;  
+  $scope.supportValue = 0;
   // retrieve one bud from server
   api.buds.view($stateParams.budId).success(function (bud)
   {
@@ -72,11 +72,20 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.supporter = false;
     }
 
-    if (bud.type && bud.type !== 'Bud') {
-      $state.go('bud.viewer.' + bud.type);
-    }
     $scope.ready = true;
   });
+
+  $scope.showType = function (type) {
+    if (type !== 'Bud') {
+      $state.go('bud.viewer.' + type);
+    } else {
+      $state.go('bud.viewer');
+    }
+  };
+
+  $scope.evolve = function (type) {
+    api.buds.evolve($scope.bud, type);
+  };
 
   $scope.editSubBud = function () {
     $state.go('bud.editor',{parentBud : $scope.bud});
@@ -123,6 +132,10 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.canShare = function ()
   {
     var sharable = false;
+    if(!$scope.bud) {
+      return sharable;
+    }
+
     var creatorId = $scope.bud.creator.id;
 
     //TODO: Add a watch on privacy changes check actor
@@ -362,6 +375,13 @@ function ($scope, $state, $stateParams, $modal, api)
   });
 
   api.buds.updated.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
+    {
+      $scope.bud = bud;
+    }
+  });
+
+  api.buds.evolved.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
       $scope.bud = bud;

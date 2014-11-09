@@ -154,6 +154,12 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     }
   };
 
+  api.actors = {
+    list: function () {
+      return $http({method: 'GET', url: apiBase + '/actors', headers: headers});
+    }
+  };
+
   api.types = {
     list: function () {
       return $http({method: 'GET', url: apiBase + '/types', headers: headers});

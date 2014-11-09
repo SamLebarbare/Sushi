@@ -60,11 +60,11 @@ function ($scope, $state, $stateParams, $location, api)
   });
 
   $scope.setType = function (type) {
-    /*if(type === 'bud') {
+    if(type === 'bud') {
       $state.go('bud.editor');
     } else {
       $state.go('bud.editor.' + type);
-    }*/
+    }
   };
 
   // add bud creation functions to scope

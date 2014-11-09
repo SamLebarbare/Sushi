@@ -16,6 +16,7 @@ var route = require('koa-route'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
     setType           = require('../graph-entities/setTypeOnBud'),
     clearBud          = require('../graph-entities/clearBud'),
+    packdata          = require('../bud-entities/packdata'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -100,7 +101,7 @@ function *createBud()
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
-  if(bud.type) {
+  if(bud.type && bud.type !== 'Bud') {
     var packData = {
       type : bud.type,
       data : {}
@@ -258,7 +259,7 @@ function *evolveBud(budId, type)
     this.throw(403, 'You are not the creator of this bud');
   }
 
-  if(bud.type && bud.types.indexOf(type) !== -1)
+  if(bud.types && bud.types.indexOf(type) !== -1)
   {
     this.throw(403, 'You have already evolved with this type');
   }
@@ -626,18 +627,10 @@ function *setPackData(budId, type)
 function *getPackData(budId, type)
 {
   budId        = new ObjectID(budId);
-  var result   = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
-  var packData = {};
+  var bud      = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
 
-  if(result) {
-    result.budPacksData.forEach(function (pack){
-      if(pack.type === type) {
-        packData = pack.data;
-        return;
-      }
-    });
-  }
-
+  var packData = yield packdata.getPack (bud, type);
+  console.log(packData);
   this.status = 201;
   this.body = packData;
 }

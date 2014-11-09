@@ -16,15 +16,11 @@ angular
       var types  = ['Team'];
       var states = [];
       var availableViews = {};
+
       availableViews['@'] = {
         controller: 'ViewerCtrl',
         templateUrl: 'modules/viewer/viewer.html',
       };
-      angular.forEach(types, function(type) {
-        availableViews[type + '@'] = {
-          templateUrl: 'budPacks/qibud-org-teams/actions.html'
-        };
-      });
 
 
       states.push({
@@ -39,22 +35,4 @@ angular
         } });
 
       angular.forEach(states, function(state) { $stateProvider.state(state); });
-
-      /*$stateProvider
-          .state('bud.viewer', {
-            url: "/viewer/:budId",
-            title: 'Qibud',
-            sticky: true,
-            views : {
-              '@': {
-                templateUrl: 'modules/viewer/viewer.html',
-                controller: 'ViewerCtrl'
-              }
-            },
-            breadcrumb: {
-              class: 'highlight',
-              text: 'Bud Viewer',
-              stateName: 'bud.viewer'
-            }
-      });*/
     });

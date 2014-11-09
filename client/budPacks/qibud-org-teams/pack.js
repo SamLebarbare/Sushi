@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Bud Teams view
+ * Bud Team
  */
 
 angular

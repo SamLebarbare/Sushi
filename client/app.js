@@ -18,7 +18,8 @@ angular
       'qibud.viewer',
       'qibud.editor',
       'qibud.profile',
-      'qibud.org.teams'
+      'qibud.org.teams',
+      'qibud.org.ideas'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {
