@@ -629,7 +629,7 @@ function *getPackData(budId, type)
   budId        = new ObjectID(budId);
   var bud      = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
 
-  var packData = yield packdata.getPack (bud, type);
+  var packData = packdata.getPack (bud, type);
   console.log(packData);
   this.status = 201;
   this.body = packData;

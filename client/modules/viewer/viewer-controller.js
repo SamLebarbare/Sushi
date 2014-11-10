@@ -102,24 +102,25 @@ function ($scope, $state, $stateParams, $modal, api)
   };
 
   $scope.share = function () {
-    api.users.list().success(function (users)
+    api.actors.list().success(function (actors)
     {
-      _.remove(users, function(u) { return u.id === user.id; });
-
       var modalInstance = $modal.open({
         templateUrl: 'sharebox.html',
         controller: 'ShareboxCtrl',
         size: 'lg',
         resolve: {
           users: function () {
-            return users;
+            return actors.users;
+          },
+          teams: function () {
+            return actors.teams;
           }
         }
       });
 
-      modalInstance.result.then(function (users) {
+      modalInstance.result.then(function (actors) {
         //share to ->
-        api.buds.share($scope.bud, users).success(function (bud) {
+        api.buds.share($scope.bud, actors).success(function (bud) {
 
         });
 

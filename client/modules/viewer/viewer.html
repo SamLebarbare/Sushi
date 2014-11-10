@@ -64,7 +64,7 @@
         <div class="clear-fix"></div>
         <div style="background-color: white;" class="well" ui-view="summary"></div>
       </tab>
-      <tab heading="Evolve...">
+      <tab ng-if="bud.creator.id == common.user.id" heading="Evolve...">
         <br>
         <div class="clear-fix"></div>
         <label for="type"><strong>Bud Type: </strong></label>
@@ -86,6 +86,15 @@
         <h3 class="modal-title">Sharebox</h3>
     </div>
     <div class="modal-body">
+      Teams members from (click to add members):
+      <div class="table-responsive">
+        <table class="table table-hover">
+          <tbody>
+            <tr ng-repeat="team in teams"><td ng-click="addTeam(team)"><span><i class="fa fa-user"></i></span> {{ team.name }}</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="spacer visible-xs"></div>
       Available (click to add):
       <div class="table-responsive">
         <table class="table table-hover">

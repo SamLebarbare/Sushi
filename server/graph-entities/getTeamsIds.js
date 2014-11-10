@@ -13,7 +13,7 @@ module.exports = function *(user)
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Team) " +
+  var query = "MATCH (bud:Team)<-[:MEMBER]-(:User) " +
               "RETURN bud.bid;"
 
 

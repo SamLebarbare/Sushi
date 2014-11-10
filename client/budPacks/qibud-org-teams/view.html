@@ -1,4 +1,8 @@
 <h1>Team members</h1>
 <div ng-repeat="user in packData.members">
-  <img ng-src="/api/users/{{user.id}}/picture" alt="">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <img ng-src="/api/users/{{user.id}}/picture" alt="" / > {{user.name}}
+    </div>
+  </div>
 </div>

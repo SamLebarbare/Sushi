@@ -4,7 +4,8 @@
  * Users controller for user profile relation operations.
  */
 
-var route       = require('koa-route'),
+var _           = require('lodash'),
+    route       = require('koa-route'),
     parse       = require('co-body'),
     getTeamsIds = require('../graph-entities/getTeamsIds'),
     packdata    = require('../bud-entities/packdata'),
@@ -20,6 +21,9 @@ exports.init = function (app) {
  * List actors
  */
 function *listActors() {
+
+  var currentUID = this.user.id;
+
   var actors = {
     teams: []
   };
@@ -35,6 +39,8 @@ function *listActors() {
 
   actors.users = users;
 
+  _.remove(actors.users, function(u) { return u.id === currentUID});
+
   var teamsIds = yield getTeamsIds();
   var teamBuds = yield mongo.buds.find(
       {_id: { $in: teamsIds }}).toArray();
@@ -46,11 +52,10 @@ function *listActors() {
       name   : bud.title,
       members: packData.members
     }
-
+    _.remove(team.members, function(u) { return u.id === currentUID});
+    actors.teams.push(team);
   });
 
-  actors.teams = teams;
-
   this.status = 201;
-  this.body = users;
+  this.body   = actors;
 }
