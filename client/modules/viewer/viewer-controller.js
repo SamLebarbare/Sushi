@@ -84,7 +84,11 @@ function ($scope, $state, $stateParams, $modal, api)
   };
 
   $scope.evolve = function (type) {
-    api.buds.evolve($scope.bud, type);
+    api.buds.evolve($scope.bud, type).success(function () {
+      $scope.showType(type);
+      $state.go($state.current.name, $state.params, { reload: true });
+    });
+
   };
 
   $scope.editSubBud = function () {

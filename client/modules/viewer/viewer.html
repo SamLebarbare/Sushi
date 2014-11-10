@@ -66,10 +66,14 @@
       </tab>
       <tab ng-if="bud.creator.id == common.user.id" heading="Evolve...">
         <br>
-        <div class="clear-fix"></div>
-        <label for="type"><strong>Bud Type: </strong></label>
-        <select ng-model="evolve.type" ng-change="evolve(evolve.type)" ng-options="type.id as type.id for type in common.availableTypes">
-        </select>
+        <table class="table table-hover">
+          <tbody>
+            <tr ng-repeat="type in common.availableTypes" ng-click="evolve(type.id)">
+              <td><h1>{{type.id}}</h1></td>
+              <td><small>{{type.desc}}</small></td>
+            </tr>
+          </tbody>
+        </table>
       </tab>
     </tabset>
   </nav>
