@@ -22,7 +22,14 @@
         </ul>
       </div>
     </div>
+      <ul class="breadcrumb" style="background-color: white;">
+        <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="bud.parentBud.title}: status..." popover-trigger="mouseenter">{{bud.parentBud.title}}</a></li>
+        <li ng-if="bud.subBuds"><span class="divider"> Contains: (</span></li>
+        <li ng-if="bud.subBuds" ng-repeat="b in bud.subBuds"><a ui-sref="bud.viewer({budId : b.id})" popover="{{b.title}}: status..." popover-trigger="mouseenter">{{b.title}}</a></li>
+        <li ng-if="bud.subBuds"> <span class="divider"> )</span></li>
+      </ul>
     <br>
+    <div id="chart" class=""></div>
     <tabset style="background-color: white;">
       <tab heading="Bud" ng-click="showType('Bud')">
         <br>
@@ -122,8 +129,8 @@
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </script>
+
 <!--
-<div id="chart" class=""></div>
 <script type="text/javascript">
 //.event("click", function(d) self.location = "show?id="+d.id);
 
@@ -194,7 +201,6 @@ force.on("tick", function() {
         })
 </script>
 -->
-
 
 <style type="text/css">
   /* Layout */
