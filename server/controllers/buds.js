@@ -169,7 +169,7 @@ function *createSubBud(parentBudId)
   ws.notify('qi.updated', parentBud);
   ws.notify('buds.created', bud);
   ws.notify('buds.updated', parentBud);
-  if(bud.type) {
+  if(bud.type && bud.type !== 'Bud') {
     var packData = {
       type : bud.type,
       data : {}
@@ -261,26 +261,32 @@ function *evolveBud(budId, type)
 
   if(bud.types && bud.types.indexOf(type) !== -1)
   {
-    this.throw(403, 'You have already evolved with this type');
+    var result = yield mongo.buds.update(
+        {_id: budId},
+        {$set: {type: type}});
+    console.log('restored in '+ type);
   }
+  else
+  {
+    var packData = {
+      type : type,
+      data : {}
+    };
 
-  var packData = {
-    type : type,
-    data : {}
-  };
-
-  var result = yield mongo.buds.update(
-      {_id: budId},
-      {$push: {types: type, budPacksData: packData}},
-      {type: type}
-  );
-
-  yield setType(this.user, bud, type);
+    var result = yield mongo.buds.update(
+        {_id: budId},
+        {$push: {types: type, budPacksData: packData}},
+        {$set: {type: type}}
+    );
+    console.log('evolved in '+ type);
+    yield setType(this.user, bud, type);
+  }
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('buds.evolved', bud);
+  ws.notify('buds.evolved', {id: budId, type: type});
+
 }
 
 /**

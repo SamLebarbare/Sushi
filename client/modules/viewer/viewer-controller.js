@@ -16,77 +16,83 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.supportersCount = 0;
   $scope.supportValue = 0;
   // retrieve one bud from server
-  api.buds.view($stateParams.budId).success(function (bud)
+
+  $scope.load = function ()
   {
-    bud.commentBox = {message: '', disabled: false};
-    bud.comments   = bud.comments || [];
-    $scope.bud = bud;
-    if(bud.followers)
+    $scope.ready = false;
+    api.buds.view($stateParams.budId).success(function (bud)
     {
-        $scope.followersCount = bud.followers.length;
-        if(bud.followers.indexOf(user.id)!== -1)
+      bud.commentBox = {message: '', disabled: false};
+      bud.comments   = bud.comments || [];
+      $scope.bud = bud;
+      if(bud.followers)
+      {
+          $scope.followersCount = bud.followers.length;
+          if(bud.followers.indexOf(user.id)!== -1)
+          {
+            $scope.follower = true;
+          }
+          else
+          {
+            $scope.follower = false;
+          }
+      }
+      else
+      {
+        $scope.follower = false;
+      }
+
+      if(bud.sponsors)
+      {
+        $scope.sponsorsCount = bud.sponsors.length;
+        if(bud.sponsors.indexOf(user.id)!== -1)
         {
-          $scope.follower = true;
+          $scope.sponsorer = true;
         }
         else
         {
-          $scope.follower = false;
+          $scope.sponsorer = false;
         }
-    }
-    else
-    {
-      $scope.follower = false;
-    }
-
-    if(bud.sponsors)
-    {
-      $scope.sponsorsCount = bud.sponsors.length;
-      if(bud.sponsors.indexOf(user.id)!== -1)
-      {
-        $scope.sponsorer = true;
       }
       else
       {
         $scope.sponsorer = false;
       }
-    }
-    else
-    {
-      $scope.sponsorer = false;
-    }
 
-    if(bud.supporters)
-    {
-      $scope.supportersCount = bud.supporters.length;
-      if(bud.supporters.indexOf(user.id)!== -1)
+      if(bud.supporters)
       {
-        $scope.supporter = true;
+        $scope.supportersCount = bud.supporters.length;
+        if(bud.supporters.indexOf(user.id)!== -1)
+        {
+          $scope.supporter = true;
+        }
+        else
+        {
+          $scope.supporter = false;
+        }
       }
       else
       {
         $scope.supporter = false;
       }
-    }
-    else
-    {
-      $scope.supporter = false;
-    }
 
-    $scope.ready = true;
-  });
+      $scope.ready = true;
+    });
+  }
+  //Init view
+  $scope.load();
 
-  $scope.showType = function (type) {
+  $scope.showType = function (type, reload) {
     if (type !== 'Bud') {
-      $state.go('bud.viewer.' + type);
+      $state.go('bud.viewer.' + type, $state.params, { reload: reload });
     } else {
-      $state.go('bud.viewer');
+      $state.go('bud.viewer',$state.params, { reload: reload });
     }
   };
 
   $scope.evolve = function (type) {
     api.buds.evolve($scope.bud, type).success(function () {
-      $scope.showType(type);
-      $state.go($state.current.name, $state.params, { reload: true });
+
     });
 
   };
@@ -389,7 +395,7 @@ function ($scope, $state, $stateParams, $modal, api)
   api.buds.evolved.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
-      $scope.bud = bud;
+      $scope.showType(bud.type, true);
     }
   });
 
