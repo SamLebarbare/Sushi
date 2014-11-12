@@ -118,13 +118,35 @@
                <a href="#" class="dropdown-toggle">
                   <i class="fa fa-envelope-o"></i>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-right" ng-controller="Mailbox">
+                <ul class="dropdown-menu dropdown-menu-right" ng-controller="MailboxCtrl">
                   <li class="dropdown-header">
                     Emails
                   </li>
+                  <script type="text/ng-template" id="mail.html">
+                      <div class="modal-header">
+                          <h3 class="modal-title">{{email.subject}}</h3>
+                      </div>
+                      <div class="modal-body">
+                        To:
+                        <div class="table-responsive">
+                          <table class="table table-hover">
+                            <tbody>
+                              <tr ng-repeat="mail in email.to">
+                                <td><span><i class="fa fa-user"></i></span> {{ mail }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                        <div class="well" ng-bind-html="email.content"></div>
+                      </div>
+                      <div class="modal-footer">
+                          <button class="btn btn-primary" ng-click="ok()">Convert to bud</button>
+                          <button class="btn btn-warning" ng-click="cancel()">Delete</button>
+                      </div>
+                  </script>
                   <li class="divider"></li>
                   <li ng-repeat="email in emails">
-                    <a href="#">{{email.subject}}</a>
+                    <a href="#" ng-click="openEmail(email)">{{email.subject}}</a>
                   </li>
                 </ul>
               </div>
@@ -172,7 +194,8 @@
 <script src="/budPacks/qibud-org-ideas/view-controller.js"></script>
 <script src="/app.js"></script>
 <script src="/modules/common/common.js"></script>
-<script src="/modules/common/mailbox.js"></script>
+<script src="/modules/common/mailbox-controller.js"></script>
+<script src="/modules/common/mail-controller.js"></script>
 <script src="/modules/common/api-service.js"></script>
 <script src="/modules/dashboard/dashboard.js"></script>
 <script src="/modules/home/home.js"></script>
