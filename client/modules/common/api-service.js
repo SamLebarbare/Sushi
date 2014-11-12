@@ -127,8 +127,8 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
   };
 
   api.mailboxes = {
-    get: function (user) {
-      return $http({method: 'GET', url: apiBase + '/mailboxes/emails',data: user, headers: headers});
+    get: function () {
+      return $http({method: 'GET', url: apiBase + '/user/mailboxes/emails', headers: headers});
     },
     incoming: event()
   };

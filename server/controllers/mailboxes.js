@@ -12,7 +12,6 @@ var _ = require('lodash'),
 exports.init = function (app) {
   app.use(route.head('/api/mailboxes/incoming', incomingHead));
   app.use(route.post('/api/mailboxes/incoming', incomingPost));
-  app.use(route.get ('/api/mailboxes/emails'  , getEmails));
 };
 
 
@@ -46,13 +45,6 @@ function *incomingPost() {
   console.log(JSON.stringify(results));
 
 
-  this.status = 200;
-}
-
-//Extract from here!!! security issue
-function *getEmails(user) {
-  var emails = yield mongo.emails.find(
-      {}).toArray();
-  this.body = emails;
-  this.status = 200;
+  this.status = 201;
+  ws.notify('mailboxes.incoming');
 }

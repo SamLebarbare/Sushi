@@ -116,15 +116,15 @@
               </div>
               <div class="item dropdown">
                <a href="#" class="dropdown-toggle">
-                  <i class="fa fa-bell-o"></i>
+                  <i class="fa fa-envelope-o"></i>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-right">
+                <ul class="dropdown-menu dropdown-menu-right" ng-controller="Mailbox">
                   <li class="dropdown-header">
-                    Notifications
+                    Emails
                   </li>
                   <li class="divider"></li>
-                  <li>
-                    <a href="#">...</a>
+                  <li ng-repeat="email in emails">
+                    <a href="#">{{email.subject}}</a>
                   </li>
                 </ul>
               </div>
@@ -172,6 +172,7 @@
 <script src="/budPacks/qibud-org-ideas/view-controller.js"></script>
 <script src="/app.js"></script>
 <script src="/modules/common/common.js"></script>
+<script src="/modules/common/mailbox.js"></script>
 <script src="/modules/common/api-service.js"></script>
 <script src="/modules/dashboard/dashboard.js"></script>
 <script src="/modules/home/home.js"></script>
