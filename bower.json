@@ -15,7 +15,8 @@
     "ui-router-extras": "latest",
     "angular-elastic": "~2",
     "lodash": "~2",
-    "angular-ui-tinymce": "latest"
+    "angular-ui-tinymce": "latest",
+    "cytoscape": "latest"
   },
   "devDependencies": {
     "angular-mocks": "~1",
