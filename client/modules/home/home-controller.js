@@ -8,11 +8,6 @@ angular.module('qibud.home').controller('HomeCtrl',
 function ($scope, $state, api, budGraph)
 {
   var user       = $scope.common.user;
-  var cy; // maybe you want a ref to cy
-  // (usually better to have the srv as intermediary)
-
-  var budsById = {};
-  // retrieve buds from server
   api.buds.list().success(function (buds)
   {
     buds.forEach(function (bud)
@@ -22,33 +17,6 @@ function ($scope, $state, api, budGraph)
     });
 
     $scope.buds = buds;
-    for( var i = 0; i < $scope.buds.length; i++ ){
-      var p = $scope.buds[i];
-
-      budsById[ p.id ] = p;
-    }
-
-    // you would probably want some ui to prevent use of budsCtrl until cy is loaded
-    budGraph( $scope.buds ).then(function( budsCy ){
-      cy = budsCy;
-      // use this variable to hide ui until cy loaded if you want
-      $scope.cyLoaded = true;
-    });
-
-  });
-
-  $scope.onWeightChange = function(bud){
-     budGraph.setBudWeight( bud.id, bud.qi );
-  };
-
-  budGraph.onWeightChange(function(id, weight){
-    budsById[id].qi = weight;
-
-    $scope.$apply();
-  });
-
-  budGraph.onClick(function(id){
-    $state.go('bud.viewer',{budId : id});
   });
 
   // subscribe to websocket events to receive new buds, comments, etc.

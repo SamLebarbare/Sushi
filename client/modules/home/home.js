@@ -22,5 +22,16 @@ angular
             url: "/home",
             templateUrl: 'modules/home/home.html',
             controller: 'HomeCtrl'
+      })
+      .state('bud.home.budgraph', {
+        title: 'Bud Graph',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'Bud Graph',
+          stateName: 'bud.home.budgraph'
+        },
+        url: "/home",
+        templateUrl: 'modules/home/home-budgraph.html',
+        controller: 'BudgraphCtrl'
       });
     });

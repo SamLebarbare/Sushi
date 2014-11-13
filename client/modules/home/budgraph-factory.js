@@ -14,14 +14,16 @@ angular
         // put buds model in cy.js
         var eles = [];
         for( var i = 0; i < buds.length; i++ ){
+
           eles.push({
             group: 'nodes',
             data: {
               id: buds[i].id,
-              weight: 10,
+              weight: 20,
+              label: buds[i].type,
               name: buds[i].title,
               faveColor: '#30426a',
-              faveShape: 'circle'
+              faveShape: buds[i].type == 'Team' ? 'octagon' : 'roundrectangle'
             }
           });
         }
@@ -51,6 +53,7 @@ angular
             style: cytoscape.stylesheet()
               .selector('node')
                 .css({
+                  'shape': 'data(faveShape)',
                   'width': 'mapData(weight, 10, 10, 10, 10)',
                   'content': 'data(name)',
                   'text-valign': 'center',
@@ -99,7 +102,7 @@ angular
                 fire('onWeightChange', [ node.id(), node.data('weight') ]);
               });
 
-              cy.on('click', 'node', function(e){
+              cy.on('tap', 'node', function(e){
                 var node = this;
                 fire('onClick', [ node.id() ]);
               });
