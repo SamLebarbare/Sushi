@@ -3,7 +3,7 @@
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="#">
-          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
+          <i class="glyphicon glyphicon-leaf">({{bud.type || 'Bud'}})</i> {{bud.title}} 
         </a>
       </div>
       <div class="btn-group navbar-right" dropdown>
@@ -23,10 +23,9 @@
       </div>
     </div>
       <ul class="breadcrumb" style="background-color: white;">
-        <li>{{bud.type}} </li>
-        <li ng-if="bud.parentBud"><span class="divider">derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="bud.parentBud.title}: status..." popover-trigger="mouseenter">{{bud.parentBud.title}}</a></li>
+        <li ng-if="bud.parentBud"><span class="divider">derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></li>
         <li ng-if="bud.subBuds"><span class="divider"> Contains: (</span></li>
-        <li ng-if="bud.subBuds" ng-repeat="b in bud.subBuds"><a ui-sref="bud.viewer({budId : b.id})" popover="{{b.title}}: status..." popover-trigger="mouseenter">{{b.title}}</a></li>
+        <li ng-if="bud.subBuds" ng-repeat="b in bud.subBuds"><a ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter">{{b.title}}</a></li>
         <li ng-if="bud.subBuds"> <span class="divider"> )</span></li>
       </ul>
     <br>

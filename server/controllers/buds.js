@@ -231,6 +231,16 @@ function *updateBud()
     );
   }
 
+  if(bud.subBuds)
+  {
+    yield * foreach(bud.subBuds, function * (sBud) {
+      var sBudId = new ObjectID(sBud.id);
+      var r=yield mongo.buds.update(
+          {_id: sBudId},
+          {$set: {'parentBud.title': bud.title } });
+    });
+  }
+
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 

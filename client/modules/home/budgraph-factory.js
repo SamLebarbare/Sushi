@@ -18,9 +18,9 @@ angular
             group: 'nodes',
             data: {
               id: buds[i].id,
-              weight: 15,
+              weight: 10,
               name: buds[i].title,
-              faveColor: '#' + buds[i].type,
+              faveColor: '#30426a',
               faveShape: 'circle'
             }
           });
@@ -34,7 +34,7 @@ angular
                 data: {
                   source: buds[i].id,
                   target: buds[i].subBuds[s].id,
-                  faveColor: '#6FB1FC',
+                  faveColor: '#30426a',
                   strength: 1
                 }
               });
@@ -55,6 +55,7 @@ angular
                   'content': 'data(name)',
                   'text-valign': 'center',
                   'text-outline-width': 2,
+                  'background-color': 'data(faveColor)',
                   'color': '#fff'
                 })
               .selector(':selected')
