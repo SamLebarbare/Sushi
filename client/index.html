@@ -22,6 +22,7 @@
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="/responsive-dashboard/css/dashboard/dashboard.css"/>
+  <link rel="stylesheet" href="/timeline.css">
   <!-- <link rel="stylesheet" href="/app.css"> -->
 
 </head>
@@ -40,6 +41,9 @@
           </a>
         </li>
         <li class="sidebar-title"><span>NAVIGATION</span></li>
+        <li class="sidebar-list" ui-sref-active="active">
+          <a ui-sref="bud.home.timeline">Timeline <span class="menu-icon fa fa-clock-o"></span></a>
+        </li>
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="bud.home.budgraph">Bud graph <span class="menu-icon fa fa-share-alt"></span></a>
         </li>
@@ -202,6 +206,7 @@
 <script src="/modules/home/budgraph-factory.js"></script>
 <script src="/modules/home/budgraph-controller.js"></script>
 <script src="/modules/home/home-controller.js"></script>
+<script src="/modules/home/timeline-controller.js"></script>
 <script src="/modules/editor/editor.js"></script>
 <script src="/modules/editor/editor-controller.js"></script>
 <script src="/modules/viewer/viewer.js"></script>

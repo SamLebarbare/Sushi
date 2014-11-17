@@ -30,8 +30,19 @@ angular
           text: 'Bud Graph',
           stateName: 'bud.home.budgraph'
         },
-        url: "/home",
+        url: "/graph",
         templateUrl: 'modules/home/home-budgraph.html',
         controller: 'BudgraphCtrl'
+      })
+      .state('bud.home.timeline', {
+        title: 'Bud Timeline',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'Bud Timeline',
+          stateName: 'bud.home.timeline'
+        },
+        url: "/timeline",
+        templateUrl: 'modules/home/home-timeline.html',
+        controller: 'TimelineCtrl'
       });
     });

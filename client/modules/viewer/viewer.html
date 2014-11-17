@@ -1,9 +1,16 @@
 <section>
+  <ul class="breadcrumb" style="background-color: #f3f3f3;">
+    <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
+    <li>Creator : <a>{{bud.creator.name}}</a></li>
+    <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
+    <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></span></li>
+    <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+  </ul>
   <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
     <div class="container-fluid">
       <div class="navbar-header">
         <a class="navbar-brand" href="#">
-          <i class="glyphicon glyphicon-leaf">({{bud.type || 'Bud'}})</i> {{bud.title}} 
+          <i class="glyphicon glyphicon-leaf"></i> {{bud.title}}
         </a>
       </div>
       <div class="btn-group navbar-right" dropdown>
@@ -22,12 +29,6 @@
         </ul>
       </div>
     </div>
-      <ul class="breadcrumb" style="background-color: white;">
-        <li ng-if="bud.parentBud"><span class="divider">derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></li>
-        <li ng-if="bud.subBuds"><span class="divider"> Contains: (</span></li>
-        <li ng-if="bud.subBuds" ng-repeat="b in bud.subBuds"><a ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter">{{b.title}}</a></li>
-        <li ng-if="bud.subBuds"> <span class="divider"> )</span></li>
-      </ul>
     <br>
     <tabset style="background-color: white;">
       <tab heading="Bud">
@@ -85,15 +86,45 @@
         </table>
       </tab>
     </tabset>
-  </nav>
-  <nav class="navbar navbar-default " role="navigation">
-    <div class="container">
-      <p class="navbar-text">Creator {{bud.creator.name}} <small></small></p>
-      <p class="navbar-text navbar-right">{{bud.privacy}}</p>
+    <div class="well">
+        <label for="content">Your comment : </label>
+        <div class="input">
+          <textarea
+            msd-elastic
+            ng-model="bud.commentBox.message"
+            ng-keypress="createComment($event, bud)"
+            ng-disabled="bud.commentBox.disabled"
+            class="form-control"
+            placeholder="Write a comment...">
+          </textarea>
+        </div>
     </div>
   </nav>
 </section>
-
+<section id="comments" style="background-color: white;">
+    <nav class="navbar navbar-default " role="navigation">
+      <div class="container">
+        <p class="navbar-text">Comments</p>
+      </div>
+    </nav>
+    <ul class="timeline">
+      <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
+          <div class="timeline-badge" ng-click="budify(comment.message)" popover="Budify" popover-trigger="mouseenter">
+            <i class="fa fa-comment"></i>
+          </div>
+          <div class="timeline-panel">
+              <div class="timeline-heading">
+                  <h4 class="timeline-title">{{comment.from.name}}</h4>
+                  <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
+                  </p>
+              </div>
+              <div class="timeline-body">
+                  <p>{{comment.message}}</p>
+              </div>
+          </div>
+      </li>
+    </ul>
+</section>
 <script type="text/ng-template" id="sharebox.html">
     <div class="modal-header">
         <h3 class="modal-title">Sharebox</h3>
@@ -131,78 +162,6 @@
         <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
     </div>
 </script>
-
-<!--
-<script type="text/javascript">
-//.event("click", function(d) self.location = "show?id="+d.id);
-
-var w = 960,
-  h = 100;
-  fill = d3.scale.category20();
-
-var vis = d3.select("#chart").append("svg:svg")
-  .attr("width", w)
-  .attr("height", h);
-d3.json("", function(json) {
-var force = d3.layout.force()
-   .charge(-120)
-   .linkDistance(30)
-   .nodes(json.nodes)
-   .links(json.links)
-   .size([w, h])
-   .start();
-
-var link = vis.selectAll("line.link")
-   .data(json.links)
-   .enter().append("svg:line")
-   .style("stroke","black")
-   .attr("x1", function(d) { return d.source.x; })
-   .attr("y1", function(d) { return d.source.y; })
-   .attr("x2", function(d) { return d.target.x; })
-   .attr("y2", function(d) { return d.target.y; });
-
-var node = vis.selectAll("circle.node")
-   .data(json.nodes)
- .enter().append("svg:circle")
-   .attr("cx", function(d) { return d.x; })
-   .attr("cy", function(d) { return d.y; })
-   .attr("r", 8)
-   .attr("rel","popover")
-   .attr("data-content",function(d) { return d.content; })
-   .attr("data-original-title",function(d) { return d.nodeName; })
-   .style("fill", function(d) { return fill(d.group); })
-   .call(force.drag);
-
-
-node.on("click",function(d) { self.location = "show?id="+d.id; });
-
-force.on("tick", function() {
- link.attr("x1", function(d) { return d.source.x; })
-     .attr("y1", function(d) { return d.source.y; })
-     .attr("x2", function(d) { return d.target.x; })
-     .attr("y2", function(d) { return d.target.y; });
-
- node.attr("cx", function(d) { return d.x; })
-     .attr("cy", function(d) { return d.y; });
-
-
-});
-
-});
-</script>
-<script type="text/javascript">
-        $(function () {
-          $("circle[rel=popover]")
-            .popover({
-              live: true,
-              animate: false,
-              html: true,
-              placement: "above"
-            })
-
-        })
-</script>
--->
 
 <style type="text/css">
   /* Layout */

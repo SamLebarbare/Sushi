@@ -24,6 +24,7 @@ function ($scope, $state, $stateParams, $modal, api)
     {
       bud.commentBox = {message: '', disabled: false};
       bud.comments   = bud.comments || [];
+
       $scope.bud = bud;
       if(bud.followers)
       {
