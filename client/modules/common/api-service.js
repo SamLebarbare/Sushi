@@ -53,6 +53,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
 
   // api http endpoints and websocket events
   api.buds = {
+    search: function (query) {
+      return $http({method: 'GET', url: apiBase + '/buds/search/'+ query,headers: headers});
+    },
     list: function () {
       return $http({method: 'GET', url: apiBase + '/buds', headers: headers});
     },

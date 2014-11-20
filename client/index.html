@@ -28,7 +28,7 @@
 </head>
 
 <body ng-controller="DashboardCtrl">
-  <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak>
+  <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak  ng-controller="SearchCtrl">
 
     <!-- Sidebar -->
 
@@ -53,6 +53,10 @@
         <li class="sidebar-title separator"><span>Actions</span></li>
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="bud.editor">New bud <span class="menu-icon fa fa-pencil-square-o"></span></a>
+        </li>
+        <li class="sidebar-title" ng-show="results.length > 0"><span>SEARCH RESULT</span></li>
+        <li class="sidebar-list">
+          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
         </li>
 
       </ul>
@@ -83,7 +87,24 @@
         <!-- Header Bar -->
 
         <div class="row header">
-          <div class="col-xs-12">
+          <div class="col-xs-2">
+            <div class="meta" breadcrumbs>
+              <div class="page">
+                {{breadcrumbs[0].text}}
+              </div>
+              <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
+                <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
+              </div>
+            </div>
+          </div>
+          <div class="col-xs-4">
+              <input type="text"
+                class="form-control input-lg"
+                ng-model="query"
+                placeholder="Search..."
+                ng-change="search(query)">
+          </div>
+          <div class="col-xs-6">
             <div class="user pull-right">
               <div class="item dropdown">
                 <a href="#" class="dropdown-toggle">
@@ -154,14 +175,6 @@
                 </ul>
               </div>
             </div>
-            <div class="meta" breadcrumbs>
-              <div class="page">
-                {{breadcrumbs[0].text}}
-              </div>
-              <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
-                <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
-              </div>
-            </div>
           </div>
         </div>
 
@@ -198,6 +211,7 @@
 <script src="/budPacks/qibud-org-ideas/view-controller.js"></script>
 <script src="/app.js"></script>
 <script src="/modules/common/common.js"></script>
+<script src="/modules/common/search-controller.js"></script>
 <script src="/modules/common/mailbox-controller.js"></script>
 <script src="/modules/common/mail-controller.js"></script>
 <script src="/modules/common/api-service.js"></script>

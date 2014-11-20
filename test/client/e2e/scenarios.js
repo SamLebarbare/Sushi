@@ -2,7 +2,7 @@
 
 /* https://github.com/angular/protractor/blob/master/docs/getting-started.md */
 
-describe('QIBUD app', function() {
+/*describe('QIBUD app', function() {
 
   browser.get('index.html');
 
@@ -10,4 +10,4 @@ describe('QIBUD app', function() {
     expect(browser.getLocationAbsUrl()).toMatch("/login.html");
   });
 
-});
+});*/

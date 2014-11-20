@@ -33,6 +33,8 @@
     "co-mongo": "~0",
     "co-request": "~0",
     "co-from-stream": "~0",
+    "elasticsearch": "3.0.0",
+    "thunkify": "2.1.2",
     "lodash": "~2",
     "oboe": "~1.15.0",
     "ws": "~0",

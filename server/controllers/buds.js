@@ -17,12 +17,16 @@ var route = require('koa-route'),
     setType           = require('../graph-entities/setTypeOnBud'),
     clearBud          = require('../graph-entities/clearBud'),
     packdata          = require('../bud-entities/packdata'),
+    indexer           = require('../indexer/addBud'),
+    unindexer         = require('../indexer/removeBud'),
+    search           = require('../indexer/searchBud'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
 
 // register koa routes
 exports.init = function (app) {
+  app.use(route.get ('/api/buds/search/:query', searchBuds));
   app.use(route.get ('/api/buds', listBuds));
   app.use(route.get ('/api/buds/:budId/view', viewBud));
   app.use(route.put ('/api/buds/:budId/update', updateBud));
@@ -42,6 +46,13 @@ exports.init = function (app) {
   app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
   app.use(route.delete ('/api/buds/:budId', deleteBud));
 };
+
+function *searchBuds(query)
+{
+  var results = yield search(query);
+  console.log(results);
+  this.body = results;
+}
 
 /**
  * Lists last 15 posts with latest 15 comments in them.
@@ -97,6 +108,7 @@ function *createBud()
   bud.qi = yield updateQi(this.user, bud, 0);
   this.status = 201;
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
+  yield indexer(bud);
 
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
@@ -152,7 +164,7 @@ function *createSubBud(parentBudId)
   delete bud._id;
   this.status = 201;
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
-
+  yield indexer(bud);
 
   //add bud in graph
   yield createBudInGraph  (this.user, bud);
@@ -241,11 +253,12 @@ function *updateBud()
     });
   }
 
-  this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-
   bud.id = bud._id;
   delete bud._id;
+
+  this.status = 201;
+  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  yield indexer(bud);
 
   ws.notify('buds.updated', bud);
 }
@@ -294,7 +307,7 @@ function *evolveBud(budId, type)
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-
+  yield indexer(bud);
   ws.notify('buds.evolved', {id: budId, type: type});
 
 }
@@ -660,7 +673,7 @@ function *deleteBud(budId)
   budId   = new ObjectID(budId);
   var bud = yield mongo.buds.findOne({_id : budId});
   bud.id = bud._id;
-  delete bud.id;
+  delete bud._id;
   if(!bud)
   {
     this.throw(403, 'Unable to find bud');
@@ -677,8 +690,8 @@ function *deleteBud(budId)
         {$pull: {subBuds: {id: bud._id, title: bud.title} } }
     );
   }
+  yield unindexer(bud);
   yield clearBud  (bud);
   yield mongo.buds.remove({_id : budId});
-
   this.status = 201;
 }

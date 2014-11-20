@@ -26,6 +26,10 @@ var platformConfig = {
     neo4j: {
       url: 'http://localhost:7474'
     },
+    es: {
+      host: 'localhost:9200',
+      log: 'trace',
+    },
     mailin: {
       port: 2500,
       webhook: 'http://localhost:3000/api/mailboxes/incoming',
@@ -52,6 +56,10 @@ var platformConfig = {
     mongo: {
       url: 'mongodb://localhost:27017/qibud'
     },
+    es: {
+      host: 'localhost:9200',
+      log: 'trace',
+    },
     neo4j: {
       url: 'http://localhost:7474/'
     },
@@ -67,6 +75,10 @@ var platformConfig = {
     },
     neo4j: {
       url: process.env.GRAPHENEDB_URL + '/'
+    },
+    es: {
+      host: process.env.BONSAI_URL,
+      log: 'trace',
     },
     mailin: {
       port: 25,
