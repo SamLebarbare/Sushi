@@ -1,12 +1,12 @@
 'use strict';
-var client        = require('./client');
+var client        = require('./es-client');
 
 module.exports = function *(bud)
 {
 
   yield client.index({
     index: 'bud',
-    type: bud.type,
+    type: 'bud',
     id: bud.id.toString(),
     body: {
       id: bud.id,

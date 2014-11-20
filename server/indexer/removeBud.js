@@ -1,5 +1,5 @@
 'use strict';
-var client        = require('./client');
+var client        = require('./es-client');
 
 module.exports = function *(bud)
 {

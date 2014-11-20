@@ -18,14 +18,12 @@ function ($scope, $state, $stateParams, $location, api)
         title: bud.title,
         content: bud.content,
         privacy: bud.privacy,
-        type : bud.type || 'Bud',
+        type : bud.type,
         disabled: false,
         action: 'update'
       };
 
-      if (bud.type) {
-        $state.go ('bud.editor.' + bud.type);
-      }
+      $scope.setType(bud.type);
     });
   }
   else
@@ -60,7 +58,7 @@ function ($scope, $state, $stateParams, $location, api)
   });
 
   $scope.setType = function (type) {
-    if(type === 'bud') {
+    if(type === 'Bud') {
       $state.go('bud.editor');
     } else {
       $state.go('bud.editor.' + type);

@@ -2,6 +2,7 @@
 
 var mongo = require('./mongo'),
     ObjectID          = mongo.ObjectID;
+var flushES           = require('../indexer/deleteAll');
 var createUser        = require('../graph-entities/userNode');
 var createBudWithUser = require('../graph-entities/userCreateBud');
 var clearGraph        = require('../graph-entities/clearGraph');
@@ -36,6 +37,8 @@ module.exports = function *(overwrite)
     yield mongo.buds.insert(buds);
 
 
+    // clear ES
+    yield flushES();
     // clear neo4j
     yield clearGraph();
 
