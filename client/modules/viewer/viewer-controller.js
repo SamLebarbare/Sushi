@@ -382,7 +382,7 @@ function ($scope, $state, $stateParams, $modal, api)
       return c.id === comment.id;
     }))
     {
-      bud.comments.push(comment);
+      $scope.bud.comments.push(comment);
     }
   });
 

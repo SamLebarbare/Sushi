@@ -88,6 +88,7 @@ var buds = [
     creator: {id: 1, name: 'Chuck Norris', picture: '/api/users/1/picture'},
     content: 'And at universe creation, chuck added the root bud...',
     privacy: 'Private',
+    qi: 0,
     createdTime: getTime(-97),
     comments: []
   }

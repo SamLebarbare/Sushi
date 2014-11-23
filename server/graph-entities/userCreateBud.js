@@ -16,6 +16,7 @@ module.exports = function *(user, bud)
   var params = { data :
     {
       bid : bud.id,
+      qi: bud.qi,
       creatorId : user.id,
       privacy : bud.privacy
     }

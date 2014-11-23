@@ -31,6 +31,7 @@ comongo.connect = function *()
   comongo.users    = yield db.collection('users');
   comongo.buds     = yield db.collection('buds');
   comongo.emails   = yield db.collection('emails');
+  comongo.events   = yield db.collection('events');
 };
 
 /**

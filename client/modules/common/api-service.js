@@ -163,6 +163,12 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     }
   };
 
+  api.events = {
+    list: function () {
+      return $http({method: 'GET', url: apiBase + '/events', headers: headers});
+    }
+  };
+
   api.types = {
     list: function () {
       return $http({method: 'GET', url: apiBase + '/types', headers: headers});

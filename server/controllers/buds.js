@@ -64,10 +64,12 @@ function *listBuds()
   var buds = yield mongo.buds.find(
       {_id: { $in: userBudsIds }}).toArray();
 
-  buds.forEach(function (bud)
-  {
+  var scope = this;
+  yield * foreach(buds, function * (bud) {
     bud.id = bud._id;
     delete bud._id;
+    bud.qi = yield updateQi(scope.user, bud, 0);
+    console.log(bud.qi);
   });
 
   this.body = buds;
@@ -83,7 +85,11 @@ function *viewBud(budId)
 
   bud.id = bud._id;
   delete bud._id;
-
+  bud.qi  = yield updateQi(this.user, bud, 0);
+  var result = yield mongo.buds.update(
+      {_id: budId},
+      {$set: {qi: bud.qi}}
+  );
   this.body = bud;
 }
 
@@ -96,7 +102,7 @@ function *createBud()
   var bud  = yield parse(this);
   bud.creator = this.user;
   bud.createdTime = new Date();
-
+  bud.qi = 0;
   var results = yield mongo.buds.insert(bud);
 
   bud.id = bud._id;
@@ -109,6 +115,16 @@ function *createBud()
   this.status = 201;
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
   yield indexer(bud);
+
+  var budCreated = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.created',
+    when: bud.createdTime
+  };
+
+  yield mongo.events.insert(budCreated);
 
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
@@ -150,6 +166,7 @@ function *createSubBud(parentBudId)
   var bud  = yield parse(this);
   bud.creator = this.user;
   bud.createdTime = new Date();
+  bud.qi = 0;
   bud.parentBud = parentBud;
 
   var results = yield mongo.buds.insert(bud);
@@ -175,6 +192,15 @@ function *createSubBud(parentBudId)
   bud.qi       = yield updateQi (this.user, bud, 0);
   parentBud.qi = yield updateQi (this.user, parentBud, 0);
 
+  var budCreated = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.created',
+    when: bud.createdTime
+  };
+
+  yield mongo.events.insert(budCreated);
 
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
@@ -260,6 +286,15 @@ function *updateBud()
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
   yield indexer(bud);
 
+  var budUpdated = {
+    actor: this.user,
+    target: bud.id,
+    type: 'buds.updated',
+    when: bud.lastUpdate
+  };
+
+  yield mongo.events.insert(budUpdated);
+
   ws.notify('buds.updated', bud);
 }
 
@@ -303,11 +338,25 @@ function *evolveBud(budId, type)
     );
     console.log('evolved in '+ type);
     yield setType(this.user, bud, type);
+
+    yield indexer(bud);
+
+    var budEvolved = {
+      actor: this.user,
+      target: bud.id,
+      qi: bud.qi,
+      type: 'buds.evolved',
+      when: new Date()
+    };
+
+    yield mongo.events.insert(budEvolved);
   }
+
+  bud.qi       = yield updateQi (this.user, bud, 0);
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-  yield indexer(bud);
+
   ws.notify('buds.evolved', {id: budId, type: type});
 
 }
@@ -338,6 +387,16 @@ function *shareBud(budId)
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  var budShared= {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.shared',
+    when: new Date()
+  };
+
+  yield mongo.events.insert(budShared);
 
   ws.notify('qi.updated', bud);
 }
@@ -376,6 +435,16 @@ function *sponsorBud()
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  var budSponsored = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.sponsored',
+    when: new Date()
+  };
+
+  yield mongo.events.insert(budSponsored);
 
   ws.notify('qi.updated', bud);
   ws.notify('buds.sponsorsChanged', bud);
@@ -456,6 +525,16 @@ function *supportBud(budId, supportValue)
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
+  var budSupported = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.supported',
+    when: new Date()
+  };
+
+  yield mongo.events.insert(budSupported);
+
   ws.notify('qi.updated', bud);
   ws.notify('buds.supportersChanged', bud);
 }
@@ -521,7 +600,7 @@ function *followBud()
 
 
   yield createUser2BudRel(this.user, bud, 'FOLLOW');
-  bud.qi = yield updateQi(this.user, bud, 0);
+  bud.qi = yield updateQi(this.user, bud, 1);
   ws.notify('qi.updated', bud);
   bud = yield mongo.buds.findOne({_id : budId});
 
@@ -530,6 +609,16 @@ function *followBud()
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+
+  var budFollowed = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.followed',
+    when: new Date()
+  };
+
+  yield mongo.events.insert(budFollowed);
 
   ws.notify('buds.followersChanged', bud);
 }
@@ -594,6 +683,16 @@ function *createComment(budId)
 
   this.status = 201;
   this.body = commentId.toString(); // we need .toString() here to return text/plain response
+
+  var budCommented = {
+    actor: this.user,
+    target: bud.id,
+    qi: bud.qi,
+    type: 'buds.commented',
+    when: new Date()
+  };
+
+  yield mongo.events.insert(budCommented);
 
   // now notify everyone about this new comment
   comment.id = comment._id;

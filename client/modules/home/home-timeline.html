@@ -1,27 +1,17 @@
-<style>
-#cy {
-  height: 100%;
-  width: 100%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: -1;
-}
-</style>
 <div class="row" ng-show="'bud.home.timeline' | isState">
-  <ul class="timeline">
+  <ul class="timeline" style="background-color: white;">
     <li ng-repeat="event in events | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-        <div class="timeline-badge" ng-click="" popover="XXX" popover-trigger="mouseenter">
+        <div class="timeline-badge" ui-sref="bud.viewer({budId : event.target})" popover="View bud" popover-trigger="mouseenter">
           <i class="fa fa-comment"></i>
         </div>
         <div class="timeline-panel">
             <div class="timeline-heading">
-                <h4 class="timeline-title">X</h4>
-                <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{event.createdTime | date:'short'}}</small>
+                <h4 class="timeline-title">{{event.actor.name}}</h4>
+                <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{event.when | date:'short'}}</small>
                 </p>
             </div>
             <div class="timeline-body">
-                <p>{{event.message}}</p>
+              <p>{{event.type}}</p>
             </div>
         </div>
     </li>

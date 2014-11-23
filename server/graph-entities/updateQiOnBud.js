@@ -26,7 +26,7 @@ module.exports = function *(user, bud, addedQi)
               "count(su) AS su_qi, " +
               "count(fo) AS fo_qi, " +
               "count(sp) AS sp_qi " +
-              "SET bud.qi = su_qi + fo_qi + sp_qi + " + addedQi + ";";
+              "SET bud.qi = bud.qi + su_qi + fo_qi + sp_qi + " + addedQi + ";";
 
 
 
@@ -34,12 +34,13 @@ module.exports = function *(user, bud, addedQi)
   var addQi = fromStream(cypher(query));
   yield addQi(true);
 
-  query = "MATCH (bud:Bud) WHERE bud.id = '" + bud.id + "' " +
+  query = "MATCH (bud:Bud) WHERE bud.bid = '" + bud.id + "' " +
           "RETURN bud.qi";
 
   var getQi = fromStream(cypher(query));
   while (data = yield getQi())
   {
+    console.log(data['bud.qi']);
     result.push(data['bud.qi']);
   }
 
