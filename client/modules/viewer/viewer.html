@@ -1,4 +1,12 @@
 <section>
+  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
+    <div class="navbar-header">
+      <h1>{{bud.title}}</h1>
+    </div>
+    <div class="container-fluid">
+      <h1 class="navbar-right">{{bud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
+    </div>
+  </nav>
   <ul class="breadcrumb" style="background-color: #f3f3f3;">
     <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
     <li>Creator : <a>{{bud.creator.name}}</a></li>
@@ -7,30 +15,7 @@
     <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
   </ul>
   <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <a class="navbar-brand" href="#">
-          <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i> {{bud.title}}
-        </a>
-      </div>
-      <div class="btn-group navbar-right" dropdown>
-        <button type="button" class="btn btn-default navbar-btn">Actions</button>
-        <button type="button" class="btn btn-default navbar-btn dropdown-toggle">
-          <span class="caret"></span>
-          <span class="sr-only">Split button!</span>
-        </button>
-        <ul class="dropdown-menu" role="menu">
-          <li><a href="#" ng-click="editSubBud()" >Add a bud here</a></li>
-          <li class="divider"></li>
-          <li ng-if="canShare()"><a href="#" ng-click="share()">Share</a></li>
-          <li ng-if="bud.creator.id == common.user.id"><a ui-sref="bud.editor({budId : bud.id})">Edit</a></li>
-          <li class="divider"></li>
-          <li><a ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)" ng-click="delete()">Delete</a></li>
-        </ul>
-      </div>
-    </div>
-    <br>
-    <tabset style="background-color: white;">
+    <tabset style="background-color: white;" justified="true">
       <tab heading="Bud">
         <br>
         <div class="clear-fix">
@@ -65,7 +50,9 @@
           </div>
         </div>
         <br>
-        <div style="background-color: white;" class="well" ng-bind-html="bud.content"></div>
+        <div style="background-color: white;" class="well" ng-bind-html="bud.content">
+
+        </div>
       </tab>
       <tab ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
         <br>
@@ -74,7 +61,10 @@
         <br>
         <div style="background-color: white;" class="well" ui-view="summary"></div>
       </tab>
-      <tab ng-if="bud.creator.id == common.user.id" heading="Evolve...">
+      <tab ng-if="bud.creator.id == common.user.id" heading="">
+        <tab-heading>
+          <i class="fa fa-puzzle-piece"></i> Evolve...
+        </tab-heading>
         <br>
         <table class="table table-hover">
           <tbody>
@@ -84,6 +74,31 @@
             </tr>
           </tbody>
         </table>
+      </tab>
+      <tab ng-if="canShare()" ng-click="share()">
+        <tab-heading>
+          <i class="fa fa-share"></i> Share...
+        </tab-heading>
+        <tbody>
+          <tr ng-repeat="user in bud.shares">
+            <td><h1>{{user.name}}</h1></td>
+          </tr>
+        </tbody>
+      </tab>
+      <tab ng-if="bud.creator.id == common.user.id" ui-sref="bud.editor({budId : bud.id})">
+        <tab-heading>
+          <i class="fa fa-edit"></i> Edit...
+        </tab-heading>
+      </tab>
+      <tab ui-sref="bud.editor({budId: null,parentBudId: bud.id})">
+        <tab-heading>
+          <i class="fa fa-share-alt"></i> Add bud...
+        </tab-heading>
+      </tab>
+      <tab ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)" ng-click="delete()">
+        <tab-heading>
+          <i class="fa fa-warning"></i> Delete...
+        </tab-heading>
       </tab>
     </tabset>
     <div class="well">
@@ -109,7 +124,7 @@
     </nav>
     <ul class="timeline">
       <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-          <div class="timeline-badge" ng-click="budify(comment.message)" popover="Budify" popover-trigger="mouseenter">
+          <div class="timeline-badge" ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" popover="Budify" popover-trigger="mouseenter">
             <i class="fa fa-comment"></i>
           </div>
           <div class="timeline-panel">

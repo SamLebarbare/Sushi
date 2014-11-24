@@ -1,4 +1,4 @@
-<div class="row" ng-show="'bud.home.timeline' | isState">
+<div class="row">
   <ul class="timeline" style="background-color: white;">
     <li ng-repeat="event in events | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
         <div class="timeline-badge" ui-sref="bud.viewer({budId : event.target})" popover="View bud" popover-trigger="mouseenter">
@@ -17,5 +17,3 @@
     </li>
   </ul>
 </div>
-<section data-ui-view>
-</section>

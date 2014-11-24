@@ -28,8 +28,12 @@ angular
           })
           .state('bud.editor.Idea', {
             url: '/idea',
-            controller: 'IdeaditorCtrl',
-            templateUrl: 'budPacks/qibud-org-ideas/edit.html',
+            views: {
+              'summary':{
+                controller: 'IdeaEditorCtrl',
+                templateUrl: 'budPacks/qibud-org-ideas/edit.html',
+              }
+            },
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Idea Editor',

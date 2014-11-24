@@ -28,8 +28,12 @@ angular
           })
           .state('bud.editor.Team', {
             url: '/team',
-            controller: 'TeamEditorCtrl',
-            templateUrl: 'budPacks/qibud-org-teams/edit.html',
+            views: {
+              'summary':{
+                controller: 'TeamEditorCtrl',
+                templateUrl: 'budPacks/qibud-org-teams/edit.html'
+              }
+            },
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Team Editor',

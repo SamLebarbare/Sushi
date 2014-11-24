@@ -1,10 +1,132 @@
-<div class="row" ng-cloak>
-    <div class="widget">
-      <div class="widget-header">
-        <i class="fa fa-edit"></i> Edit your {{bud.type ? bud.type : 'bud'}}
-        <a href="#" class="pull-right">Help</a>
+<section>
+  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
+    <div class="navbar-header">
+      <h1>
+        <input
+        type="text"
+        name="budTitle"
+        ng-disabled="budBox.disabled"
+        ng-model="budBox.title"
+        autofocus
+        required
+        class="form-control" />
+      </h1>
+    </div>
+    <div class="container-fluid">
+      <h1 class="navbar-right">{{editedBud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
+    </div>
+  </nav>
+  <ul ng-if="budBox.action == 'update'" class="breadcrumb" style="background-color: #f3f3f3;">
+    <li><span class="divider">Type: <a>{{editedBud.type || 'Bud'}}</a></span></li>
+    <li>Creator : <a>{{editedBud.creator.name}}</a></li>
+    <li><span class="divider">Privacy: <a>{{editedBud.privacy}}</a></span></li>
+    <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : editedBud.parentBud.id})" popover="{{editedBud.parentBud.type}}" popover-trigger="mouseenter">{{editedBud.parentBud.title}}</a></span></li>
+    <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in editedBud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+  </ul>
+  <ul ng-if="budBox.action == 'subbud'" class="breadcrumb" style="background-color: #f3f3f3;">
+    <li><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : parentBud.id})" popover="{{parentBud.type}}" popover-trigger="mouseenter">{{parentBud.title}}</a></span></li>
+  </ul>
+  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
+    <tabset style="background-color: white;">
+      <tab heading="Bud">
+        <br>
+        <div style="background-color: white;" class="well">
+          <textarea
+          ui-tinymce
+          ng-model="budBox.content"
+          class="form-control"
+          name="message"
+          placeholder="Type your bud here..."
+          ng-disabled="budBox.disabled">
+          </textarea>
+          <span class="help-block">
+          May the Qi be with you!
+          </span>
+        </div>
+      </tab>
+      <tab ng-repeat="pack in editedBud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
+        <br>
+        <div class="clear-fix">
+        </div>
+        <br>
+        <div style="background-color: white;" class="well" ui-view="summary"></div>
+      </tab>
+    </tabset>
+  </nav>
+  <div class="well">
+      <div class="form-group">
+        <label for=""><strong>Privacy: </strong></label>
+        <div class="radio">
+          <label>
+            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private" checked>
+            This bud is non-sharable, only visible by the creator
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private2Share">
+            Sharable for creator and current actor
+          </label>
+        </div>
+        <div class="radio">
+          <label>
+            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Free2Share">
+            Sharable for everyone
+          </label>
+        </div>
       </div>
-      <div class="widget-body">
+      <input
+      ng-if="budBox.action == 'create'"
+      class="btn btn-primary btn-xl"
+      ng-click="createBud($event)"
+      value="Create bud"
+      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+      />
+      <input
+      ng-if="budBox.action == 'update'"
+      class="btn btn-primary btn-xl"
+      ng-click="updateBud($event)"
+      value="Update bud"
+      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+      />
+      <input
+      ng-if="budBox.action == 'subbud'"
+      class="btn btn-primary btn-xl"
+      ng-click="createSubBud($event)"
+      value="Create child bud"
+      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+      />
+  </div>
+</section>
+<section id="comments" style="background-color: white;">
+    <nav class="navbar navbar-default " role="navigation">
+      <div class="container">
+        <p class="navbar-text">Comments</p>
+      </div>
+    </nav>
+    <ul class="timeline">
+      <li ng-repeat="comment in editedBud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
+          <div class="timeline-badge" ng-click="budify(comment.message)" popover="Budify" popover-trigger="mouseenter">
+            <i class="fa fa-comment"></i>
+          </div>
+          <div class="timeline-panel">
+              <div class="timeline-heading">
+                  <h4 class="timeline-title">{{comment.from.name}}</h4>
+                  <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
+                  </p>
+              </div>
+              <div class="timeline-body">
+                  <p>{{comment.message}}</p>
+              </div>
+          </div>
+      </li>
+    </ul>
+</section>
+
+<!--
+        <i class="fa fa-edit"></i> Edit your {{bud.type ? bud.type : 'bud'}}
+        <i class="fa fa-leaf"> Parent bud: {{parentBud.title}}</i>
+        <a href="#" class="pull-right">Help</a>
         <form>
           <div class="clear-fix">
             <label for="requestTitle"><strong>Bud: </strong></label>
@@ -16,16 +138,7 @@
               ng-disabled="budBox.disabled"
               ng-model="budBox.title"
               class="required" />
-              <label for="file"><strong>Add file: </strong></label>
-              <div class="input">
-                 <input class="input-file" type="file" name="file"/>
-              </div>
             </div>
-          </div>
-          <div class="clear-fix">
-            <label for="type"><strong>Bud Type: </strong></label>
-            <select ng-model="budBox.type" ng-change="setType(budBox.type)" ng-options="type.id as type.id for type in availableTypes">
-            </select>
           </div>
           <div class="clear-fix">
             <label for="content"><strong>Content: </strong></label>
@@ -44,17 +157,6 @@
             </div>
           </div>
         </form>
-      </div>
-    </div>
-    <div class="clear-fix"></div>
-    <div ng-if="budBox.action == 'update'" ui-view=""></div>
-    <div class="clear-fix"></div>
-    <div class="widget">
-      <div class="widget-header">
-        <i class="fa fa-key"></i> Choose privacy model
-        <a href="#" class="pull-right">Help</a>
-      </div>
-      <div class="widget-body">
         <div class="well">
             <div class="form-group">
               <label for=""><strong>Privacy: </strong></label>
@@ -99,33 +201,7 @@
             ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
             />
         </div>
-      </div>
-    </div>
-    <div class="widget" ng-if="parentBud">
-      <div class="widget-header">
-        <i class="fa fa-leaf"> Parent bud: {{parentBud.title}}</i>
-        <a href="#" class="pull-right">Help</a>
-      </div>
-      <div class="widget-body">
-        <div ng-bind-html="parentBud.content"></div>
-      </div>
-    </div>
-    <div class="clear-fix"></div>
-    <div class="widget">
-      <div class="widget-header">
-        <i class="fa fa-eye"></i> Bud preview
-      </div>
-      <div class="widget-body">
-        <div class="page-header">
-            <h1>{{budBox.title}}</h1>
-        </div>
-        <div ng-bind-html="budBox.content"></div>
-      </div>
-    </div>
-</div>
-
-
-
+-->
 <style type="text/css">
   /* Message box */
 

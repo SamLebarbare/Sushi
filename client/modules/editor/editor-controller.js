@@ -38,9 +38,13 @@ function ($scope, $state, $stateParams, $location, api)
     };
   }
 
-  if($stateParams.parentBud)
+  if($stateParams.parentBudId)
   {
-    $scope.parentBud = $stateParams.parentBud;
+    api.buds.view($stateParams.parentBudId).success(function (bud)
+    {
+      $scope.parentBud = bud;
+    });
+
     $scope.budBox.action = 'subbud';
   }
 
@@ -50,12 +54,6 @@ function ($scope, $state, $stateParams, $location, api)
   }
 
   $scope.editorOptions = {uiColor: '#000000'};
-  $scope.availableTypes = [];
-
-  api.types.list().success(function (types)
-  {
-    $scope.availableTypes = types;
-  });
 
   $scope.setType = function (type) {
     if(type === 'Bud') {
@@ -91,7 +89,7 @@ function ($scope, $state, $stateParams, $location, api)
       $scope.budBox.disabled = false;
 
       //redirect
-      $state.go('bud.home');
+      $state.go('bud.viewer',{budId : budId},{ reload: true });
     })
     .error(function ()
     {
@@ -125,7 +123,7 @@ function ($scope, $state, $stateParams, $location, api)
       $scope.budBox.disabled = false;
 
       //redirect
-      $state.go('bud.home');
+      $state.go('bud.viewer',{budId : budId});
     })
     .error(function ()
     {
@@ -158,7 +156,7 @@ function ($scope, $state, $stateParams, $location, api)
     api.buds.update($scope.editedBud).success(function (bud)
     {
       //redirect
-      $state.go('bud.viewer', {budId: $scope.editedBud.id});
+      $state.go('bud.viewer', {budId: $scope.editedBud.id},{ reload: true });
     })
     .error(function ()
     {

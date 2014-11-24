@@ -12,18 +12,18 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-      .state('bud.home', {
+      .state('home.stickers', {
         title: 'Dashboard',
         breadcrumb: {
           class: 'highlight',
-          text: 'Qibud',
-          stateName: 'bud.home'
+          text: 'Bud stickers',
+          stateName: 'bud.home.stickers'
         },
-        url: "/home",
-        templateUrl: 'modules/home/home.html',
+        url: "/stickers",
+        templateUrl: 'modules/home/home-stickers.html',
         controller: 'HomeCtrl'
       })
-      .state('bud.home.budgraph', {
+      .state('home.budgraph', {
         title: 'Bud Graph',
         breadcrumb: {
           class: 'highlight',
@@ -34,7 +34,7 @@ angular
         templateUrl: 'modules/home/home-budgraph.html',
         controller: 'BudgraphCtrl'
       })
-      .state('bud.home.timeline', {
+      .state('home.timeline', {
         title: 'Bud Timeline',
         breadcrumb: {
           class: 'highlight',

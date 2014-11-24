@@ -85,12 +85,14 @@ function *viewBud(budId)
 
   bud.id = bud._id;
   delete bud._id;
+
+  this.body = bud;
+
   bud.qi  = yield updateQi(this.user, bud, 0);
   var result = yield mongo.buds.update(
       {_id: budId},
       {$set: {qi: bud.qi}}
   );
-  this.body = bud;
 }
 
 /**
@@ -180,7 +182,7 @@ function *createSubBud(parentBudId)
   bud.id = bud._id;
   delete bud._id;
   this.status = 201;
-  this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
+  this.body = bud.id; // we need .toString() here to return text/plain response
   yield indexer(bud);
 
   //add bud in graph
@@ -188,9 +190,12 @@ function *createSubBud(parentBudId)
   yield createUser2BudRel (this.user, bud, 'CREATED');
   yield createBud2BudRel  (bud, parentBud, 'PARENT');
   yield createBud2BudRel  (parentBud,bud, 'CHILD');
-  //update qi
-  bud.qi       = yield updateQi (this.user, bud, 0);
-  parentBud.qi = yield updateQi (this.user, parentBud, 0);
+  //update parentqi
+  parentBud.qi = yield updateQi (this.user, parentBud, 1);
+  var result = yield mongo.buds.update(
+      {_id: parentBud.id},
+      {$set: {qi: parentBud.qi}}
+  );
 
   var budCreated = {
     actor: this.user,

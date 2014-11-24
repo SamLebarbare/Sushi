@@ -26,6 +26,8 @@ angular
       $urlRouterProvider.otherwise("/home");
       $stateProvider
           .state('bud', { abstract: true, url: '/buds', template: '<div data-ui-view></div>'});
+      $stateProvider
+            .state('home', { abstract: true, url: '/home', template: '<div data-ui-view></div>'});
     })
 
     .run(function ($location, $rootScope, $window, api) {
