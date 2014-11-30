@@ -1,9 +1,9 @@
 <section>
   <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
-    <div class="navbar-header">
-      <h1>{{bud.title}}</h1>
-    </div>
     <div class="container-fluid">
+      <div class="navbar-header">
+        <h1>{{bud.title}}</h1>
+      </div>
       <h1 class="navbar-right">{{bud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
     </div>
   </nav>
@@ -23,7 +23,7 @@
             <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">
                 {{follower ? 'Unfollow' : 'Follow'}}
             </button>
-            <button class="btn btn-group-xs" disabled>
+            <button class="btn btn-default" disabled>
                 {{followersCount}} followers
             </button>
           </div>

@@ -20,6 +20,8 @@
   <title ng-bind="common.title">QIBUD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/bower_components/bootstrap-material-design/dist/css/ripples.min.css">
+  <link rel="stylesheet" href="/bower_components/bootstrap-material-design/dist/css/material-wfont.min.css">
   <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="/responsive-dashboard/css/dashboard/dashboard.css"/>
   <link rel="stylesheet" href="/timeline.css">
@@ -35,10 +37,14 @@
     <div id="sidebar-wrapper">
       <ul class="sidebar">
         <li class="sidebar-main">
-          <a href="#" ng-click="toggleSidebar()">
+          <a ng-click="toggleSidebar()">
             QiBud Menu
             <span class="menu-icon glyphicon glyphicon-transfer"></span>
           </a>
+        </li>
+        <li class="sidebar-title" ng-show="results.length > 0"><span>SEARCH RESULT</span></li>
+        <li class="sidebar-list">
+          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
         </li>
         <li class="sidebar-title"><span>NAVIGATION</span></li>
         <li class="sidebar-list" ui-sref-active="active">
@@ -54,11 +60,6 @@
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="bud.editor">New bud <span class="menu-icon fa fa-pencil-square-o"></span></a>
         </li>
-        <li class="sidebar-title" ng-show="results.length > 0"><span>SEARCH RESULT</span></li>
-        <li class="sidebar-list">
-          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
-        </li>
-
       </ul>
       <div class="sidebar-footer">
         <div class="col-xs-4">
@@ -67,7 +68,7 @@
           </a>
         </div>
         <div class="col-xs-4">
-          <a href="#" target="_blank">
+          <a target="_blank">
             About
           </a>
         </div>
@@ -107,7 +108,7 @@
           <div class="col-xs-6">
             <div class="user pull-right">
               <div class="item dropdown">
-                <a href="#" class="dropdown-toggle">
+                <a class="dropdown-toggle">
                   <img ng-src="{{common.user.picture}}" alt="">
                 </a>
                 <ul class="dropdown-menu dropdown-menu-right">
@@ -121,7 +122,7 @@
                     </a>
                   </li>
                   <li class="link">
-                    <a href="#" ng-click="common.clearDatabase()">
+                    <a ng-click="common.clearDatabase()">
                       Clear Database
                     </a>
                   </li>
@@ -170,7 +171,7 @@
                   </script>
                   <li class="divider"></li>
                   <li ng-repeat="email in emails">
-                    <a href="#" ng-click="openEmail(email)">{{email.subject}}</a>
+                    <a ng-click="openEmail(email)">{{email.subject}}</a>
                   </li>
                 </ul>
               </div>
@@ -189,43 +190,19 @@
   </div><!-- End Page Wrapper -->
 
 <script src="/bower_components/jquery/dist/jquery.js"></script>
-<script src="/bower_components/lodash/dist/lodash.js"></script>
-<script src="/bower_components/angular/angular.js"></script>
-<script src="/bower_components/angular-sanitize/angular-sanitize.min.js"></script>
-<script src="/bower_components/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
-<script src="/bower_components/angular-ui-router/release/angular-ui-router.js"></script>
-<script src="/bower_components/ui-router-extras/release/ct-ui-router-extras.min.js"></script>
-<script src="/bower_components/angular-ui-router-breadcrumbs/dist/angular-ui-router-breadcrumbs.js"></script>
-<script src="/bower_components/angular-elastic/elastic.js"></script>
-<script src="/bower_components/angular-cookies/angular-cookies.js"></script>
+<script src="/bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
+<script src="/bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $.material.init();
+    });
+</script>
 <script src="/bower_components/cytoscape/dist/cytoscape.js"></script>
-<script type="text/javascript" src="/bower_components/tinymce/tinymce.min.js"></script>
-<script type="text/javascript" src="/bower_components/angular-ui-tinymce/src/tinymce.js"></script>
-
-<script src="/budPacks/qibud-org-teams/pack.js"></script>
-<script src="/budPacks/qibud-org-teams/edit-controller.js"></script>
-<script src="/budPacks/qibud-org-teams/view-controller.js"></script>
-<script src="/budPacks/qibud-org-ideas/pack.js"></script>
-<script src="/budPacks/qibud-org-ideas/edit-controller.js"></script>
-<script src="/budPacks/qibud-org-ideas/view-controller.js"></script>
+<script src="/bower_components/tinymce/tinymce.min.js"></script>
+<script src="/bower_components/angular/angular.min.js"></script>
+<script src="/dist/qibud-ext.js"></script>
+<script src="/dist/qibud-mods.js"></script>
+<script src="/dist/qibud-packs.js"></script>
 <script src="/app.js"></script>
-<script src="/modules/common/common.js"></script>
-<script src="/modules/common/search-controller.js"></script>
-<script src="/modules/common/mailbox-controller.js"></script>
-<script src="/modules/common/mail-controller.js"></script>
-<script src="/modules/common/api-service.js"></script>
-<script src="/modules/dashboard/dashboard.js"></script>
-<script src="/modules/home/home.js"></script>
-<script src="/modules/home/budgraph-factory.js"></script>
-<script src="/modules/home/budgraph-controller.js"></script>
-<script src="/modules/home/home-controller.js"></script>
-<script src="/modules/home/timeline-controller.js"></script>
-<script src="/modules/editor/editor.js"></script>
-<script src="/modules/editor/editor-controller.js"></script>
-<script src="/modules/viewer/viewer.js"></script>
-<script src="/modules/viewer/viewer-controller.js"></script>
-<script src="/modules/viewer/viewer-sharebox-controller.js"></script>
-<script src="/modules/profile/profile.js"></script>
-<script src="/modules/profile/profile-controller.js"></script>
 </body>
 </html>

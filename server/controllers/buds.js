@@ -83,16 +83,24 @@ function *viewBud(budId)
   budId   = new ObjectID(budId);
   var bud = yield mongo.buds.findOne({_id : budId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  if(bud)
+  {
+    bud.id = bud._id;
+    delete bud._id;
 
-  this.body = bud;
+    this.body = bud;
 
-  bud.qi  = yield updateQi(this.user, bud, 0);
-  var result = yield mongo.buds.update(
-      {_id: budId},
-      {$set: {qi: bud.qi}}
-  );
+    bud.qi  = yield updateQi(this.user, bud, 0);
+    var result = yield mongo.buds.update(
+        {_id: budId},
+        {$set: {qi: bud.qi}}
+    );
+  }
+  else
+  {
+    this.throw(404, 'Bud not found');
+  }
+
 }
 
 /**

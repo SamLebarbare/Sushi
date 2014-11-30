@@ -7,7 +7,6 @@
 angular
     .module('qibud.editor', [
       'ui.router',
-      'monospaced.elastic',
       'qibud.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {

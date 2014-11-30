@@ -1,18 +1,16 @@
 <section>
   <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
-    <div class="navbar-header">
-      <h1>
-        <input
-        type="text"
-        name="budTitle"
-        ng-disabled="budBox.disabled"
-        ng-model="budBox.title"
-        autofocus
-        required
-        class="form-control" />
-      </h1>
-    </div>
+
     <div class="container-fluid">
+      <h1><input
+      type="text"
+      name="budTitle"
+      ng-disabled="budBox.disabled"
+      ng-model="budBox.title"
+      autofocus
+      required
+      placeholder="Bud title..."
+      class="form-control input-lg" /></h1>
       <h1 class="navbar-right">{{editedBud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
     </div>
   </nav>
@@ -56,21 +54,27 @@
   <div class="well">
       <div class="form-group">
         <label for=""><strong>Privacy: </strong></label>
-        <div class="radio">
+        <div class="radio radio-primary">
           <label>
             <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private" checked>
+            <span class="circle"></span>
+            <span class="check"></span>
             This bud is non-sharable, only visible by the creator
           </label>
         </div>
-        <div class="radio">
+        <div class="radio radio-primary">
           <label>
             <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private2Share">
+            <span class="circle"></span>
+            <span class="check"></span>
             Sharable for creator and current actor
           </label>
         </div>
-        <div class="radio">
+        <div class="radio radio-primary">
           <label>
             <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Free2Share">
+            <span class="circle"></span>
+            <span class="check"></span>
             Sharable for everyone
           </label>
         </div>

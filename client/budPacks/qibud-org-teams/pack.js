@@ -10,7 +10,7 @@ angular
       'ui.bootstrap',
       'qibud.common'
     ])
-    .config(function ($stateProvider, $stickyStateProvider, $urlRouterProvider) {
+    .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
           .state('bud.viewer.Team', {
             url: '/team',

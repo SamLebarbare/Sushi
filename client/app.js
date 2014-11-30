@@ -11,7 +11,6 @@ angular
       'ui.tinymce',
       'ui.router',
       'ui.router.breadcrumbs',
-      'ct.ui.router.extras',
       'qibud.common',
       'qibud.dashboard',
       'qibud.home',
@@ -19,7 +18,8 @@ angular
       'qibud.editor',
       'qibud.profile',
       'qibud.org.teams',
-      'qibud.org.ideas'
+      'qibud.org.ideas',
+      'qibud.org.missions'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {

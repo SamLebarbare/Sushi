@@ -26,6 +26,10 @@ function *listTypes() {
     {
       id:'Idea',
       desc:'Starting point for innovation, can be primed'
+    },
+    {
+      id:'Mission',
+      desc:'Define your strategy with some missions'
     }
   ];
   //TODO: dynload budPacks
