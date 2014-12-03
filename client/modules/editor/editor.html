@@ -1,46 +1,99 @@
 <section>
-  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
-
+  <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
+    <div class="navbar-header">
+      <h1 class="jumbotron">{{budBox.title}}</h1>
+      <ul ng-if="budBox.action == 'update'" class="breadcrumb shadow-z-2" style="background-color: #f3f3f3;">
+        <li><span class="divider">Type: <a>{{editedBud.type || 'Bud'}}</a></span></li>
+        <li>Creator : <a>{{editedBud.creator.name}}</a></li>
+        <li><span class="divider">Privacy: <a>{{budBox.privacy}}</a></span></li>
+        <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : editedBud.parentBud.id})" popover="{{editedBud.parentBud.type}}" popover-trigger="mouseenter">{{editedBud.parentBud.title}}</a></span></li>
+        <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in editedBud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+      </ul>
+    </div>
     <div class="container-fluid">
-      <h1><input
-      type="text"
-      name="budTitle"
-      ng-disabled="budBox.disabled"
-      ng-model="budBox.title"
-      autofocus
-      required
-      placeholder="Bud title..."
-      class="form-control input-lg" /></h1>
       <h1 class="navbar-right">{{editedBud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
     </div>
   </nav>
-  <ul ng-if="budBox.action == 'update'" class="breadcrumb" style="background-color: #f3f3f3;">
-    <li><span class="divider">Type: <a>{{editedBud.type || 'Bud'}}</a></span></li>
-    <li>Creator : <a>{{editedBud.creator.name}}</a></li>
-    <li><span class="divider">Privacy: <a>{{editedBud.privacy}}</a></span></li>
-    <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : editedBud.parentBud.id})" popover="{{editedBud.parentBud.type}}" popover-trigger="mouseenter">{{editedBud.parentBud.title}}</a></span></li>
-    <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in editedBud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
-  </ul>
   <ul ng-if="budBox.action == 'subbud'" class="breadcrumb" style="background-color: #f3f3f3;">
     <li><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : parentBud.id})" popover="{{parentBud.type}}" popover-trigger="mouseenter">{{parentBud.title}}</a></span></li>
   </ul>
-  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
-    <tabset style="background-color: white;">
+  <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
+    <tabset style="background-color: white;" justified="true">
       <tab heading="Bud">
         <br>
-        <div style="background-color: white;" class="well">
-          <textarea
-          ui-tinymce
-          ng-model="budBox.content"
-          class="form-control"
-          name="message"
-          placeholder="Type your bud here..."
-          ng-disabled="budBox.disabled">
-          </textarea>
-          <span class="help-block">
-          May the Qi be with you!
-          </span>
+        <div class="clear-fix">
         </div>
+        <br>
+        <div style="background-color: white;" class="well">
+          <div class="form-control-wrapper">
+            <input class="form-control input-lg"
+            type="text"
+            name="budTitle"
+            ng-disabled="budBox.disabled"
+            ng-model="budBox.title"
+            autofocus
+            required />
+            <div class="floating-label">Your bud title</div>
+            <span class="material-input"></span>
+
+          </div>
+          <div class="form-control-wrapper">
+            <textarea
+            ui-tinymce
+            ng-model="budBox.content"
+            class="form-control"
+            name="message"
+            placeholder="Type your bud here..."
+            ng-disabled="budBox.disabled">
+            </textarea>
+            <span class="help-block">
+            May the Qi be with you!
+            </span>
+          </div>
+          <input
+          ng-if="budBox.action == 'create'"
+          class="btn btn-primary btn-xl btn-raised"
+          ng-click="createBud($event)"
+          value="Create bud"
+          ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+          />
+          <input
+          ng-if="budBox.action == 'update'"
+          class="btn btn-primary btn-xl btn-raised"
+          ng-click="updateBud($event)"
+          value="Update bud"
+          ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+          />
+          <input
+          ng-if="budBox.action == 'subbud'"
+          class="btn btn-primary btn-xl btn-raised"
+          ng-click="createSubBud($event)"
+          value="Create child bud"
+          ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+          />
+        </div>
+        <nav class="navbar navbar-default " role="navigation">
+          <div class="container">
+            <p class="navbar-text">Comments</p>
+          </div>
+        </nav>
+        <ul class="timeline">
+          <li ng-repeat="comment in editedBud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
+              <div class="timeline-badge" ng-click="budify(comment.message)" popover="Budify" popover-trigger="mouseenter">
+                <i class="fa fa-comment"></i>
+              </div>
+              <div class="timeline-panel">
+                  <div class="timeline-heading">
+                      <h4 class="timeline-title">{{comment.from.name}}</h4>
+                      <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
+                      </p>
+                  </div>
+                  <div class="timeline-body">
+                      <p>{{comment.message}}</p>
+                  </div>
+              </div>
+          </li>
+        </ul>
       </tab>
       <tab ng-repeat="pack in editedBud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
         <br>
@@ -49,82 +102,43 @@
         <br>
         <div style="background-color: white;" class="well" ui-view="summary"></div>
       </tab>
+      <tab heading="Privacy">
+        <br>
+        <div class="clear-fix">
+        </div>
+        <br>
+        <div class="well">
+            <div class="form-group">
+              <label for=""><strong>Privacy: </strong></label>
+              <div class="radio radio-primary">
+                <label>
+                  <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private" checked>
+                  <span class="circle"></span>
+                  <span class="check"></span>
+                  This bud is non-sharable, only visible by the creator
+                </label>
+              </div>
+              <div class="radio radio-primary">
+                <label>
+                  <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private2Share">
+                  <span class="circle"></span>
+                  <span class="check"></span>
+                  Sharable for creator and current actor
+                </label>
+              </div>
+              <div class="radio radio-primary">
+                <label>
+                  <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Free2Share">
+                  <span class="circle"></span>
+                  <span class="check"></span>
+                  Sharable for everyone
+                </label>
+              </div>
+            </div>
+        </div>
+      </tab>
     </tabset>
   </nav>
-  <div class="well">
-      <div class="form-group">
-        <label for=""><strong>Privacy: </strong></label>
-        <div class="radio radio-primary">
-          <label>
-            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private" checked>
-            <span class="circle"></span>
-            <span class="check"></span>
-            This bud is non-sharable, only visible by the creator
-          </label>
-        </div>
-        <div class="radio radio-primary">
-          <label>
-            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private2Share">
-            <span class="circle"></span>
-            <span class="check"></span>
-            Sharable for creator and current actor
-          </label>
-        </div>
-        <div class="radio radio-primary">
-          <label>
-            <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Free2Share">
-            <span class="circle"></span>
-            <span class="check"></span>
-            Sharable for everyone
-          </label>
-        </div>
-      </div>
-      <input
-      ng-if="budBox.action == 'create'"
-      class="btn btn-primary btn-xl"
-      ng-click="createBud($event)"
-      value="Create bud"
-      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
-      />
-      <input
-      ng-if="budBox.action == 'update'"
-      class="btn btn-primary btn-xl"
-      ng-click="updateBud($event)"
-      value="Update bud"
-      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
-      />
-      <input
-      ng-if="budBox.action == 'subbud'"
-      class="btn btn-primary btn-xl"
-      ng-click="createSubBud($event)"
-      value="Create child bud"
-      ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
-      />
-  </div>
-</section>
-<section id="comments" style="background-color: white;">
-    <nav class="navbar navbar-default " role="navigation">
-      <div class="container">
-        <p class="navbar-text">Comments</p>
-      </div>
-    </nav>
-    <ul class="timeline">
-      <li ng-repeat="comment in editedBud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-          <div class="timeline-badge" ng-click="budify(comment.message)" popover="Budify" popover-trigger="mouseenter">
-            <i class="fa fa-comment"></i>
-          </div>
-          <div class="timeline-panel">
-              <div class="timeline-heading">
-                  <h4 class="timeline-title">{{comment.from.name}}</h4>
-                  <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
-                  </p>
-              </div>
-              <div class="timeline-body">
-                  <p>{{comment.message}}</p>
-              </div>
-          </div>
-      </li>
-    </ul>
 </section>
 
 <!--

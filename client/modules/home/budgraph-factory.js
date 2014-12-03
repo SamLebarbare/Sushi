@@ -59,7 +59,8 @@ angular
                   'text-valign': 'center',
                   'text-outline-width': 2,
                   'background-color': 'data(faveColor)',
-                  'color': '#fff'
+                  'color': '#fff',
+                  'box-shadow': '0 10px 18px rgba(0,0,0,.22),0 14px 45px rgba(0,0,0,.25)'
                 })
               .selector(':selected')
                 .css({

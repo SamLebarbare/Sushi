@@ -20,16 +20,16 @@
   <title ng-bind="common.title">QIBUD</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.css">
+  <link rel="stylesheet" href="/responsive-dashboard/css/dashboard/dashboard.css"/>
   <link rel="stylesheet" href="/bower_components/bootstrap-material-design/dist/css/ripples.min.css">
   <link rel="stylesheet" href="/bower_components/bootstrap-material-design/dist/css/material-wfont.min.css">
   <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
-  <link rel="stylesheet" href="/responsive-dashboard/css/dashboard/dashboard.css"/>
   <link rel="stylesheet" href="/timeline.css">
   <!-- <link rel="stylesheet" href="/app.css"> -->
 
 </head>
 
-<body ng-controller="DashboardCtrl">
+<body ng-controller="DashboardCtrl" style="background-color: white;">
   <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak  ng-controller="SearchCtrl">
 
     <!-- Sidebar -->
@@ -82,8 +82,8 @@
 
     <!-- End Sidebar -->
 
-    <div id="content-wrapper">
-      <div class="page-content">
+    <div id="content-wrapper" >
+      <div class="page-content" style="background-color: white;">
 
         <!-- Header Bar -->
 
@@ -197,12 +197,13 @@
         $.material.init();
     });
 </script>
+
 <script src="/bower_components/cytoscape/dist/cytoscape.js"></script>
 <script src="/bower_components/tinymce/tinymce.min.js"></script>
 <script src="/bower_components/angular/angular.min.js"></script>
-<script src="/dist/qibud-ext.js"></script>
-<script src="/dist/qibud-mods.js"></script>
-<script src="/dist/qibud-packs.js"></script>
+<script src="/res/qibud-ext.js"></script>
+<script src="/res/qibud-mods.js"></script>
+<script src="/res/qibud-packs.js"></script>
 <script src="/app.js"></script>
 </body>
 </html>

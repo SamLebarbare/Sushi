@@ -6,7 +6,7 @@ module.exports = {
       packs: path.join(__dirname, '/budPacks/packs-deps.js'),
   },
   output: {
-      path: path.join(__dirname, 'dist'),
+      path: path.join(__dirname, 'res'),
       filename: "qibud-[name].js"
   },
   resolve: {

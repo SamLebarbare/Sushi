@@ -1,20 +1,22 @@
+
 <section>
   <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
     <div class="container-fluid">
       <div class="navbar-header">
-        <h1>{{bud.title}}</h1>
+        <h1 class="jumbotron">{{bud.title}}</h1>
+        <ul class="breadcrumb shadow-z-2" style="background-color: #f3f3f3;">
+          <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
+          <li>Creator : <a>{{bud.creator.name}}</a></li>
+          <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
+          <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></span></li>
+          <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+        </ul>
       </div>
-      <h1 class="navbar-right">{{bud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
+
+      <h1 class="navbar-right"><i class="glyphicon glyphicon-leaf">{{bud.qi}}</i></h1>
     </div>
   </nav>
-  <ul class="breadcrumb" style="background-color: #f3f3f3;">
-    <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
-    <li>Creator : <a>{{bud.creator.name}}</a></li>
-    <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
-    <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></span></li>
-    <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
-  </ul>
-  <nav class="navbar navbar-default" role="navigation" style="background-color: white;">
+  <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
     <tabset style="background-color: white;" justified="true">
       <tab heading="Bud">
         <br>
@@ -53,6 +55,41 @@
         <div style="background-color: white;" class="well" ng-bind-html="bud.content">
 
         </div>
+        <div class="well">
+            <label for="content">Your comment : </label>
+            <div class="input">
+              <textarea
+                msd-elastic
+                ng-model="bud.commentBox.message"
+                ng-keypress="createComment($event, bud)"
+                ng-disabled="bud.commentBox.disabled"
+                class="form-control"
+                placeholder="Write a comment...">
+              </textarea>
+            </div>
+        </div>
+        <nav class="navbar navbar-default " role="navigation">
+          <div class="container">
+            <p class="navbar-text">Comments</p>
+          </div>
+        </nav>
+        <ul class="timeline">
+          <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
+              <div class="timeline-badge" ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" popover="Budify" popover-trigger="mouseenter">
+                <i class="fa fa-comment"></i>
+              </div>
+              <div class="timeline-panel">
+                  <div class="timeline-heading">
+                      <h4 class="timeline-title">{{comment.from.name}}</h4>
+                      <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
+                      </p>
+                  </div>
+                  <div class="timeline-body">
+                      <p>{{comment.message}}</p>
+                  </div>
+              </div>
+          </li>
+        </ul>
       </tab>
       <tab ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
         <br>
@@ -95,50 +132,26 @@
           <i class="fa fa-share-alt"></i> Add bud...
         </tab-heading>
       </tab>
-      <tab ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)" ng-click="delete()">
+      <tab class="navbar-warning" ng-if="bud.creator.id == common.user.id && (!bud.subBuds || bud.subBuds.length == 0)">
         <tab-heading>
           <i class="fa fa-warning"></i> Delete...
         </tab-heading>
+        <div class="togglebutton">
+          <label>
+            Unlock
+            <input type="checkbox" ng-model="unlocked">
+            <span class="toggle"></span>
+          </label>
+          <button class="btn btn-danger btn-raised" ng-click="delete()" ng-disabled="!unlocked">Delete</button>
+        </div>
+
+
       </tab>
     </tabset>
-    <div class="well">
-        <label for="content">Your comment : </label>
-        <div class="input">
-          <textarea
-            msd-elastic
-            ng-model="bud.commentBox.message"
-            ng-keypress="createComment($event, bud)"
-            ng-disabled="bud.commentBox.disabled"
-            class="form-control"
-            placeholder="Write a comment...">
-          </textarea>
-        </div>
-    </div>
   </nav>
 </section>
 <section id="comments" style="background-color: white;">
-    <nav class="navbar navbar-default " role="navigation">
-      <div class="container">
-        <p class="navbar-text">Comments</p>
-      </div>
-    </nav>
-    <ul class="timeline">
-      <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-          <div class="timeline-badge" ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" popover="Budify" popover-trigger="mouseenter">
-            <i class="fa fa-comment"></i>
-          </div>
-          <div class="timeline-panel">
-              <div class="timeline-heading">
-                  <h4 class="timeline-title">{{comment.from.name}}</h4>
-                  <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
-                  </p>
-              </div>
-              <div class="timeline-body">
-                  <p>{{comment.message}}</p>
-              </div>
-          </div>
-      </li>
-    </ul>
+
 </section>
 <script type="text/ng-template" id="sharebox.html">
     <div class="modal-header">

@@ -1,6 +1,6 @@
 <div class="row">
-    <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in buds" id="bud_{{bud.id}}">
-      <div class="widget">
+    <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in buds | orderBy: bud.qi : reverse" id="bud_{{bud.id}}">
+      <div class="widget shadow-z-5">
         <div class="widget-body">
           <div class="widget-icon green pull-left">
             <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i>
