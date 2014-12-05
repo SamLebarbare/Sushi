@@ -10,12 +10,18 @@ function ($scope, $state, $stateParams, api)
   console.log("MissionViewerCtrl start...");
   var user       = $scope.common.user;
   $scope.packData = {
+    state: 'Waiting for projects',
+    projects: [],
+    team: null
   };
 
   api.buds.budPacksData.get($scope.bud.id, 'Mission')
     .success(function (packData)
     {
-
+      if(packData.state) {
+        console.log('packdata loaded');
+        $scope.packData = packData;
+      }
     });
 
 });

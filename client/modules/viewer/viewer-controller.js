@@ -108,7 +108,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.delete = function () {
     api.buds.delete($scope.bud.id).success(function (){
-      $state.go('bud.home');
+      $state.go('home.stickers');
     });
   };
 

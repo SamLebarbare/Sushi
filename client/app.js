@@ -22,7 +22,7 @@ angular
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {
-      $urlRouterProvider.otherwise("/home");
+      $urlRouterProvider.otherwise("/home/stickers");
       $stateProvider
           .state('bud', { abstract: true, url: '/buds', template: '<div data-ui-view></div>'});
       $stateProvider

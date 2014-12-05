@@ -44,39 +44,21 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(19);
-	__webpack_require__(20);
-	__webpack_require__(21);
+	__webpack_require__(1);
+	__webpack_require__(2);
+	__webpack_require__(3);
 
-	__webpack_require__(22);
-	__webpack_require__(23);
-	__webpack_require__(24);
+	__webpack_require__(4);
+	__webpack_require__(5);
+	__webpack_require__(6);
 
-	__webpack_require__(25);
-	__webpack_require__(26);
-	__webpack_require__(27);
+	__webpack_require__(7);
+	__webpack_require__(8);
+	__webpack_require__(9);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -125,7 +107,7 @@
 
 
 /***/ },
-/* 20 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -186,7 +168,7 @@
 
 
 /***/ },
-/* 21 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -216,7 +198,7 @@
 
 
 /***/ },
-/* 22 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -265,7 +247,7 @@
 
 
 /***/ },
-/* 23 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -277,16 +259,35 @@
 	angular.module('qibud.org.missions').controller('MissionEditorCtrl',
 	function ($scope, $state, $stateParams, $location, api)
 	{
+	  console.log("MissionEditorCtrl start...");
 	  var user        = $scope.common.user;
 	  $scope.packData = {
-
+	    state: 'Waiting for projects',
+	    projects: [],
+	    team: null
 	  };
+
+	  api.buds.budPacksData.get($scope.editedBud.id, 'Mission')
+	    .success(function (packData)
+	    {
+
+	      if(packData.state) {
+	        $scope.packData = packData;
+	        console.log('packdata found:' + packData);
+	      } else {
+	        api.buds.budPacksData.create($scope.editedBud.id, $scope.packData, 'Mission');
+	      }
+	    })
+	    .error(function ()
+	    {
+	      console.log('error while loading packdata');
+	    });
 
 	});
 
 
 /***/ },
-/* 24 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -301,19 +302,25 @@
 	  console.log("MissionViewerCtrl start...");
 	  var user       = $scope.common.user;
 	  $scope.packData = {
+	    state: 'Waiting for projects',
+	    projects: [],
+	    team: null
 	  };
 
 	  api.buds.budPacksData.get($scope.bud.id, 'Mission')
 	    .success(function (packData)
 	    {
-
+	      if(packData.state) {
+	        console.log('packdata loaded');
+	        $scope.packData = packData;
+	      }
 	    });
 
 	});
 
 
 /***/ },
-/* 25 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -362,7 +369,7 @@
 
 
 /***/ },
-/* 26 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -383,7 +390,7 @@
 
 
 /***/ },
-/* 27 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

@@ -330,14 +330,20 @@ function *evolveBud(budId, type)
     this.throw(403, 'You are not the creator of this bud');
   }
 
-  if(bud.types && bud.types.indexOf(type) !== -1)
+  var evolveNeeded = true;
+  if(bud.types)
   {
-    var result = yield mongo.buds.update(
-        {_id: budId},
-        {$set: {type: type}});
-    console.log('restored in '+ type);
+    if(bud.types.indexOf(type) !== -1)
+    {
+      var result = yield mongo.buds.update(
+          {_id: budId},
+          {$set: {type: type}});
+      console.log('restored in '+ type);
+      evolveNeeded = false;
+    }
   }
-  else
+
+  if(evolveNeeded)
   {
     var packData = {
       type : type,
@@ -346,9 +352,12 @@ function *evolveBud(budId, type)
 
     var result = yield mongo.buds.update(
         {_id: budId},
-        {$push: {types: type, budPacksData: packData}},
-        {$set: {type: type}}
+        {$push: {types: type, budPacksData: packData}}
     );
+
+    result = yield mongo.buds.update(
+        {_id: budId},
+        {$set: {type: type}});
     console.log('evolved in '+ type);
     yield setType(this.user, bud, type);
 
@@ -725,21 +734,36 @@ function *createPackData(budId, type)
   budId      = new ObjectID(budId);
 
   var result = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
+  console.log('XXX:' + JSON.stringify(result));
   if(result) {
-    this.throw(403, 'Packdata already initialized');
-  }
-  var packData   = {
-    type: type,
-    data: yield parse(this)
-  };
-  // update bud document with the new packData
-  var result = yield mongo.buds.update(
-      {_id: budId},
-      {$push: {budPacksData: packData}}
-  );
+    // update bud document with the new packData
+    var data = yield parse(this);
+    result = yield mongo.buds.update(
+        {_id: budId,'budPacksData.type' : type},
+        {$set: {'budPacksData.$.data': data}}
+    );
 
-  this.status = 201;
-  ws.notify('buds.budPacksData.created');
+    this.status = 201;
+    this.body = result;
+    ws.notify('buds.budPacksData.updated', budId);
+  }
+  else
+  {
+    var packData   = {
+      type: type,
+      data: yield parse(this)
+    };
+    console.log('create packdata:' + JSON.stringify(packData));
+    // update bud document with the new packData
+    var result = yield mongo.buds.update(
+        {_id: budId},
+        {$push: {budPacksData: packData}}
+    );
+
+    this.status = 201;
+    ws.notify('buds.budPacksData.created');
+  }
+
 }
 
 /**
@@ -806,4 +830,5 @@ function *deleteBud(budId)
   yield clearBud  (bud);
   yield mongo.buds.remove({_id : budId});
   this.status = 201;
+  this.body = "deleted";
 }

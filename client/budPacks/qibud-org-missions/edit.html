@@ -1,9 +1,10 @@
-<div class="widget">
-  <div class="widget-header">
-    <i class="fa fa-edit"></i> Edit Mission
-    <a href="#" class="pull-right">Help</a>
-  </div>
-  <div class="widget-body">
-
+<h1>State: {{packData.state}}</h1>
+<h1>Team : {{packData.team}}</h1>
+<h1>Projects:</h1>
+<div ng-repeat="project in packData.projects">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      {{project.title}}
+    </div>
   </div>
 </div>
