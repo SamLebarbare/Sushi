@@ -41,7 +41,8 @@
     "forever": "~0",
     "bower": "~1",
     "grunt-cli": "~0",
-    "mailin": "^1.0.0"
+    "mailin": "^1.0.0",
+    "cypher-stream":"~0"
   },
   "devDependencies": {
     "grunt-env": "~0",

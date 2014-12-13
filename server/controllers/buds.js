@@ -13,6 +13,7 @@ var route = require('koa-route'),
     createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
+    getRelatedChilds  = require('../graph-entities/getRelatedChildBuds'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
     setType           = require('../graph-entities/setTypeOnBud'),
     clearBud          = require('../graph-entities/clearBud'),
@@ -29,6 +30,7 @@ exports.init = function (app) {
   app.use(route.get ('/api/buds/search/:query', searchBuds));
   app.use(route.get ('/api/buds', listBuds));
   app.use(route.get ('/api/buds/:budId/view', viewBud));
+  app.use(route.get ('/api/buds/:budId/child/:type', relatedChilds));
   app.use(route.put ('/api/buds/:budId/update', updateBud));
   app.use(route.put ('/api/buds/:budId/share', shareBud));
   app.use(route.put ('/api/buds/:budId/follow', followBud));
@@ -52,6 +54,20 @@ function *searchBuds(query)
   var results = yield search(query);
   console.log(results);
   this.body = results;
+}
+
+
+/**
+* Find related labeled buds following neo4j CHILD relationships
+*/
+function *relatedChilds(budId, type)
+{
+  var relatedBudsIds = yield getRelatedChilds(budId,type);
+  console.log(relatedBudsIds);
+  var buds = yield mongo.buds.find(
+      {_id: { $in: relatedBudsIds }}).toArray();
+
+  this.body = buds;
 }
 
 /**
@@ -197,7 +213,7 @@ function *createSubBud(parentBudId)
   yield createBudInGraph  (this.user, bud);
   yield createUser2BudRel (this.user, bud, 'CREATED');
   yield createBud2BudRel  (bud, parentBud, 'PARENT');
-  yield createBud2BudRel  (parentBud,bud, 'CHILD');
+  yield createBud2BudRel  (parentBud, bud, 'CHILD');
   //update parentqi
   parentBud.qi = yield updateQi (this.user, parentBud, 1);
   var result = yield mongo.buds.update(
@@ -819,7 +835,6 @@ function *deleteBud(budId)
     this.throw(403, 'You are not the creator of this bud');
   }
   if(bud.parentBud) {
-    //embbed sub bud in document
     var parentBudId = bud.parentBud.id;
     yield mongo.buds.update(
         {_id: parentBudId},

@@ -44,42 +44,33 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1);
+	__webpack_require__(2);
+	__webpack_require__(3);
+	__webpack_require__(4);
+	__webpack_require__(5);
+
+	__webpack_require__(6);
+
+	__webpack_require__(7);
+	__webpack_require__(8);
+
+	__webpack_require__(9);
 	__webpack_require__(10);
 	__webpack_require__(11);
 	__webpack_require__(12);
 	__webpack_require__(13);
-	__webpack_require__(14);
 
+	__webpack_require__(14);
 	__webpack_require__(15);
 
 	__webpack_require__(16);
 	__webpack_require__(17);
-
 	__webpack_require__(18);
-	__webpack_require__(19);
-	__webpack_require__(20);
-	__webpack_require__(21);
-	__webpack_require__(22);
-
-	__webpack_require__(23);
-	__webpack_require__(24);
-
-	__webpack_require__(25);
-	__webpack_require__(26);
-	__webpack_require__(27);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -92,7 +83,7 @@
 
 
 /***/ },
-/* 11 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -118,7 +109,7 @@
 
 
 /***/ },
-/* 12 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -153,7 +144,7 @@
 
 
 /***/ },
-/* 13 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -173,7 +164,7 @@
 
 
 /***/ },
-/* 14 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -233,6 +224,9 @@
 	  api.buds = {
 	    search: function (query) {
 	      return $http({method: 'GET', url: apiBase + '/buds/search/'+ query,headers: headers});
+	    },
+	    childrenByType: function (budId,type) {
+	      return $http({method: 'GET', url: apiBase + '/buds/'+ budId + '/child/' + type, headers: headers});
 	    },
 	    list: function () {
 	      return $http({method: 'GET', url: apiBase + '/buds', headers: headers});
@@ -379,7 +373,7 @@
 
 
 /***/ },
-/* 15 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	angular.module('qibud.dashboard',[]).controller('DashboardCtrl', ['$scope', '$cookieStore', DashboardCtrl]);
@@ -431,7 +425,7 @@
 
 
 /***/ },
-/* 16 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -462,7 +456,7 @@
 
 
 /***/ },
-/* 17 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -644,7 +638,7 @@
 
 
 /***/ },
-/* 18 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -697,7 +691,7 @@
 
 
 /***/ },
-/* 19 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -756,7 +750,7 @@
 
 
 /***/ },
-/* 20 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -914,7 +908,7 @@
 
 
 /***/ },
-/* 21 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -985,7 +979,7 @@
 
 
 /***/ },
-/* 22 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1007,7 +1001,7 @@
 
 
 /***/ },
-/* 23 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1038,7 +1032,7 @@
 
 
 /***/ },
-/* 24 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1054,7 +1048,7 @@
 
 
 /***/ },
-/* 25 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1097,7 +1091,7 @@
 
 
 /***/ },
-/* 26 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1128,6 +1122,7 @@
 	      bud.comments   = bud.comments || [];
 
 	      $scope.bud = bud;
+	      $scope.showType ($scope.bud.type, false);
 	      if(bud.followers)
 	      {
 	          $scope.followersCount = bud.followers.length;
@@ -1180,7 +1175,10 @@
 	      }
 
 	      $scope.ready = true;
+
 	    });
+
+
 	  }
 	  //Init view
 	  $scope.load();
@@ -1513,7 +1511,7 @@
 
 
 /***/ },
-/* 27 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

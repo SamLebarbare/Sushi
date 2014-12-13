@@ -24,20 +24,20 @@ angular
               class: 'highlight',
               text: 'Bud Mission',
               stateName: 'bud.viewer.Mission'
-            },
+            }
           })
           .state('bud.editor.Mission', {
             url: '/mission',
             views: {
               'summary':{
-                controller: 'MissionEditorCtrl',
-                templateUrl: 'budPacks/qibud-org-missions/edit.html',
+                controller: 'MissionViewerCtrl',
+                templateUrl: 'budPacks/qibud-org-missions/view.html',
               }
             },
             breadcrumb: {
               class: 'highlight',
               text: 'Bud Mission Editor',
               stateName: 'bud.editor.Mission'
-            },
+            }
           });
     });

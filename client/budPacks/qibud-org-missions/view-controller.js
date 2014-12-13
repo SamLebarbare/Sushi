@@ -8,7 +8,7 @@ angular.module('qibud.org.missions').controller('MissionViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   console.log("MissionViewerCtrl start...");
-  var user       = $scope.common.user;
+  var user        = $scope.common.user;
   $scope.packData = {
     state: 'Waiting for projects',
     projects: [],
@@ -19,9 +19,26 @@ function ($scope, $state, $stateParams, api)
     .success(function (packData)
     {
       if(packData.state) {
-        console.log('packdata loaded');
         $scope.packData = packData;
+        console.log('packdata found:' + packData);
+        api.buds.childrenByType ($scope.bud.id, 'Project')
+          .success(function (projects)
+          {
+            $scope.packData.projects = projects;
+            if(projects.length > 0)
+            {
+              $scope.packData.state = 'Started';
+            }
+
+            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
+          });
+      } else {
+        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Mission');
       }
+    })
+    .error(function ()
+    {
+      console.log('error while loading packdata');
     });
 
 });

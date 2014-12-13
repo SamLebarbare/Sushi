@@ -1,7 +1,7 @@
 'use strict';
 var config = require('../config/config');
 var fromStream = require('co-from-stream');
-var cypher = require('../../cypher-stream')(config.neo4j.url);
+var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
@@ -12,10 +12,13 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
  */
 module.exports = function *(user, bud, rel)
 {
+  var transaction = cypher.transaction();
   var query = "MATCH (b:Bud),(u:User) "
   +"WHERE b.bid = '" + bud.id + "' AND u.uid = " + user.id
   +" CREATE (u)-[:" + rel + "]->(b);";
   console.log(query);
-  var createRel = fromStream(cypher(query));
+  transaction.write(query);
+  transaction.commit();
+  var createRel = fromStream(transaction);
   while(yield createRel());
 };

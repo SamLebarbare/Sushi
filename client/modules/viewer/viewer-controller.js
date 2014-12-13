@@ -26,6 +26,7 @@ function ($scope, $state, $stateParams, $modal, api)
       bud.comments   = bud.comments || [];
 
       $scope.bud = bud;
+      $scope.showType ($scope.bud.type, false);
       if(bud.followers)
       {
           $scope.followersCount = bud.followers.length;
@@ -78,7 +79,10 @@ function ($scope, $state, $stateParams, $modal, api)
       }
 
       $scope.ready = true;
+
     });
+
+
   }
   //Init view
   $scope.load();

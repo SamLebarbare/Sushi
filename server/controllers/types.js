@@ -19,17 +19,26 @@ exports.init = function (app) {
  */
 function *listTypes() {
   var types = [
-    {
-      id:'Team',
-      desc:'Create team for your organisation, team can be used to share bud to team members'
-    },
+
     {
       id:'Idea',
       desc:'Starting point for innovation, can be primed'
     },
     {
+      id:'Action',
+      desc:'Describe work and engage people under a project'
+    },
+    {
+      id:'Project',
+      desc:'Attach project to mission for defining the way to goal'
+    },
+    {
       id:'Mission',
       desc:'Define your strategy with some missions'
+    },
+    {
+      id:'Team',
+      desc:'Create team for your organisation, team can be used to share bud to team members'
     }
   ];
   //TODO: dynload budPacks

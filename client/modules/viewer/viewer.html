@@ -18,6 +18,13 @@
   </nav>
   <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
     <tabset style="background-color: white;" justified="true">
+      <tab active="true" ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
+        <br>
+        <div class="clear-fix">
+        </div>
+        <br>
+        <div style="background-color: white;" class="well" ui-view="summary"></div>
+      </tab>
       <tab heading="Bud">
         <br>
         <div class="clear-fix">
@@ -90,13 +97,6 @@
               </div>
           </li>
         </ul>
-      </tab>
-      <tab ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
-        <br>
-        <div class="clear-fix">
-        </div>
-        <br>
-        <div style="background-color: white;" class="well" ui-view="summary"></div>
       </tab>
       <tab ng-if="bud.creator.id == common.user.id" heading="">
         <tab-heading>

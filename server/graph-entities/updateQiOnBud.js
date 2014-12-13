@@ -1,7 +1,7 @@
 'use strict';
 var config = require('../config/config');
 var fromStream = require('co-from-stream');
-var cypher = require('../../cypher-stream')(config.neo4j.url);
+var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
@@ -13,11 +13,11 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
 module.exports = function *(user, bud, addedQi)
 {
 
-
- var data, result = [];
- var query =  "MATCH (bud:Bud) " +
-		          "WHERE bud.bid = '" + bud.id + "' " +
-			        "OPTIONAL MATCH " +
+  var transaction = cypher.transaction();
+  var data, result = [];
+  var query1 =  "MATCH (bud:Bud) " +
+  	          "WHERE bud.bid = '" + bud.id + "' " +
+  		        "OPTIONAL MATCH " +
               "(user:User)-[su:SUPPORT]->(bud:Bud), " +
               "(user:User)-[fo:FOLLOW]->(bud:Bud), " +
               "(user:User)-[sp:SPONSOR]->(bud:Bud) " +
@@ -29,15 +29,15 @@ module.exports = function *(user, bud, addedQi)
               "SET bud.qi = bud.qi + su_qi + fo_qi + sp_qi + " + addedQi + ";";
 
 
+  var query2 = "MATCH (bud:Bud) WHERE bud.bid = '" + bud.id + "' " +
+               "RETURN bud.qi";
 
-  console.log(query);
-  var addQi = fromStream(cypher(query));
-  yield addQi(true);
+  transaction.write(query1);
+  transaction.write(query2);
+  transaction.commit();
 
-  query = "MATCH (bud:Bud) WHERE bud.bid = '" + bud.id + "' " +
-          "RETURN bud.qi";
 
-  var getQi = fromStream(cypher(query));
+  var getQi = fromStream(transaction);
   while (data = yield getQi())
   {
     console.log(data['bud.qi']);

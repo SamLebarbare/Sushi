@@ -1,7 +1,16 @@
 <section>
   <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
     <div class="navbar-header">
-      <h1 class="jumbotron">{{budBox.title}}</h1>
+      <h1 class="jumbotron">
+        {{budBox.title}}
+        <input
+        ng-if="budBox.action == 'update'"
+        class="btn btn-primary btn-success btn-xl btn-raised"
+        ng-click="updateBud($event)"
+        value="Update bud"
+        ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+        />
+      </h1>
       <ul ng-if="budBox.action == 'update'" class="breadcrumb shadow-z-2" style="background-color: #f3f3f3;">
         <li><span class="divider">Type: <a>{{editedBud.type || 'Bud'}}</a></span></li>
         <li>Creator : <a>{{editedBud.creator.name}}</a></li>
@@ -14,9 +23,6 @@
       <h1 class="navbar-right">{{editedBud.qi}}<i class="glyphicon glyphicon-leaf"></i></h1>
     </div>
   </nav>
-  <ul ng-if="budBox.action == 'subbud'" class="breadcrumb" style="background-color: #f3f3f3;">
-    <li><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : parentBud.id})" popover="{{parentBud.type}}" popover-trigger="mouseenter">{{parentBud.title}}</a></span></li>
-  </ul>
   <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
     <tabset style="background-color: white;" justified="true">
       <tab heading="Bud">
@@ -35,8 +41,11 @@
             required />
             <div class="floating-label">Your bud title</div>
             <span class="material-input"></span>
-
           </div>
+          <br>
+          <div class="clear-fix">
+          </div>
+          <br>
           <div class="form-control-wrapper">
             <textarea
             ui-tinymce
@@ -52,21 +61,14 @@
           </div>
           <input
           ng-if="budBox.action == 'create'"
-          class="btn btn-primary btn-xl btn-raised"
+          class="btn btn-primary btn-success btn-xl btn-raised"
           ng-click="createBud($event)"
           value="Create bud"
           ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
           />
           <input
-          ng-if="budBox.action == 'update'"
-          class="btn btn-primary btn-xl btn-raised"
-          ng-click="updateBud($event)"
-          value="Update bud"
-          ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
-          />
-          <input
           ng-if="budBox.action == 'subbud'"
-          class="btn btn-primary btn-xl btn-raised"
+          class="btn btn-primary btn-success btn-xl btn-raised"
           ng-click="createSubBud($event)"
           value="Create child bud"
           ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
@@ -95,7 +97,7 @@
           </li>
         </ul>
       </tab>
-      <tab ng-repeat="pack in editedBud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
+      <tab ng-repeat="pack in editedBud.budPacksData | filter: editedBud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
         <br>
         <div class="clear-fix">
         </div>

@@ -44,21 +44,47 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(1);
-	__webpack_require__(2);
-	__webpack_require__(3);
+	__webpack_require__(19);
+	__webpack_require__(20);
+	__webpack_require__(21);
 
-	__webpack_require__(4);
-	__webpack_require__(5);
-	__webpack_require__(6);
+	__webpack_require__(22);
+	__webpack_require__(23);
+	__webpack_require__(24);
 
-	__webpack_require__(7);
-	__webpack_require__(8);
-	__webpack_require__(9);
+	__webpack_require__(25);
+	__webpack_require__(26);
+	__webpack_require__(27);
+
+	__webpack_require__(28);
+	__webpack_require__(29);
+	__webpack_require__(30);
+
+	__webpack_require__(31);
+	__webpack_require__(32);
+	__webpack_require__(33);
 
 
 /***/ },
-/* 1 */
+/* 1 */,
+/* 2 */,
+/* 3 */,
+/* 4 */,
+/* 5 */,
+/* 6 */,
+/* 7 */,
+/* 8 */,
+/* 9 */,
+/* 10 */,
+/* 11 */,
+/* 12 */,
+/* 13 */,
+/* 14 */,
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */,
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -107,7 +133,7 @@
 
 
 /***/ },
-/* 2 */
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -168,7 +194,7 @@
 
 
 /***/ },
-/* 3 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -198,7 +224,7 @@
 
 
 /***/ },
-/* 4 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -227,27 +253,27 @@
 	              class: 'highlight',
 	              text: 'Bud Mission',
 	              stateName: 'bud.viewer.Mission'
-	            },
+	            }
 	          })
 	          .state('bud.editor.Mission', {
 	            url: '/mission',
 	            views: {
 	              'summary':{
-	                controller: 'MissionEditorCtrl',
-	                templateUrl: 'budPacks/qibud-org-missions/edit.html',
+	                controller: 'MissionViewerCtrl',
+	                templateUrl: 'budPacks/qibud-org-missions/view.html',
 	              }
 	            },
 	            breadcrumb: {
 	              class: 'highlight',
 	              text: 'Bud Mission Editor',
 	              stateName: 'bud.editor.Mission'
-	            },
+	            }
 	          });
 	    });
 
 
 /***/ },
-/* 5 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -260,34 +286,13 @@
 	function ($scope, $state, $stateParams, $location, api)
 	{
 	  console.log("MissionEditorCtrl start...");
-	  var user        = $scope.common.user;
-	  $scope.packData = {
-	    state: 'Waiting for projects',
-	    projects: [],
-	    team: null
-	  };
 
-	  api.buds.budPacksData.get($scope.editedBud.id, 'Mission')
-	    .success(function (packData)
-	    {
-
-	      if(packData.state) {
-	        $scope.packData = packData;
-	        console.log('packdata found:' + packData);
-	      } else {
-	        api.buds.budPacksData.create($scope.editedBud.id, $scope.packData, 'Mission');
-	      }
-	    })
-	    .error(function ()
-	    {
-	      console.log('error while loading packdata');
-	    });
 
 	});
 
 
 /***/ },
-/* 6 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -300,7 +305,7 @@
 	function ($scope, $state, $stateParams, api)
 	{
 	  console.log("MissionViewerCtrl start...");
-	  var user       = $scope.common.user;
+	  var user        = $scope.common.user;
 	  $scope.packData = {
 	    state: 'Waiting for projects',
 	    projects: [],
@@ -311,16 +316,255 @@
 	    .success(function (packData)
 	    {
 	      if(packData.state) {
-	        console.log('packdata loaded');
 	        $scope.packData = packData;
+	        console.log('packdata found:' + packData);
+	        api.buds.childrenByType ($scope.bud.id, 'Project')
+	          .success(function (projects)
+	          {
+	            $scope.packData.projects = projects;
+	            if(projects.length > 0)
+	            {
+	              $scope.packData.state = 'Started';
+	            }
+
+	            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
+	          });
+	      } else {
+	        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Mission');
 	      }
+	    })
+	    .error(function ()
+	    {
+	      console.log('error while loading packdata');
 	    });
 
 	});
 
 
 /***/ },
-/* 7 */
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * Bud project
+	 */
+
+	angular
+	    .module('qibud.org.projects', [
+	      'ui.router',
+	      'ui.bootstrap',
+	      'qibud.common'
+	    ])
+	    .config(function ($stateProvider, $urlRouterProvider) {
+	      $stateProvider
+	          .state('bud.viewer.Project', {
+	            url: '/project',
+	            views: {
+	              'summary':{
+	                templateUrl: 'budPacks/qibud-org-projects/view.html',
+	                controller: 'ProjectViewerCtrl'
+	              }
+	            },
+	            breadcrumb: {
+	              class: 'highlight',
+	              text: 'Bud Project',
+	              stateName: 'bud.viewer.Project'
+	            }
+	          })
+	          .state('bud.editor.Project', {
+	            url: '/project',
+	            views: {
+	              'summary':{
+	                controller: 'ProjectViewerCtrl',
+	                templateUrl: 'budPacks/qibud-org-projects/view.html',
+	              }
+	            },
+	            breadcrumb: {
+	              class: 'highlight',
+	              text: 'Bud Project Editor',
+	              stateName: 'bud.editor.Project'
+	            }
+	          });
+	    });
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * __
+	 */
+
+	angular.module('qibud.org.missions').controller('ProjectEditorCtrl',
+	function ($scope, $state, $stateParams, $location, api)
+	{
+	  console.log("ProjectEditorCtrl start...");
+
+
+	});
+
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * __
+	 */
+
+	angular.module('qibud.org.projects').controller('ProjectViewerCtrl',
+	function ($scope, $state, $stateParams, api)
+	{
+	  console.log("ProjectViewerCtrl start...");
+	  var user        = $scope.common.user;
+	  $scope.packData = {
+	    state: 'Waiting for actions',
+	    actions: []
+	  };
+
+	  api.buds.budPacksData.get($scope.bud.id, 'Project')
+	    .success(function (packData)
+	    {
+	      if(packData.state) {
+	        $scope.packData = packData;
+	        console.log('packdata found:' + packData);
+	        api.buds.childrenByType ($scope.bud.id, 'Action')
+	          .success(function (actions)
+	          {
+	            $scope.packData.actions = actions;
+	            if(actions.length > 0)
+	            {
+	              $scope.packData.state = 'Started';
+	            }
+	            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+	          });
+	      } else {
+	        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Project');
+	      }
+	    })
+	    .error(function ()
+	    {
+	      console.log('error while loading packdata');
+	    });
+
+	});
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * Bud project
+	 */
+
+	angular
+	    .module('qibud.org.actions', [
+	      'ui.router',
+	      'ui.bootstrap',
+	      'qibud.common'
+	    ])
+	    .config(function ($stateProvider, $urlRouterProvider) {
+	      $stateProvider
+	          .state('bud.viewer.Action', {
+	            url: '/action',
+	            views: {
+	              'summary':{
+	                templateUrl: 'budPacks/qibud-org-actions/view.html',
+	                controller: 'ActionViewerCtrl'
+	              }
+	            },
+	            breadcrumb: {
+	              class: 'highlight',
+	              text: 'Bud Action',
+	              stateName: 'bud.viewer.Action'
+	            }
+	          })
+	          .state('bud.editor.Action', {
+	            url: '/action',
+	            views: {
+	              'summary':{
+	                controller: 'ActionViewerCtrl',
+	                templateUrl: 'budPacks/qibud-org-actions/view.html',
+	              }
+	            },
+	            breadcrumb: {
+	              class: 'highlight',
+	              text: 'Bud Action Editor',
+	              stateName: 'bud.editor.Action'
+	            }
+	          });
+	    });
+
+
+/***/ },
+/* 29 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * __
+	 */
+
+	angular.module('qibud.org.actions').controller('ActionEditorCtrl',
+	function ($scope, $state, $stateParams, $location, api)
+	{
+	  console.log("ActionEditorCtrl start...");
+
+
+	});
+
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	/**
+	 * __
+	 */
+
+	angular.module('qibud.org.actions').controller('ActionViewerCtrl',
+	function ($scope, $state, $stateParams, api)
+	{
+	  console.log("ActionViewerCtrl start...");
+	  var user        = $scope.common.user;
+	  $scope.packData = {
+	    state: 'free',
+	    actions: []
+	  };
+
+	  api.buds.budPacksData.get($scope.bud.id, 'Action')
+	    .success(function (packData)
+	    {
+	      if(packData.state) {
+	        $scope.packData = packData;
+	        console.log('packdata found:' + packData);
+	      } else {
+	        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
+	      }
+	    })
+	    .error(function ()
+	    {
+	      console.log('error while loading packdata');
+	    });
+
+	});
+
+
+/***/ },
+/* 31 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -369,7 +613,7 @@
 
 
 /***/ },
-/* 8 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -390,7 +634,7 @@
 
 
 /***/ },
-/* 9 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

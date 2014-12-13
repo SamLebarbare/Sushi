@@ -2,7 +2,7 @@
 var config = require('../config/config');
 var mongo = require('../config/mongo');
 var fromStream = require('co-from-stream');
-var cypher = require('../../cypher-stream')(config.neo4j.url);
+var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
@@ -10,14 +10,17 @@ var cypher = require('../../cypher-stream')(config.neo4j.url);
  */
 module.exports = function *(user)
 {
+  var transaction = cypher.transaction();
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
   var query = "MATCH (bud:Team)<-[:MEMBER]-(:User) " +
               "RETURN bud.bid;"
 
+  transaction.write(query);
+  transaction.commit();
 
-  var teams = fromStream(cypher(query));
+  var teams = fromStream(transaction);
 
   while (data = yield teams())
   {
