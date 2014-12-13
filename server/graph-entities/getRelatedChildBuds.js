@@ -17,7 +17,7 @@ module.exports = function *(budId, type)
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Bud)-[:CHILD*]-(child:" + type +") " +
+  var query = "MATCH (bud:Bud)-[:CHILD]-(child:" + type +") " +
               "WHERE bud.bid = '" + budId + "' " +
               "RETURN child.bid "
 
