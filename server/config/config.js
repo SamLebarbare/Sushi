@@ -27,8 +27,8 @@ var platformConfig = {
       url: 'http://localhost:7474'
     },
     es: {
-      host: 'localhost:9200',
-      log: 'trace',
+      host: 'http://localhost:9200',
+      log: 'trace'
     },
     mailin: {
       port: 2500,
@@ -59,6 +59,7 @@ var platformConfig = {
     es: {
       host: 'localhost:9200',
       log: 'trace',
+      keepAlive: false
     },
     neo4j: {
       url: 'http://localhost:7474/'
@@ -79,6 +80,7 @@ var platformConfig = {
     es: {
       host: process.env.BONSAI_URL,
       log: 'trace',
+      keepAlive: false
     },
     mailin: {
       port: 25,

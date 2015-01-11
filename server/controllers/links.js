@@ -11,6 +11,7 @@ var route = require('koa-route'),
     createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
     createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
+    findUser2BudIds   = require('../graph-entities/findUser2BudIds'),
     ws = require('../config/ws'),
     ObjectID = mongo.ObjectID;
 
@@ -20,8 +21,21 @@ exports.init = function (app) {
   app.use(route.post  ('/api/links/b2u/:budId/:type/:userId', createB2U));
   app.use(route.post  ('/api/links/u2b/:userId/:type/:budId', createU2B));
   app.use(route.delete('/api/links/u2b/:userId/:type/:budId', deleteU2B));
+  app.use(route.get   ('/api/links/u2b/:userId/:type', findU2B));
 };
 
+
+/**
+* findU2B buds
+*/
+function *findU2B(userId, type)
+{
+  var budIds = yield findUser2BudIds (userId, type);
+  var buds   = yield mongo.buds.find(
+                  {_id: { $in: budIds }}).toArray();
+  this.status = 200;
+  this.body   = buds;
+}
 
 /**
  * Create Bud2Bud relation
