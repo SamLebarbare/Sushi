@@ -102,6 +102,19 @@ function ($scope, $state, $stateParams, $modal, api)
 
   };
 
+  $scope.canEvolve = function ()
+  {
+    if(!$scope.bud) {
+      return false;
+    }
+
+    if($scope.bud.type === 'Bud' && $scope.bud.creator.id === user.id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   $scope.editSubBud = function () {
     $state.go('bud.editor',{parentBud : $scope.bud});
   };

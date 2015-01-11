@@ -44,48 +44,33 @@
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
+	__webpack_require__(1);
+	__webpack_require__(2);
+	__webpack_require__(3);
+	__webpack_require__(4);
+	__webpack_require__(5);
+
+	__webpack_require__(6);
+
+	__webpack_require__(7);
+	__webpack_require__(8);
+
+	__webpack_require__(9);
+	__webpack_require__(10);
+	__webpack_require__(11);
+	__webpack_require__(12);
+	__webpack_require__(13);
+
+	__webpack_require__(14);
+	__webpack_require__(15);
+
 	__webpack_require__(16);
 	__webpack_require__(17);
 	__webpack_require__(18);
-	__webpack_require__(19);
-	__webpack_require__(20);
-
-	__webpack_require__(21);
-
-	__webpack_require__(22);
-	__webpack_require__(23);
-
-	__webpack_require__(24);
-	__webpack_require__(25);
-	__webpack_require__(26);
-	__webpack_require__(27);
-	__webpack_require__(28);
-
-	__webpack_require__(29);
-	__webpack_require__(30);
-
-	__webpack_require__(31);
-	__webpack_require__(32);
-	__webpack_require__(33);
 
 
 /***/ },
-/* 1 */,
-/* 2 */,
-/* 3 */,
-/* 4 */,
-/* 5 */,
-/* 6 */,
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
-/* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */
+/* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -98,7 +83,7 @@
 
 
 /***/ },
-/* 17 */
+/* 2 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -124,7 +109,7 @@
 
 
 /***/ },
-/* 18 */
+/* 3 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -159,7 +144,7 @@
 
 
 /***/ },
-/* 19 */
+/* 4 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -179,7 +164,7 @@
 
 
 /***/ },
-/* 20 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -335,6 +320,9 @@
 	    },
 	    deleteU2B : function (userId, type, budId) {
 	      return $http({method: 'DELETE', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+	    },
+	    findU2B : function (userId, type) {
+	      return $http({method: 'GET', url: apiBase + '/links/u2b/' + userId + '/' + type, headers: headers});
 	    }
 	  };
 
@@ -357,6 +345,9 @@
 	  };
 
 	  api.types = {
+	    get: function (type) {
+	      return $http({method: 'GET', url: apiBase + '/types/' + type, headers: headers})
+	    },
 	    list: function () {
 	      return $http({method: 'GET', url: apiBase + '/types', headers: headers});
 	    }
@@ -388,7 +379,7 @@
 
 
 /***/ },
-/* 21 */
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	angular.module('qibud.dashboard',[]).controller('DashboardCtrl', ['$scope', '$cookieStore', DashboardCtrl]);
@@ -440,7 +431,7 @@
 
 
 /***/ },
-/* 22 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -471,7 +462,7 @@
 
 
 /***/ },
-/* 23 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -653,7 +644,7 @@
 
 
 /***/ },
-/* 24 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -706,7 +697,7 @@
 
 
 /***/ },
-/* 25 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -728,6 +719,17 @@
 	    });
 
 	    $scope.buds = buds;
+	  });
+
+	  api.links.findU2B(user.id, 'ACTOR').success(function (buds)
+	  {
+	    buds.forEach(function (bud)
+	    {
+	      bud.commentBox = {message: '', disabled: false};
+	      bud.comments   = bud.comments || [];
+	    });
+
+	    $scope.budsActingOn = buds;
 	  });
 
 	  // subscribe to websocket events to receive new buds, comments, etc.
@@ -765,7 +767,7 @@
 
 
 /***/ },
-/* 26 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -923,7 +925,7 @@
 
 
 /***/ },
-/* 27 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -994,7 +996,7 @@
 
 
 /***/ },
-/* 28 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1016,7 +1018,7 @@
 
 
 /***/ },
-/* 29 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1047,7 +1049,7 @@
 
 
 /***/ },
-/* 30 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1063,7 +1065,7 @@
 
 
 /***/ },
-/* 31 */
+/* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1106,7 +1108,7 @@
 
 
 /***/ },
-/* 32 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -1212,6 +1214,19 @@
 	    });
 
 	  };
+
+	  $scope.canEvolve = function ()
+	  {
+	    if(!$scope.bud) {
+	      return false;
+	    }
+
+	    if($scope.bud.type === 'Bud' && $scope.bud.creator.id === user.id) {
+	      return true;
+	    } else {
+	      return false;
+	    }
+	  }
 
 	  $scope.editSubBud = function () {
 	    $state.go('bud.editor',{parentBud : $scope.bud});
@@ -1526,7 +1541,7 @@
 
 
 /***/ },
-/* 33 */
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';

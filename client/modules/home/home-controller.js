@@ -19,6 +19,17 @@ function ($scope, $state, api, budGraph)
     $scope.buds = buds;
   });
 
+  api.links.findU2B(user.id, 'ACTOR').success(function (buds)
+  {
+    buds.forEach(function (bud)
+    {
+      bud.commentBox = {message: '', disabled: false};
+      bud.comments   = bud.comments || [];
+    });
+
+    $scope.budsActingOn = buds;
+  });
+
   // subscribe to websocket events to receive new buds, comments, etc.
   api.buds.created.subscribe($scope, function (bud)
   {

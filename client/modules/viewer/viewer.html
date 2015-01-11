@@ -11,29 +11,13 @@
           <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></span></li>
           <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
         </ul>
-      </div>
-
-      <h1 class="navbar-right"><i class="glyphicon glyphicon-leaf">{{bud.qi}}</i></h1>
-    </div>
-  </nav>
-  <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
-    <tabset style="background-color: white;" justified="true">
-      <tab active="true" ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
-        <br>
-        <div class="clear-fix">
-        </div>
-        <br>
-        <div style="background-color: white;" class="well" ui-view="summary"></div>
-      </tab>
-      <tab heading="Bud">
-        <br>
-        <div class="clear-fix">
+        <ul class="clear-fix">
           <div class="btn-group btn-group-xs">
             <button class="btn btn-danger" ng-click="followBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">
-                {{follower ? 'Unfollow' : 'Follow'}}
+              {{follower ? 'Unfollow' : 'Follow'}}
             </button>
             <button class="btn btn-default" disabled>
-                {{followersCount}} followers
+              {{followersCount}} followers
             </button>
           </div>
           <div class="btn-group btn-group-xs">
@@ -54,10 +38,25 @@
             on-leave="overStar = null"
             state-on="'glyphicon-leaf'"
             >
-            </rating>
-            <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
-          </div>
+          </rating>
+          <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
+        </ul>
+      </div>
+      </div>
+
+      <h1 class="navbar-right"><i class="glyphicon glyphicon-leaf">{{bud.qi}}</i></h1>
+    </div>
+  </nav>
+  <nav class="navbar navbar-inverse" role="navigation" style="background-color: white;">
+    <tabset style="background-color: white;" justified="true">
+      <tab active="true" ng-repeat="pack in bud.budPacksData | filter: bud.type" heading="{{pack.type}}" ng-click="showType(pack.type, false)">
+        <br>
+        <div class="clear-fix">
         </div>
+        <br>
+        <div style="background-color: white;" class="well" ui-view="summary"></div>
+      </tab>
+      <tab heading="Bud">
         <br>
         <div style="background-color: white;" class="well" ng-bind-html="bud.content">
 
@@ -98,7 +97,7 @@
           </li>
         </ul>
       </tab>
-      <tab ng-if="bud.creator.id == common.user.id" heading="">
+      <tab ng-if="canEvolve()" heading="">
         <tab-heading>
           <i class="fa fa-puzzle-piece"></i> Evolve...
         </tab-heading>

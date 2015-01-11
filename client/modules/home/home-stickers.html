@@ -1,21 +1,46 @@
-<div class="row">
-    <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in buds | orderBy: bud.qi : reverse" id="bud_{{bud.id}}">
-      <div class="widget shadow-z-5">
-        <div class="widget-body">
-          <div class="widget-icon green pull-left">
-            <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i>
-          </div>
-          <div class="widget-content pull-left">
-            <div class="title">
-              <a ui-sref="bud.viewer({budId : bud.id})">{{bud.title}}</a>
-            </div>
-            <div class="comment">
-              {{bud.createdTime | date:'medium'}}
-            </div>
-          </div>
-          <div class="clearfix"></div>
+
+<div class="row" ng-show="budsActingOn">
+  <h1>I'am actor on:</h1>
+  <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in budsActingOn | orderBy: bud.qi : reverse" id="bud_{{bud.id}}">
+    <div class="widget shadow-z-5">
+      <div class="widget-body">
+        <div class="widget-icon green pull-left">
+          <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i>
         </div>
+        <div class="widget-content pull-left">
+          <div class="title">
+            <a ui-sref="bud.viewer({budId : bud._id})">{{bud.title}}</a>
+          </div>
+          <div class="comment">
+            {{bud.createdTime | date:'medium'}}
+          </div>
+        </div>
+        <div class="clearfix"></div>
       </div>
     </div>
-    <div class="spacer visible-xs"></div>
+  </div>
+  <div class="spacer visible-xs"></div>
+</div>
+
+<div class="row" ng-show="buds">
+  <h1>I can see:</h1>
+  <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in buds | orderBy: bud.qi : reverse" id="bud_{{bud.id}}">
+    <div class="widget shadow-z-5">
+      <div class="widget-body">
+        <div class="widget-icon green pull-left">
+          <i class="glyphicon glyphicon-leaf">{{bud.qi}}</i>
+        </div>
+        <div class="widget-content pull-left">
+          <div class="title">
+            <a ui-sref="bud.viewer({budId : bud.id})">{{bud.title}}</a>
+          </div>
+          <div class="comment">
+            {{bud.createdTime | date:'medium'}}
+          </div>
+        </div>
+        <div class="clearfix"></div>
+      </div>
+    </div>
+  </div>
+  <div class="spacer visible-xs"></div>
 </div>

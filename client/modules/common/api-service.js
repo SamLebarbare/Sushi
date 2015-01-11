@@ -151,6 +151,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     },
     deleteU2B : function (userId, type, budId) {
       return $http({method: 'DELETE', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+    },
+    findU2B : function (userId, type) {
+      return $http({method: 'GET', url: apiBase + '/links/u2b/' + userId + '/' + type, headers: headers});
     }
   };
 
@@ -173,6 +176,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
   };
 
   api.types = {
+    get: function (type) {
+      return $http({method: 'GET', url: apiBase + '/types/' + type, headers: headers})
+    },
     list: function () {
       return $http({method: 'GET', url: apiBase + '/types', headers: headers});
     }

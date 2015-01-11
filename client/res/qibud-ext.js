@@ -46,9 +46,9 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	__webpack_require__(38);
-	__webpack_require__(39);
-	__webpack_require__(40);
 	__webpack_require__(41);
+	__webpack_require__(40);
+	__webpack_require__(39);
 	__webpack_require__(35);
 	__webpack_require__(36);
 	__webpack_require__(34);
@@ -264,7 +264,7 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;/**
-	 * @license AngularJS v1.3.6
+	 * @license AngularJS v1.3.7
 	 * (c) 2010-2014 Google, Inc. http://angularjs.org
 	 * License: MIT
 	 */
@@ -319,7 +319,7 @@
 	      return match;
 	    });
 
-	    message = message + '\nhttp://errors.angularjs.org/1.3.6/' +
+	    message = message + '\nhttp://errors.angularjs.org/1.3.7/' +
 	      (module ? module + '/' : '') + code;
 	    for (i = 2; i < arguments.length; i++) {
 	      message = message + (i == 2 ? '?' : '&') + 'p' + (i - 2) + '=' +
@@ -374,6 +374,7 @@
 	  isWindow: true,
 	  isScope: true,
 	  isFile: true,
+	  isFormData: true,
 	  isBlob: true,
 	  isBoolean: true,
 	  isPromiseLike: true,
@@ -892,6 +893,11 @@
 
 	function isFile(obj) {
 	  return toString.call(obj) === '[object File]';
+	}
+
+
+	function isFormData(obj) {
+	  return toString.call(obj) === '[object FormData]';
 	}
 
 
@@ -1757,7 +1763,12 @@
 	 * @param {DOMElement} element DOM element which is the root of angular application.
 	 */
 	function getTestability(rootElement) {
-	  return angular.element(rootElement).injector().get('$$testability');
+	  var injector = angular.element(rootElement).injector();
+	  if (!injector) {
+	    throw ngMinErr('test',
+	      'no injector found for element argument to getTestability');
+	  }
+	  return injector.get('$$testability');
 	}
 
 	var SNAKE_CASE_REGEXP = /[A-Z]/g;
@@ -2370,11 +2381,11 @@
 	 * - `codeName` – `{string}` – Code name of the release, such as "jiggling-armfat".
 	 */
 	var version = {
-	  full: '1.3.6',    // all of these placeholder strings will be replaced by grunt's
+	  full: '1.3.7',    // all of these placeholder strings will be replaced by grunt's
 	  major: 1,    // package task
 	  minor: 3,
-	  dot: 6,
-	  codeName: 'robofunky-danceblaster'
+	  dot: 7,
+	  codeName: 'leaky-obstruction'
 	};
 
 
@@ -7387,7 +7398,10 @@
 	            // support ngAttr attribute binding
 	            ngAttrName = directiveNormalize(name);
 	            if (isNgAttr = NG_ATTR_BINDING.test(ngAttrName)) {
-	              name = snake_case(ngAttrName.substr(6), '-');
+	              name = name.replace(PREFIX_REGEXP, '')
+	                .substr(8).replace(/_(.)/g, function(match, letter) {
+	                  return letter.toUpperCase();
+	                });
 	            }
 
 	            var directiveNName = ngAttrName.replace(/(Start|End)$/, '');
@@ -8299,7 +8313,10 @@
 
 
 	    function addAttrInterpolateDirective(node, directives, value, name, allOrNothing) {
-	      var interpolateFn = $interpolate(value, true);
+	      var trustedContext = getTrustedContext(node, name);
+	      allOrNothing = ALL_OR_NOTHING_ATTRS[name] || allOrNothing;
+
+	      var interpolateFn = $interpolate(value, true, trustedContext, allOrNothing);
 
 	      // no interpolation found -> ignore
 	      if (!interpolateFn) return;
@@ -8324,15 +8341,15 @@
 	                          "ng- versions (such as ng-click instead of onclick) instead.");
 	                }
 
-	                // If the attribute was removed, then we are done
-	                if (!attr[name]) {
-	                  return;
+	                // If the attribute has changed since last $interpolate()ed
+	                var newValue = attr[name];
+	                if (newValue !== value) {
+	                  // we need to interpolate again since the attribute value has been updated
+	                  // (e.g. by another directive's compile function)
+	                  // ensure unset/empty values make interpolateFn falsy
+	                  interpolateFn = newValue && $interpolate(newValue, true, trustedContext, allOrNothing);
+	                  value = newValue;
 	                }
-
-	                // we need to interpolate again, in case the attribute value has been updated
-	                // (e.g. by another directive's compile function)
-	                interpolateFn = $interpolate(attr[name], true, getTrustedContext(node, name),
-	                    ALL_OR_NOTHING_ATTRS[name] || allOrNothing);
 
 	                // if attribute was updated so that there is no interpolation going on we don't want to
 	                // register any observers
@@ -8794,21 +8811,32 @@
 
 	var APPLICATION_JSON = 'application/json';
 	var CONTENT_TYPE_APPLICATION_JSON = {'Content-Type': APPLICATION_JSON + ';charset=utf-8'};
-	var JSON_START = /^\s*(\[|\{[^\{])/;
-	var JSON_END = /[\}\]]\s*$/;
+	var JSON_START = /^\[|^\{(?!\{)/;
+	var JSON_ENDS = {
+	  '[': /]$/,
+	  '{': /}$/
+	};
 	var JSON_PROTECTION_PREFIX = /^\)\]\}',?\n/;
 
 	function defaultHttpResponseTransform(data, headers) {
 	  if (isString(data)) {
-	    // strip json vulnerability protection prefix
-	    data = data.replace(JSON_PROTECTION_PREFIX, '');
-	    var contentType = headers('Content-Type');
-	    if ((contentType && contentType.indexOf(APPLICATION_JSON) === 0 && data.trim()) ||
-	        (JSON_START.test(data) && JSON_END.test(data))) {
-	      data = fromJson(data);
+	    // Strip json vulnerability protection prefix and trim whitespace
+	    var tempData = data.replace(JSON_PROTECTION_PREFIX, '').trim();
+
+	    if (tempData) {
+	      var contentType = headers('Content-Type');
+	      if ((contentType && (contentType.indexOf(APPLICATION_JSON) === 0)) || isJsonLike(tempData)) {
+	        data = fromJson(tempData);
+	      }
 	    }
 	  }
+
 	  return data;
+	}
+
+	function isJsonLike(str) {
+	    var jsonStart = str.match(JSON_START);
+	    return jsonStart && JSON_ENDS[jsonStart[0]].test(str);
 	}
 
 	/**
@@ -8873,16 +8901,17 @@
 	 * This function is used for both request and response transforming
 	 *
 	 * @param {*} data Data to transform.
-	 * @param {function(string=)} headers Http headers getter fn.
+	 * @param {function(string=)} headers HTTP headers getter fn.
+	 * @param {number} status HTTP status code of the response.
 	 * @param {(Function|Array.<Function>)} fns Function or an array of functions.
 	 * @returns {*} Transformed data.
 	 */
-	function transformData(data, headers, fns) {
+	function transformData(data, headers, status, fns) {
 	  if (isFunction(fns))
-	    return fns(data, headers);
+	    return fns(data, headers, status);
 
 	  forEach(fns, function(fn) {
-	    data = fn(data, headers);
+	    data = fn(data, headers, status);
 	  });
 
 	  return data;
@@ -8934,7 +8963,7 @@
 
 	    // transform outgoing request data
 	    transformRequest: [function(d) {
-	      return isObject(d) && !isFile(d) && !isBlob(d) ? toJson(d) : d;
+	      return isObject(d) && !isFile(d) && !isBlob(d) && !isFormData(d) ? toJson(d) : d;
 	    }],
 
 	    // default headers
@@ -9161,7 +9190,7 @@
 	     *
 	     * Both requests and responses can be transformed using transformation functions: `transformRequest`
 	     * and `transformResponse`. These properties can be a single function that returns
-	     * the transformed value (`{function(data, headersGetter)`) or an array of such transformation functions,
+	     * the transformed value (`{function(data, headersGetter, status)`) or an array of such transformation functions,
 	     * which allows you to `push` or `unshift` a new transformation function into the transformation chain.
 	     *
 	     * ### Default Transformations
@@ -9405,9 +9434,9 @@
 	     *      See {@link ng.$http#overriding-the-default-transformations-per-request
 	     *      Overriding the Default Transformations}
 	     *    - **transformResponse** –
-	     *      `{function(data, headersGetter)|Array.<function(data, headersGetter)>}` –
+	     *      `{function(data, headersGetter, status)|Array.<function(data, headersGetter, status)>}` –
 	     *      transform function or an array of such functions. The transform function takes the http
-	     *      response body and headers and returns its transformed (typically deserialized) version.
+	     *      response body, headers and status and returns its transformed (typically deserialized) version.
 	     *      See {@link ng.$http#overriding-the-default-transformations-per-request
 	     *      Overriding the Default Transformations}
 	     *    - **cache** – `{boolean|Cache}` – If true, a default $http cache will be used to cache the
@@ -9530,24 +9559,23 @@
 	</example>
 	     */
 	    function $http(requestConfig) {
-	      var config = {
-	        method: 'get',
-	        transformRequest: defaults.transformRequest,
-	        transformResponse: defaults.transformResponse
-	      };
-	      var headers = mergeHeaders(requestConfig);
 
 	      if (!angular.isObject(requestConfig)) {
 	        throw minErr('$http')('badreq', 'Http request configuration must be an object.  Received: {0}', requestConfig);
 	      }
 
-	      extend(config, requestConfig);
-	      config.headers = headers;
+	      var config = extend({
+	        method: 'get',
+	        transformRequest: defaults.transformRequest,
+	        transformResponse: defaults.transformResponse
+	      }, requestConfig);
+
+	      config.headers = mergeHeaders(requestConfig);
 	      config.method = uppercase(config.method);
 
 	      var serverRequest = function(config) {
-	        headers = config.headers;
-	        var reqData = transformData(config.data, headersGetter(headers), config.transformRequest);
+	        var headers = config.headers;
+	        var reqData = transformData(config.data, headersGetter(headers), undefined, config.transformRequest);
 
 	        // strip content-type if data is undefined
 	        if (isUndefined(reqData)) {
@@ -9563,7 +9591,7 @@
 	        }
 
 	        // send request
-	        return sendReq(config, reqData, headers).then(transformResponse, transformResponse);
+	        return sendReq(config, reqData).then(transformResponse, transformResponse);
 	      };
 
 	      var chain = [serverRequest, undefined];
@@ -9608,11 +9636,28 @@
 	        if (!response.data) {
 	          resp.data = response.data;
 	        } else {
-	          resp.data = transformData(response.data, response.headers, config.transformResponse);
+	          resp.data = transformData(response.data, response.headers, response.status, config.transformResponse);
 	        }
 	        return (isSuccess(response.status))
 	          ? resp
 	          : $q.reject(resp);
+	      }
+
+	      function executeHeaderFns(headers) {
+	        var headerContent, processedHeaders = {};
+
+	        forEach(headers, function(headerFn, header) {
+	          if (isFunction(headerFn)) {
+	            headerContent = headerFn();
+	            if (headerContent != null) {
+	              processedHeaders[header] = headerContent;
+	            }
+	          } else {
+	            processedHeaders[header] = headerFn;
+	          }
+	        });
+
+	        return processedHeaders;
 	      }
 
 	      function mergeHeaders(config) {
@@ -9637,23 +9682,7 @@
 	        }
 
 	        // execute if header value is a function for merged headers
-	        execHeaders(reqHeaders);
-	        return reqHeaders;
-
-	        function execHeaders(headers) {
-	          var headerContent;
-
-	          forEach(headers, function(headerFn, header) {
-	            if (isFunction(headerFn)) {
-	              headerContent = headerFn();
-	              if (headerContent != null) {
-	                headers[header] = headerContent;
-	              } else {
-	                delete headers[header];
-	              }
-	            }
-	          });
-	        }
+	        return executeHeaderFns(reqHeaders);
 	      }
 	    }
 
@@ -9796,11 +9825,12 @@
 	     * !!! ACCESSES CLOSURE VARS:
 	     * $httpBackend, defaults, $log, $rootScope, defaultCache, $http.pendingRequests
 	     */
-	    function sendReq(config, reqData, reqHeaders) {
+	    function sendReq(config, reqData) {
 	      var deferred = $q.defer(),
 	          promise = deferred.promise,
 	          cache,
 	          cachedResp,
+	          reqHeaders = config.headers,
 	          url = buildUrl(config.url, config.params);
 
 	      $http.pendingRequests.push(config);
@@ -11500,8 +11530,8 @@
 	   * @param {string=} oldState History state object that was before it was changed.
 	   */
 
-	  this.$get = ['$rootScope', '$browser', '$sniffer', '$rootElement',
-	      function($rootScope, $browser, $sniffer, $rootElement) {
+	  this.$get = ['$rootScope', '$browser', '$sniffer', '$rootElement', '$window',
+	      function($rootScope, $browser, $sniffer, $rootElement, $window) {
 	    var $location,
 	        LocationMode,
 	        baseHref = $browser.baseHref(), // if base[href] is undefined, it defaults to ''
@@ -11583,7 +11613,7 @@
 	          if ($location.absUrl() != $browser.url()) {
 	            $rootScope.$apply();
 	            // hack to work around FF6 bug 684208 when scenario runner clicks on links
-	            window.angular['ff-684208-preventDefault'] = true;
+	            $window.angular['ff-684208-preventDefault'] = true;
 	          }
 	        }
 	      }
@@ -12199,6 +12229,8 @@
 	      primary = this.arrayDeclaration();
 	    } else if (this.expect('{')) {
 	      primary = this.object();
+	    } else if (this.peek().identifier && this.peek().text in CONSTANTS) {
+	      primary = CONSTANTS[this.consume().text];
 	    } else if (this.peek().identifier) {
 	      primary = this.identifier();
 	    } else if (this.peek().constant) {
@@ -12301,7 +12333,7 @@
 	      id += this.consume().text + this.consume().text;
 	    }
 
-	    return CONSTANTS[id] || getterFn(id, this.options, this.text);
+	    return getterFn(id, this.options, this.text);
 	  },
 
 	  constant: function() {
@@ -12491,17 +12523,16 @@
 	  },
 
 	  fieldAccess: function(object) {
-	    var expression = this.text;
-	    var field = this.consume().text;
-	    var getter = getterFn(field, this.options, expression);
+	    var getter = this.identifier();
 
 	    return extend(function $parseFieldAccess(scope, locals, self) {
-	      return getter(self || object(scope, locals));
+	      var o = self || object(scope, locals);
+	      return (o == null) ? undefined : getter(o);
 	    }, {
 	      assign: function(scope, value, locals) {
 	        var o = object(scope, locals);
 	        if (!o) object.assign(scope, o = {});
-	        return setter(o, field, value, expression);
+	        return getter.assign(o, value);
 	      }
 	    });
 	  },
@@ -13659,12 +13690,10 @@
 	function $$RAFProvider() { //rAF
 	  this.$get = ['$window', '$timeout', function($window, $timeout) {
 	    var requestAnimationFrame = $window.requestAnimationFrame ||
-	                                $window.webkitRequestAnimationFrame ||
-	                                $window.mozRequestAnimationFrame;
+	                                $window.webkitRequestAnimationFrame;
 
 	    var cancelAnimationFrame = $window.cancelAnimationFrame ||
 	                               $window.webkitCancelAnimationFrame ||
-	                               $window.mozCancelAnimationFrame ||
 	                               $window.webkitCancelRequestAnimationFrame;
 
 	    var rafSupported = !!requestAnimationFrame;
@@ -13793,7 +13822,6 @@
 	         var child = parent.$new();
 
 	         parent.salutation = "Hello";
-	         child.name = "World";
 	         expect(child.salutation).toEqual('Hello');
 
 	         child.salutation = "Welcome";
@@ -14431,7 +14459,7 @@
 	          while (asyncQueue.length) {
 	            try {
 	              asyncTask = asyncQueue.shift();
-	              asyncTask.scope.$eval(asyncTask.expression);
+	              asyncTask.scope.$eval(asyncTask.expression, asyncTask.locals);
 	            } catch (e) {
 	              $exceptionHandler(e);
 	            }
@@ -14646,8 +14674,9 @@
 	       *    - `string`: execute using the rules as defined in {@link guide/expression expression}.
 	       *    - `function(scope)`: execute the function with the current `scope` parameter.
 	       *
+	       * @param {(object)=} locals Local variables object, useful for overriding values in scope.
 	       */
-	      $evalAsync: function(expr) {
+	      $evalAsync: function(expr, locals) {
 	        // if we are outside of an $digest loop and this is the first time we are scheduling async
 	        // task also schedule async auto-flush
 	        if (!$rootScope.$$phase && !asyncQueue.length) {
@@ -14658,7 +14687,7 @@
 	          });
 	        }
 
-	        asyncQueue.push({scope: this, expression: expr});
+	        asyncQueue.push({scope: this, expression: expr, locals: locals});
 	      },
 
 	      $$postDigest: function(fn) {
@@ -17350,8 +17379,8 @@
 	 *   * `'.sss' or ',sss'`: Millisecond in second, padded (000-999)
 	 *   * `'a'`: AM/PM marker
 	 *   * `'Z'`: 4 digit (+sign) representation of the timezone offset (-1200-+1200)
-	 *   * `'ww'`: ISO-8601 week of year (00-53)
-	 *   * `'w'`: ISO-8601 week of year (0-53)
+	 *   * `'ww'`: Week of year, padded (00-53). Week 01 is the week with the first Thursday of the year
+	 *   * `'w'`: Week of year (0-53). Week 1 is the week with the first Thursday of the year
 	 *
 	 *   `format` string can also be one of the following predefined
 	 *   {@link guide/i18n localizable formats}:
@@ -17836,29 +17865,37 @@
 	          ? function(a, b) {return comp(b,a);}
 	          : comp;
 	    }
+
+	    function isPrimitive(value) {
+	      switch (typeof value) {
+	        case 'number': /* falls through */
+	        case 'boolean': /* falls through */
+	        case 'string':
+	          return true;
+	        default:
+	          return false;
+	      }
+	    }
+
+	    function objectToString(value) {
+	      if (value === null) return 'null';
+	      if (typeof value.toString === 'function') {
+	        value = value.toString();
+	        if (isPrimitive(value)) return value;
+	      }
+	      if (typeof value.valueOf === 'function') {
+	        value = value.valueOf();
+	        if (isPrimitive(value)) return value;
+	      }
+	      return '';
+	    }
+
 	    function compare(v1, v2) {
 	      var t1 = typeof v1;
 	      var t2 = typeof v2;
-	      // Prepare values for Abstract Relational Comparison
-	      // (http://www.ecma-international.org/ecma-262/5.1/#sec-11.8.5):
-	      // If the resulting values are identical, return 0 to prevent
-	      // incorrect re-ordering.
 	      if (t1 === t2 && t1 === "object") {
-	        // If types are both numbers, emulate abstract ToPrimitive() operation
-	        // in order to get primitive values suitable for comparison
-	        t1 = typeof (v1.valueOf ? v1 = v1.valueOf() : v1);
-	        t2 = typeof (v2.valueOf ? v2 = v2.valueOf() : v2);
-	        if (t1 === t2 && t1 === "object") {
-	          // Object.prototype.valueOf will return the original object, by
-	          // default. If we do not receive a primitive value, use ToString()
-	          // instead.
-	          t1 = typeof (v1.toString ? v1 = v1.toString() : v1);
-	          t2 = typeof (v2.toString ? v2 = v2.toString() : v2);
-
-	          // If the end result of toString() for each item is the same, do not
-	          // perform relational comparison, and do not re-order objects.
-	          if (t1 === t2 && v1 === v2 || t1 === "object") return 0;
-	        }
+	        v1 = objectToString(v1);
+	        v2 = objectToString(v2);
 	      }
 	      if (t1 === t2) {
 	        if (t1 === "string") {
@@ -24592,7 +24629,7 @@
 	      var aliasAs = match[3];
 	      var trackByExp = match[4];
 
-	      match = lhs.match(/^(?:([\$\w]+)|\(([\$\w]+)\s*,\s*([\$\w]+)\))$/);
+	      match = lhs.match(/^(?:(\s*[\$\w]+)|\(\s*([\$\w]+)\s*,\s*([\$\w]+)\s*\))$/);
 
 	      if (!match) {
 	        throw ngRepeatMinErr('iidexp', "'_item_' in '_item_ in _collection_' should be an identifier or '(_key_, _value_)' expression, but got '{0}'.",
@@ -26267,906 +26304,6 @@
 /***/ },
 
 /***/ 39:
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license AngularJS v1.3.6
-	 * (c) 2010-2014 Google, Inc. http://angularjs.org
-	 * License: MIT
-	 */
-	(function(window, angular, undefined) {'use strict';
-
-	var $sanitizeMinErr = angular.$$minErr('$sanitize');
-
-	/**
-	 * @ngdoc module
-	 * @name ngSanitize
-	 * @description
-	 *
-	 * # ngSanitize
-	 *
-	 * The `ngSanitize` module provides functionality to sanitize HTML.
-	 *
-	 *
-	 * <div doc-module-components="ngSanitize"></div>
-	 *
-	 * See {@link ngSanitize.$sanitize `$sanitize`} for usage.
-	 */
-
-	/*
-	 * HTML Parser By Misko Hevery (misko@hevery.com)
-	 * based on:  HTML Parser By John Resig (ejohn.org)
-	 * Original code by Erik Arvidsson, Mozilla Public License
-	 * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
-	 *
-	 * // Use like so:
-	 * htmlParser(htmlString, {
-	 *     start: function(tag, attrs, unary) {},
-	 *     end: function(tag) {},
-	 *     chars: function(text) {},
-	 *     comment: function(text) {}
-	 * });
-	 *
-	 */
-
-
-	/**
-	 * @ngdoc service
-	 * @name $sanitize
-	 * @kind function
-	 *
-	 * @description
-	 *   The input is sanitized by parsing the HTML into tokens. All safe tokens (from a whitelist) are
-	 *   then serialized back to properly escaped html string. This means that no unsafe input can make
-	 *   it into the returned string, however, since our parser is more strict than a typical browser
-	 *   parser, it's possible that some obscure input, which would be recognized as valid HTML by a
-	 *   browser, won't make it through the sanitizer. The input may also contain SVG markup.
-	 *   The whitelist is configured using the functions `aHrefSanitizationWhitelist` and
-	 *   `imgSrcSanitizationWhitelist` of {@link ng.$compileProvider `$compileProvider`}.
-	 *
-	 * @param {string} html HTML input.
-	 * @returns {string} Sanitized HTML.
-	 *
-	 * @example
-	   <example module="sanitizeExample" deps="angular-sanitize.js">
-	   <file name="index.html">
-	     <script>
-	         angular.module('sanitizeExample', ['ngSanitize'])
-	           .controller('ExampleController', ['$scope', '$sce', function($scope, $sce) {
-	             $scope.snippet =
-	               '<p style="color:blue">an html\n' +
-	               '<em onmouseover="this.textContent=\'PWN3D!\'">click here</em>\n' +
-	               'snippet</p>';
-	             $scope.deliberatelyTrustDangerousSnippet = function() {
-	               return $sce.trustAsHtml($scope.snippet);
-	             };
-	           }]);
-	     </script>
-	     <div ng-controller="ExampleController">
-	        Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
-	       <table>
-	         <tr>
-	           <td>Directive</td>
-	           <td>How</td>
-	           <td>Source</td>
-	           <td>Rendered</td>
-	         </tr>
-	         <tr id="bind-html-with-sanitize">
-	           <td>ng-bind-html</td>
-	           <td>Automatically uses $sanitize</td>
-	           <td><pre>&lt;div ng-bind-html="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
-	           <td><div ng-bind-html="snippet"></div></td>
-	         </tr>
-	         <tr id="bind-html-with-trust">
-	           <td>ng-bind-html</td>
-	           <td>Bypass $sanitize by explicitly trusting the dangerous value</td>
-	           <td>
-	           <pre>&lt;div ng-bind-html="deliberatelyTrustDangerousSnippet()"&gt;
-	&lt;/div&gt;</pre>
-	           </td>
-	           <td><div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div></td>
-	         </tr>
-	         <tr id="bind-default">
-	           <td>ng-bind</td>
-	           <td>Automatically escapes</td>
-	           <td><pre>&lt;div ng-bind="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
-	           <td><div ng-bind="snippet"></div></td>
-	         </tr>
-	       </table>
-	       </div>
-	   </file>
-	   <file name="protractor.js" type="protractor">
-	     it('should sanitize the html snippet by default', function() {
-	       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
-	         toBe('<p>an html\n<em>click here</em>\nsnippet</p>');
-	     });
-
-	     it('should inline raw snippet if bound to a trusted value', function() {
-	       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).
-	         toBe("<p style=\"color:blue\">an html\n" +
-	              "<em onmouseover=\"this.textContent='PWN3D!'\">click here</em>\n" +
-	              "snippet</p>");
-	     });
-
-	     it('should escape snippet without any filter', function() {
-	       expect(element(by.css('#bind-default div')).getInnerHtml()).
-	         toBe("&lt;p style=\"color:blue\"&gt;an html\n" +
-	              "&lt;em onmouseover=\"this.textContent='PWN3D!'\"&gt;click here&lt;/em&gt;\n" +
-	              "snippet&lt;/p&gt;");
-	     });
-
-	     it('should update', function() {
-	       element(by.model('snippet')).clear();
-	       element(by.model('snippet')).sendKeys('new <b onclick="alert(1)">text</b>');
-	       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
-	         toBe('new <b>text</b>');
-	       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).toBe(
-	         'new <b onclick="alert(1)">text</b>');
-	       expect(element(by.css('#bind-default div')).getInnerHtml()).toBe(
-	         "new &lt;b onclick=\"alert(1)\"&gt;text&lt;/b&gt;");
-	     });
-	   </file>
-	   </example>
-	 */
-	function $SanitizeProvider() {
-	  this.$get = ['$$sanitizeUri', function($$sanitizeUri) {
-	    return function(html) {
-	      var buf = [];
-	      htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
-	        return !/^unsafe/.test($$sanitizeUri(uri, isImage));
-	      }));
-	      return buf.join('');
-	    };
-	  }];
-	}
-
-	function sanitizeText(chars) {
-	  var buf = [];
-	  var writer = htmlSanitizeWriter(buf, angular.noop);
-	  writer.chars(chars);
-	  return buf.join('');
-	}
-
-
-	// Regular Expressions for parsing tags and attributes
-	var START_TAG_REGEXP =
-	       /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/,
-	  END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/,
-	  ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g,
-	  BEGIN_TAG_REGEXP = /^</,
-	  BEGING_END_TAGE_REGEXP = /^<\//,
-	  COMMENT_REGEXP = /<!--(.*?)-->/g,
-	  DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i,
-	  CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g,
-	  SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
-	  // Match everything outside of normal chars and " (quote character)
-	  NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g;
-
-
-	// Good source of info about elements and attributes
-	// http://dev.w3.org/html5/spec/Overview.html#semantics
-	// http://simon.html5.org/html-elements
-
-	// Safe Void Elements - HTML5
-	// http://dev.w3.org/html5/spec/Overview.html#void-elements
-	var voidElements = makeMap("area,br,col,hr,img,wbr");
-
-	// Elements that you can, intentionally, leave open (and which close themselves)
-	// http://dev.w3.org/html5/spec/Overview.html#optional-tags
-	var optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"),
-	    optionalEndTagInlineElements = makeMap("rp,rt"),
-	    optionalEndTagElements = angular.extend({},
-	                                            optionalEndTagInlineElements,
-	                                            optionalEndTagBlockElements);
-
-	// Safe Block Elements - HTML5
-	var blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article," +
-	        "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
-	        "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul"));
-
-	// Inline Elements - HTML5
-	var inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b," +
-	        "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
-	        "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
-
-	// SVG Elements
-	// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
-	var svgElements = makeMap("animate,animateColor,animateMotion,animateTransform,circle,defs," +
-	        "desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,hkern,image,linearGradient," +
-	        "line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,radialGradient,rect,set," +
-	        "stop,svg,switch,text,title,tspan,use");
-
-	// Special Elements (can contain anything)
-	var specialElements = makeMap("script,style");
-
-	var validElements = angular.extend({},
-	                                   voidElements,
-	                                   blockElements,
-	                                   inlineElements,
-	                                   optionalEndTagElements,
-	                                   svgElements);
-
-	//Attributes that have href and hence need to be sanitized
-	var uriAttrs = makeMap("background,cite,href,longdesc,src,usemap,xlink:href");
-
-	var htmlAttrs = makeMap('abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,' +
-	    'color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,' +
-	    'ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,' +
-	    'scope,scrolling,shape,size,span,start,summary,target,title,type,' +
-	    'valign,value,vspace,width');
-
-	// SVG attributes (without "id" and "name" attributes)
-	// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Attributes
-	var svgAttrs = makeMap('accent-height,accumulate,additive,alphabetic,arabic-form,ascent,' +
-	    'attributeName,attributeType,baseProfile,bbox,begin,by,calcMode,cap-height,class,color,' +
-	    'color-rendering,content,cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,' +
-	    'font-size,font-stretch,font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,' +
-	    'gradientUnits,hanging,height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,' +
-	    'keySplines,keyTimes,lang,marker-end,marker-mid,marker-start,markerHeight,markerUnits,' +
-	    'markerWidth,mathematical,max,min,offset,opacity,orient,origin,overline-position,' +
-	    'overline-thickness,panose-1,path,pathLength,points,preserveAspectRatio,r,refX,refY,' +
-	    'repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,' +
-	    'stemv,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,stroke,' +
-	    'stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,' +
-	    'stroke-opacity,stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,' +
-	    'underline-position,underline-thickness,unicode,unicode-range,units-per-em,values,version,' +
-	    'viewBox,visibility,width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,' +
-	    'xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,' +
-	    'zoomAndPan');
-
-	var validAttrs = angular.extend({},
-	                                uriAttrs,
-	                                svgAttrs,
-	                                htmlAttrs);
-
-	function makeMap(str) {
-	  var obj = {}, items = str.split(','), i;
-	  for (i = 0; i < items.length; i++) obj[items[i]] = true;
-	  return obj;
-	}
-
-
-	/**
-	 * @example
-	 * htmlParser(htmlString, {
-	 *     start: function(tag, attrs, unary) {},
-	 *     end: function(tag) {},
-	 *     chars: function(text) {},
-	 *     comment: function(text) {}
-	 * });
-	 *
-	 * @param {string} html string
-	 * @param {object} handler
-	 */
-	function htmlParser(html, handler) {
-	  if (typeof html !== 'string') {
-	    if (html === null || typeof html === 'undefined') {
-	      html = '';
-	    } else {
-	      html = '' + html;
-	    }
-	  }
-	  var index, chars, match, stack = [], last = html, text;
-	  stack.last = function() { return stack[ stack.length - 1 ]; };
-
-	  while (html) {
-	    text = '';
-	    chars = true;
-
-	    // Make sure we're not in a script or style element
-	    if (!stack.last() || !specialElements[ stack.last() ]) {
-
-	      // Comment
-	      if (html.indexOf("<!--") === 0) {
-	        // comments containing -- are not allowed unless they terminate the comment
-	        index = html.indexOf("--", 4);
-
-	        if (index >= 0 && html.lastIndexOf("-->", index) === index) {
-	          if (handler.comment) handler.comment(html.substring(4, index));
-	          html = html.substring(index + 3);
-	          chars = false;
-	        }
-	      // DOCTYPE
-	      } else if (DOCTYPE_REGEXP.test(html)) {
-	        match = html.match(DOCTYPE_REGEXP);
-
-	        if (match) {
-	          html = html.replace(match[0], '');
-	          chars = false;
-	        }
-	      // end tag
-	      } else if (BEGING_END_TAGE_REGEXP.test(html)) {
-	        match = html.match(END_TAG_REGEXP);
-
-	        if (match) {
-	          html = html.substring(match[0].length);
-	          match[0].replace(END_TAG_REGEXP, parseEndTag);
-	          chars = false;
-	        }
-
-	      // start tag
-	      } else if (BEGIN_TAG_REGEXP.test(html)) {
-	        match = html.match(START_TAG_REGEXP);
-
-	        if (match) {
-	          // We only have a valid start-tag if there is a '>'.
-	          if (match[4]) {
-	            html = html.substring(match[0].length);
-	            match[0].replace(START_TAG_REGEXP, parseStartTag);
-	          }
-	          chars = false;
-	        } else {
-	          // no ending tag found --- this piece should be encoded as an entity.
-	          text += '<';
-	          html = html.substring(1);
-	        }
-	      }
-
-	      if (chars) {
-	        index = html.indexOf("<");
-
-	        text += index < 0 ? html : html.substring(0, index);
-	        html = index < 0 ? "" : html.substring(index);
-
-	        if (handler.chars) handler.chars(decodeEntities(text));
-	      }
-
-	    } else {
-	      html = html.replace(new RegExp("(.*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", 'i'),
-	        function(all, text) {
-	          text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1");
-
-	          if (handler.chars) handler.chars(decodeEntities(text));
-
-	          return "";
-	      });
-
-	      parseEndTag("", stack.last());
-	    }
-
-	    if (html == last) {
-	      throw $sanitizeMinErr('badparse', "The sanitizer was unable to parse the following block " +
-	                                        "of html: {0}", html);
-	    }
-	    last = html;
-	  }
-
-	  // Clean up any remaining tags
-	  parseEndTag();
-
-	  function parseStartTag(tag, tagName, rest, unary) {
-	    tagName = angular.lowercase(tagName);
-	    if (blockElements[ tagName ]) {
-	      while (stack.last() && inlineElements[ stack.last() ]) {
-	        parseEndTag("", stack.last());
-	      }
-	    }
-
-	    if (optionalEndTagElements[ tagName ] && stack.last() == tagName) {
-	      parseEndTag("", tagName);
-	    }
-
-	    unary = voidElements[ tagName ] || !!unary;
-
-	    if (!unary)
-	      stack.push(tagName);
-
-	    var attrs = {};
-
-	    rest.replace(ATTR_REGEXP,
-	      function(match, name, doubleQuotedValue, singleQuotedValue, unquotedValue) {
-	        var value = doubleQuotedValue
-	          || singleQuotedValue
-	          || unquotedValue
-	          || '';
-
-	        attrs[name] = decodeEntities(value);
-	    });
-	    if (handler.start) handler.start(tagName, attrs, unary);
-	  }
-
-	  function parseEndTag(tag, tagName) {
-	    var pos = 0, i;
-	    tagName = angular.lowercase(tagName);
-	    if (tagName)
-	      // Find the closest opened tag of the same type
-	      for (pos = stack.length - 1; pos >= 0; pos--)
-	        if (stack[ pos ] == tagName)
-	          break;
-
-	    if (pos >= 0) {
-	      // Close all the open elements, up the stack
-	      for (i = stack.length - 1; i >= pos; i--)
-	        if (handler.end) handler.end(stack[ i ]);
-
-	      // Remove the open elements from the stack
-	      stack.length = pos;
-	    }
-	  }
-	}
-
-	var hiddenPre=document.createElement("pre");
-	var spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
-	/**
-	 * decodes all entities into regular string
-	 * @param value
-	 * @returns {string} A string with decoded entities.
-	 */
-	function decodeEntities(value) {
-	  if (!value) { return ''; }
-
-	  // Note: IE8 does not preserve spaces at the start/end of innerHTML
-	  // so we must capture them and reattach them afterward
-	  var parts = spaceRe.exec(value);
-	  var spaceBefore = parts[1];
-	  var spaceAfter = parts[3];
-	  var content = parts[2];
-	  if (content) {
-	    hiddenPre.innerHTML=content.replace(/</g,"&lt;");
-	    // innerText depends on styling as it doesn't display hidden elements.
-	    // Therefore, it's better to use textContent not to cause unnecessary
-	    // reflows. However, IE<9 don't support textContent so the innerText
-	    // fallback is necessary.
-	    content = 'textContent' in hiddenPre ?
-	      hiddenPre.textContent : hiddenPre.innerText;
-	  }
-	  return spaceBefore + content + spaceAfter;
-	}
-
-	/**
-	 * Escapes all potentially dangerous characters, so that the
-	 * resulting string can be safely inserted into attribute or
-	 * element text.
-	 * @param value
-	 * @returns {string} escaped text
-	 */
-	function encodeEntities(value) {
-	  return value.
-	    replace(/&/g, '&amp;').
-	    replace(SURROGATE_PAIR_REGEXP, function(value) {
-	      var hi = value.charCodeAt(0);
-	      var low = value.charCodeAt(1);
-	      return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
-	    }).
-	    replace(NON_ALPHANUMERIC_REGEXP, function(value) {
-	      return '&#' + value.charCodeAt(0) + ';';
-	    }).
-	    replace(/</g, '&lt;').
-	    replace(/>/g, '&gt;');
-	}
-
-	/**
-	 * create an HTML/XML writer which writes to buffer
-	 * @param {Array} buf use buf.jain('') to get out sanitized html string
-	 * @returns {object} in the form of {
-	 *     start: function(tag, attrs, unary) {},
-	 *     end: function(tag) {},
-	 *     chars: function(text) {},
-	 *     comment: function(text) {}
-	 * }
-	 */
-	function htmlSanitizeWriter(buf, uriValidator) {
-	  var ignore = false;
-	  var out = angular.bind(buf, buf.push);
-	  return {
-	    start: function(tag, attrs, unary) {
-	      tag = angular.lowercase(tag);
-	      if (!ignore && specialElements[tag]) {
-	        ignore = tag;
-	      }
-	      if (!ignore && validElements[tag] === true) {
-	        out('<');
-	        out(tag);
-	        angular.forEach(attrs, function(value, key) {
-	          var lkey=angular.lowercase(key);
-	          var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
-	          if (validAttrs[lkey] === true &&
-	            (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
-	            out(' ');
-	            out(key);
-	            out('="');
-	            out(encodeEntities(value));
-	            out('"');
-	          }
-	        });
-	        out(unary ? '/>' : '>');
-	      }
-	    },
-	    end: function(tag) {
-	        tag = angular.lowercase(tag);
-	        if (!ignore && validElements[tag] === true) {
-	          out('</');
-	          out(tag);
-	          out('>');
-	        }
-	        if (tag == ignore) {
-	          ignore = false;
-	        }
-	      },
-	    chars: function(chars) {
-	        if (!ignore) {
-	          out(encodeEntities(chars));
-	        }
-	      }
-	  };
-	}
-
-
-	// define ngSanitize module and register $sanitize service
-	angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
-
-	/* global sanitizeText: false */
-
-	/**
-	 * @ngdoc filter
-	 * @name linky
-	 * @kind function
-	 *
-	 * @description
-	 * Finds links in text input and turns them into html links. Supports http/https/ftp/mailto and
-	 * plain email address links.
-	 *
-	 * Requires the {@link ngSanitize `ngSanitize`} module to be installed.
-	 *
-	 * @param {string} text Input text.
-	 * @param {string} target Window (_blank|_self|_parent|_top) or named frame to open links in.
-	 * @returns {string} Html-linkified text.
-	 *
-	 * @usage
-	   <span ng-bind-html="linky_expression | linky"></span>
-	 *
-	 * @example
-	   <example module="linkyExample" deps="angular-sanitize.js">
-	     <file name="index.html">
-	       <script>
-	         angular.module('linkyExample', ['ngSanitize'])
-	           .controller('ExampleController', ['$scope', function($scope) {
-	             $scope.snippet =
-	               'Pretty text with some links:\n'+
-	               'http://angularjs.org/,\n'+
-	               'mailto:us@somewhere.org,\n'+
-	               'another@somewhere.org,\n'+
-	               'and one more: ftp://127.0.0.1/.';
-	             $scope.snippetWithTarget = 'http://angularjs.org/';
-	           }]);
-	       </script>
-	       <div ng-controller="ExampleController">
-	       Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
-	       <table>
-	         <tr>
-	           <td>Filter</td>
-	           <td>Source</td>
-	           <td>Rendered</td>
-	         </tr>
-	         <tr id="linky-filter">
-	           <td>linky filter</td>
-	           <td>
-	             <pre>&lt;div ng-bind-html="snippet | linky"&gt;<br>&lt;/div&gt;</pre>
-	           </td>
-	           <td>
-	             <div ng-bind-html="snippet | linky"></div>
-	           </td>
-	         </tr>
-	         <tr id="linky-target">
-	          <td>linky target</td>
-	          <td>
-	            <pre>&lt;div ng-bind-html="snippetWithTarget | linky:'_blank'"&gt;<br>&lt;/div&gt;</pre>
-	          </td>
-	          <td>
-	            <div ng-bind-html="snippetWithTarget | linky:'_blank'"></div>
-	          </td>
-	         </tr>
-	         <tr id="escaped-html">
-	           <td>no filter</td>
-	           <td><pre>&lt;div ng-bind="snippet"&gt;<br>&lt;/div&gt;</pre></td>
-	           <td><div ng-bind="snippet"></div></td>
-	         </tr>
-	       </table>
-	     </file>
-	     <file name="protractor.js" type="protractor">
-	       it('should linkify the snippet with urls', function() {
-	         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
-	             toBe('Pretty text with some links: http://angularjs.org/, us@somewhere.org, ' +
-	                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
-	         expect(element.all(by.css('#linky-filter a')).count()).toEqual(4);
-	       });
-
-	       it('should not linkify snippet without the linky filter', function() {
-	         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText()).
-	             toBe('Pretty text with some links: http://angularjs.org/, mailto:us@somewhere.org, ' +
-	                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
-	         expect(element.all(by.css('#escaped-html a')).count()).toEqual(0);
-	       });
-
-	       it('should update', function() {
-	         element(by.model('snippet')).clear();
-	         element(by.model('snippet')).sendKeys('new http://link.');
-	         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
-	             toBe('new http://link.');
-	         expect(element.all(by.css('#linky-filter a')).count()).toEqual(1);
-	         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText())
-	             .toBe('new http://link.');
-	       });
-
-	       it('should work with the target property', function() {
-	        expect(element(by.id('linky-target')).
-	            element(by.binding("snippetWithTarget | linky:'_blank'")).getText()).
-	            toBe('http://angularjs.org/');
-	        expect(element(by.css('#linky-target a')).getAttribute('target')).toEqual('_blank');
-	       });
-	     </file>
-	   </example>
-	 */
-	angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
-	  var LINKY_URL_REGEXP =
-	        /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"”’]/,
-	      MAILTO_REGEXP = /^mailto:/;
-
-	  return function(text, target) {
-	    if (!text) return text;
-	    var match;
-	    var raw = text;
-	    var html = [];
-	    var url;
-	    var i;
-	    while ((match = raw.match(LINKY_URL_REGEXP))) {
-	      // We can not end in these as they are sometimes found at the end of the sentence
-	      url = match[0];
-	      // if we did not match ftp/http/www/mailto then assume mailto
-	      if (!match[2] && !match[4]) {
-	        url = (match[3] ? 'http://' : 'mailto:') + url;
-	      }
-	      i = match.index;
-	      addText(raw.substr(0, i));
-	      addLink(url, match[0].replace(MAILTO_REGEXP, ''));
-	      raw = raw.substring(i + match[0].length);
-	    }
-	    addText(raw);
-	    return $sanitize(html.join(''));
-
-	    function addText(text) {
-	      if (!text) {
-	        return;
-	      }
-	      html.push(sanitizeText(text));
-	    }
-
-	    function addLink(url, text) {
-	      html.push('<a ');
-	      if (angular.isDefined(target)) {
-	        html.push('target="',
-	                  target,
-	                  '" ');
-	      }
-	      html.push('href="',
-	                url.replace(/"/g, '&quot;'),
-	                '">');
-	      addText(text);
-	      html.push('</a>');
-	    }
-	  };
-	}]);
-
-
-	})(window, window.angular);
-
-
-/***/ },
-
-/***/ 40:
-/***/ function(module, exports, __webpack_require__) {
-
-	/**
-	 * @license AngularJS v1.3.4
-	 * (c) 2010-2014 Google, Inc. http://angularjs.org
-	 * License: MIT
-	 */
-	(function(window, angular, undefined) {'use strict';
-
-	/**
-	 * @ngdoc module
-	 * @name ngCookies
-	 * @description
-	 *
-	 * # ngCookies
-	 *
-	 * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies.
-	 *
-	 *
-	 * <div doc-module-components="ngCookies"></div>
-	 *
-	 * See {@link ngCookies.$cookies `$cookies`} and
-	 * {@link ngCookies.$cookieStore `$cookieStore`} for usage.
-	 */
-
-
-	angular.module('ngCookies', ['ng']).
-	  /**
-	   * @ngdoc service
-	   * @name $cookies
-	   *
-	   * @description
-	   * Provides read/write access to browser's cookies.
-	   *
-	   * Only a simple Object is exposed and by adding or removing properties to/from this object, new
-	   * cookies are created/deleted at the end of current $eval.
-	   * The object's properties can only be strings.
-	   *
-	   * Requires the {@link ngCookies `ngCookies`} module to be installed.
-	   *
-	   * @example
-	   *
-	   * ```js
-	   * angular.module('cookiesExample', ['ngCookies'])
-	   *   .controller('ExampleController', ['$cookies', function($cookies) {
-	   *     // Retrieving a cookie
-	   *     var favoriteCookie = $cookies.myFavorite;
-	   *     // Setting a cookie
-	   *     $cookies.myFavorite = 'oatmeal';
-	   *   }]);
-	   * ```
-	   */
-	   factory('$cookies', ['$rootScope', '$browser', function($rootScope, $browser) {
-	      var cookies = {},
-	          lastCookies = {},
-	          lastBrowserCookies,
-	          runEval = false,
-	          copy = angular.copy,
-	          isUndefined = angular.isUndefined;
-
-	      //creates a poller fn that copies all cookies from the $browser to service & inits the service
-	      $browser.addPollFn(function() {
-	        var currentCookies = $browser.cookies();
-	        if (lastBrowserCookies != currentCookies) { //relies on browser.cookies() impl
-	          lastBrowserCookies = currentCookies;
-	          copy(currentCookies, lastCookies);
-	          copy(currentCookies, cookies);
-	          if (runEval) $rootScope.$apply();
-	        }
-	      })();
-
-	      runEval = true;
-
-	      //at the end of each eval, push cookies
-	      //TODO: this should happen before the "delayed" watches fire, because if some cookies are not
-	      //      strings or browser refuses to store some cookies, we update the model in the push fn.
-	      $rootScope.$watch(push);
-
-	      return cookies;
-
-
-	      /**
-	       * Pushes all the cookies from the service to the browser and verifies if all cookies were
-	       * stored.
-	       */
-	      function push() {
-	        var name,
-	            value,
-	            browserCookies,
-	            updated;
-
-	        //delete any cookies deleted in $cookies
-	        for (name in lastCookies) {
-	          if (isUndefined(cookies[name])) {
-	            $browser.cookies(name, undefined);
-	          }
-	        }
-
-	        //update all cookies updated in $cookies
-	        for (name in cookies) {
-	          value = cookies[name];
-	          if (!angular.isString(value)) {
-	            value = '' + value;
-	            cookies[name] = value;
-	          }
-	          if (value !== lastCookies[name]) {
-	            $browser.cookies(name, value);
-	            updated = true;
-	          }
-	        }
-
-	        //verify what was actually stored
-	        if (updated) {
-	          updated = false;
-	          browserCookies = $browser.cookies();
-
-	          for (name in cookies) {
-	            if (cookies[name] !== browserCookies[name]) {
-	              //delete or reset all cookies that the browser dropped from $cookies
-	              if (isUndefined(browserCookies[name])) {
-	                delete cookies[name];
-	              } else {
-	                cookies[name] = browserCookies[name];
-	              }
-	              updated = true;
-	            }
-	          }
-	        }
-	      }
-	    }]).
-
-
-	  /**
-	   * @ngdoc service
-	   * @name $cookieStore
-	   * @requires $cookies
-	   *
-	   * @description
-	   * Provides a key-value (string-object) storage, that is backed by session cookies.
-	   * Objects put or retrieved from this storage are automatically serialized or
-	   * deserialized by angular's toJson/fromJson.
-	   *
-	   * Requires the {@link ngCookies `ngCookies`} module to be installed.
-	   *
-	   * @example
-	   *
-	   * ```js
-	   * angular.module('cookieStoreExample', ['ngCookies'])
-	   *   .controller('ExampleController', ['$cookieStore', function($cookieStore) {
-	   *     // Put cookie
-	   *     $cookieStore.put('myFavorite','oatmeal');
-	   *     // Get cookie
-	   *     var favoriteCookie = $cookieStore.get('myFavorite');
-	   *     // Removing a cookie
-	   *     $cookieStore.remove('myFavorite');
-	   *   }]);
-	   * ```
-	   */
-	   factory('$cookieStore', ['$cookies', function($cookies) {
-
-	      return {
-	        /**
-	         * @ngdoc method
-	         * @name $cookieStore#get
-	         *
-	         * @description
-	         * Returns the value of given cookie key
-	         *
-	         * @param {string} key Id to use for lookup.
-	         * @returns {Object} Deserialized cookie value.
-	         */
-	        get: function(key) {
-	          var value = $cookies[key];
-	          return value ? angular.fromJson(value) : value;
-	        },
-
-	        /**
-	         * @ngdoc method
-	         * @name $cookieStore#put
-	         *
-	         * @description
-	         * Sets a value for given cookie key
-	         *
-	         * @param {string} key Id for the `value`.
-	         * @param {Object} value Value to be stored.
-	         */
-	        put: function(key, value) {
-	          $cookies[key] = angular.toJson(value);
-	        },
-
-	        /**
-	         * @ngdoc method
-	         * @name $cookieStore#remove
-	         *
-	         * @description
-	         * Remove given cookie
-	         *
-	         * @param {string} key Id of the key-value pair to delete.
-	         */
-	        remove: function(key) {
-	          delete $cookies[key];
-	        }
-	      };
-
-	    }]);
-
-
-	})(window, window.angular);
-
-
-/***/ },
-
-/***/ 41:
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -34328,6 +33465,906 @@
 	}.call(this));
 	
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(42)(module), (function() { return this; }())))
+
+/***/ },
+
+/***/ 40:
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license AngularJS v1.3.4
+	 * (c) 2010-2014 Google, Inc. http://angularjs.org
+	 * License: MIT
+	 */
+	(function(window, angular, undefined) {'use strict';
+
+	/**
+	 * @ngdoc module
+	 * @name ngCookies
+	 * @description
+	 *
+	 * # ngCookies
+	 *
+	 * The `ngCookies` module provides a convenient wrapper for reading and writing browser cookies.
+	 *
+	 *
+	 * <div doc-module-components="ngCookies"></div>
+	 *
+	 * See {@link ngCookies.$cookies `$cookies`} and
+	 * {@link ngCookies.$cookieStore `$cookieStore`} for usage.
+	 */
+
+
+	angular.module('ngCookies', ['ng']).
+	  /**
+	   * @ngdoc service
+	   * @name $cookies
+	   *
+	   * @description
+	   * Provides read/write access to browser's cookies.
+	   *
+	   * Only a simple Object is exposed and by adding or removing properties to/from this object, new
+	   * cookies are created/deleted at the end of current $eval.
+	   * The object's properties can only be strings.
+	   *
+	   * Requires the {@link ngCookies `ngCookies`} module to be installed.
+	   *
+	   * @example
+	   *
+	   * ```js
+	   * angular.module('cookiesExample', ['ngCookies'])
+	   *   .controller('ExampleController', ['$cookies', function($cookies) {
+	   *     // Retrieving a cookie
+	   *     var favoriteCookie = $cookies.myFavorite;
+	   *     // Setting a cookie
+	   *     $cookies.myFavorite = 'oatmeal';
+	   *   }]);
+	   * ```
+	   */
+	   factory('$cookies', ['$rootScope', '$browser', function($rootScope, $browser) {
+	      var cookies = {},
+	          lastCookies = {},
+	          lastBrowserCookies,
+	          runEval = false,
+	          copy = angular.copy,
+	          isUndefined = angular.isUndefined;
+
+	      //creates a poller fn that copies all cookies from the $browser to service & inits the service
+	      $browser.addPollFn(function() {
+	        var currentCookies = $browser.cookies();
+	        if (lastBrowserCookies != currentCookies) { //relies on browser.cookies() impl
+	          lastBrowserCookies = currentCookies;
+	          copy(currentCookies, lastCookies);
+	          copy(currentCookies, cookies);
+	          if (runEval) $rootScope.$apply();
+	        }
+	      })();
+
+	      runEval = true;
+
+	      //at the end of each eval, push cookies
+	      //TODO: this should happen before the "delayed" watches fire, because if some cookies are not
+	      //      strings or browser refuses to store some cookies, we update the model in the push fn.
+	      $rootScope.$watch(push);
+
+	      return cookies;
+
+
+	      /**
+	       * Pushes all the cookies from the service to the browser and verifies if all cookies were
+	       * stored.
+	       */
+	      function push() {
+	        var name,
+	            value,
+	            browserCookies,
+	            updated;
+
+	        //delete any cookies deleted in $cookies
+	        for (name in lastCookies) {
+	          if (isUndefined(cookies[name])) {
+	            $browser.cookies(name, undefined);
+	          }
+	        }
+
+	        //update all cookies updated in $cookies
+	        for (name in cookies) {
+	          value = cookies[name];
+	          if (!angular.isString(value)) {
+	            value = '' + value;
+	            cookies[name] = value;
+	          }
+	          if (value !== lastCookies[name]) {
+	            $browser.cookies(name, value);
+	            updated = true;
+	          }
+	        }
+
+	        //verify what was actually stored
+	        if (updated) {
+	          updated = false;
+	          browserCookies = $browser.cookies();
+
+	          for (name in cookies) {
+	            if (cookies[name] !== browserCookies[name]) {
+	              //delete or reset all cookies that the browser dropped from $cookies
+	              if (isUndefined(browserCookies[name])) {
+	                delete cookies[name];
+	              } else {
+	                cookies[name] = browserCookies[name];
+	              }
+	              updated = true;
+	            }
+	          }
+	        }
+	      }
+	    }]).
+
+
+	  /**
+	   * @ngdoc service
+	   * @name $cookieStore
+	   * @requires $cookies
+	   *
+	   * @description
+	   * Provides a key-value (string-object) storage, that is backed by session cookies.
+	   * Objects put or retrieved from this storage are automatically serialized or
+	   * deserialized by angular's toJson/fromJson.
+	   *
+	   * Requires the {@link ngCookies `ngCookies`} module to be installed.
+	   *
+	   * @example
+	   *
+	   * ```js
+	   * angular.module('cookieStoreExample', ['ngCookies'])
+	   *   .controller('ExampleController', ['$cookieStore', function($cookieStore) {
+	   *     // Put cookie
+	   *     $cookieStore.put('myFavorite','oatmeal');
+	   *     // Get cookie
+	   *     var favoriteCookie = $cookieStore.get('myFavorite');
+	   *     // Removing a cookie
+	   *     $cookieStore.remove('myFavorite');
+	   *   }]);
+	   * ```
+	   */
+	   factory('$cookieStore', ['$cookies', function($cookies) {
+
+	      return {
+	        /**
+	         * @ngdoc method
+	         * @name $cookieStore#get
+	         *
+	         * @description
+	         * Returns the value of given cookie key
+	         *
+	         * @param {string} key Id to use for lookup.
+	         * @returns {Object} Deserialized cookie value.
+	         */
+	        get: function(key) {
+	          var value = $cookies[key];
+	          return value ? angular.fromJson(value) : value;
+	        },
+
+	        /**
+	         * @ngdoc method
+	         * @name $cookieStore#put
+	         *
+	         * @description
+	         * Sets a value for given cookie key
+	         *
+	         * @param {string} key Id for the `value`.
+	         * @param {Object} value Value to be stored.
+	         */
+	        put: function(key, value) {
+	          $cookies[key] = angular.toJson(value);
+	        },
+
+	        /**
+	         * @ngdoc method
+	         * @name $cookieStore#remove
+	         *
+	         * @description
+	         * Remove given cookie
+	         *
+	         * @param {string} key Id of the key-value pair to delete.
+	         */
+	        remove: function(key) {
+	          delete $cookies[key];
+	        }
+	      };
+
+	    }]);
+
+
+	})(window, window.angular);
+
+
+/***/ },
+
+/***/ 41:
+/***/ function(module, exports, __webpack_require__) {
+
+	/**
+	 * @license AngularJS v1.3.7
+	 * (c) 2010-2014 Google, Inc. http://angularjs.org
+	 * License: MIT
+	 */
+	(function(window, angular, undefined) {'use strict';
+
+	var $sanitizeMinErr = angular.$$minErr('$sanitize');
+
+	/**
+	 * @ngdoc module
+	 * @name ngSanitize
+	 * @description
+	 *
+	 * # ngSanitize
+	 *
+	 * The `ngSanitize` module provides functionality to sanitize HTML.
+	 *
+	 *
+	 * <div doc-module-components="ngSanitize"></div>
+	 *
+	 * See {@link ngSanitize.$sanitize `$sanitize`} for usage.
+	 */
+
+	/*
+	 * HTML Parser By Misko Hevery (misko@hevery.com)
+	 * based on:  HTML Parser By John Resig (ejohn.org)
+	 * Original code by Erik Arvidsson, Mozilla Public License
+	 * http://erik.eae.net/simplehtmlparser/simplehtmlparser.js
+	 *
+	 * // Use like so:
+	 * htmlParser(htmlString, {
+	 *     start: function(tag, attrs, unary) {},
+	 *     end: function(tag) {},
+	 *     chars: function(text) {},
+	 *     comment: function(text) {}
+	 * });
+	 *
+	 */
+
+
+	/**
+	 * @ngdoc service
+	 * @name $sanitize
+	 * @kind function
+	 *
+	 * @description
+	 *   The input is sanitized by parsing the HTML into tokens. All safe tokens (from a whitelist) are
+	 *   then serialized back to properly escaped html string. This means that no unsafe input can make
+	 *   it into the returned string, however, since our parser is more strict than a typical browser
+	 *   parser, it's possible that some obscure input, which would be recognized as valid HTML by a
+	 *   browser, won't make it through the sanitizer. The input may also contain SVG markup.
+	 *   The whitelist is configured using the functions `aHrefSanitizationWhitelist` and
+	 *   `imgSrcSanitizationWhitelist` of {@link ng.$compileProvider `$compileProvider`}.
+	 *
+	 * @param {string} html HTML input.
+	 * @returns {string} Sanitized HTML.
+	 *
+	 * @example
+	   <example module="sanitizeExample" deps="angular-sanitize.js">
+	   <file name="index.html">
+	     <script>
+	         angular.module('sanitizeExample', ['ngSanitize'])
+	           .controller('ExampleController', ['$scope', '$sce', function($scope, $sce) {
+	             $scope.snippet =
+	               '<p style="color:blue">an html\n' +
+	               '<em onmouseover="this.textContent=\'PWN3D!\'">click here</em>\n' +
+	               'snippet</p>';
+	             $scope.deliberatelyTrustDangerousSnippet = function() {
+	               return $sce.trustAsHtml($scope.snippet);
+	             };
+	           }]);
+	     </script>
+	     <div ng-controller="ExampleController">
+	        Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
+	       <table>
+	         <tr>
+	           <td>Directive</td>
+	           <td>How</td>
+	           <td>Source</td>
+	           <td>Rendered</td>
+	         </tr>
+	         <tr id="bind-html-with-sanitize">
+	           <td>ng-bind-html</td>
+	           <td>Automatically uses $sanitize</td>
+	           <td><pre>&lt;div ng-bind-html="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+	           <td><div ng-bind-html="snippet"></div></td>
+	         </tr>
+	         <tr id="bind-html-with-trust">
+	           <td>ng-bind-html</td>
+	           <td>Bypass $sanitize by explicitly trusting the dangerous value</td>
+	           <td>
+	           <pre>&lt;div ng-bind-html="deliberatelyTrustDangerousSnippet()"&gt;
+	&lt;/div&gt;</pre>
+	           </td>
+	           <td><div ng-bind-html="deliberatelyTrustDangerousSnippet()"></div></td>
+	         </tr>
+	         <tr id="bind-default">
+	           <td>ng-bind</td>
+	           <td>Automatically escapes</td>
+	           <td><pre>&lt;div ng-bind="snippet"&gt;<br/>&lt;/div&gt;</pre></td>
+	           <td><div ng-bind="snippet"></div></td>
+	         </tr>
+	       </table>
+	       </div>
+	   </file>
+	   <file name="protractor.js" type="protractor">
+	     it('should sanitize the html snippet by default', function() {
+	       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
+	         toBe('<p>an html\n<em>click here</em>\nsnippet</p>');
+	     });
+
+	     it('should inline raw snippet if bound to a trusted value', function() {
+	       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).
+	         toBe("<p style=\"color:blue\">an html\n" +
+	              "<em onmouseover=\"this.textContent='PWN3D!'\">click here</em>\n" +
+	              "snippet</p>");
+	     });
+
+	     it('should escape snippet without any filter', function() {
+	       expect(element(by.css('#bind-default div')).getInnerHtml()).
+	         toBe("&lt;p style=\"color:blue\"&gt;an html\n" +
+	              "&lt;em onmouseover=\"this.textContent='PWN3D!'\"&gt;click here&lt;/em&gt;\n" +
+	              "snippet&lt;/p&gt;");
+	     });
+
+	     it('should update', function() {
+	       element(by.model('snippet')).clear();
+	       element(by.model('snippet')).sendKeys('new <b onclick="alert(1)">text</b>');
+	       expect(element(by.css('#bind-html-with-sanitize div')).getInnerHtml()).
+	         toBe('new <b>text</b>');
+	       expect(element(by.css('#bind-html-with-trust div')).getInnerHtml()).toBe(
+	         'new <b onclick="alert(1)">text</b>');
+	       expect(element(by.css('#bind-default div')).getInnerHtml()).toBe(
+	         "new &lt;b onclick=\"alert(1)\"&gt;text&lt;/b&gt;");
+	     });
+	   </file>
+	   </example>
+	 */
+	function $SanitizeProvider() {
+	  this.$get = ['$$sanitizeUri', function($$sanitizeUri) {
+	    return function(html) {
+	      var buf = [];
+	      htmlParser(html, htmlSanitizeWriter(buf, function(uri, isImage) {
+	        return !/^unsafe/.test($$sanitizeUri(uri, isImage));
+	      }));
+	      return buf.join('');
+	    };
+	  }];
+	}
+
+	function sanitizeText(chars) {
+	  var buf = [];
+	  var writer = htmlSanitizeWriter(buf, angular.noop);
+	  writer.chars(chars);
+	  return buf.join('');
+	}
+
+
+	// Regular Expressions for parsing tags and attributes
+	var START_TAG_REGEXP =
+	       /^<((?:[a-zA-Z])[\w:-]*)((?:\s+[\w:-]+(?:\s*=\s*(?:(?:"[^"]*")|(?:'[^']*')|[^>\s]+))?)*)\s*(\/?)\s*(>?)/,
+	  END_TAG_REGEXP = /^<\/\s*([\w:-]+)[^>]*>/,
+	  ATTR_REGEXP = /([\w:-]+)(?:\s*=\s*(?:(?:"((?:[^"])*)")|(?:'((?:[^'])*)')|([^>\s]+)))?/g,
+	  BEGIN_TAG_REGEXP = /^</,
+	  BEGING_END_TAGE_REGEXP = /^<\//,
+	  COMMENT_REGEXP = /<!--(.*?)-->/g,
+	  DOCTYPE_REGEXP = /<!DOCTYPE([^>]*?)>/i,
+	  CDATA_REGEXP = /<!\[CDATA\[(.*?)]]>/g,
+	  SURROGATE_PAIR_REGEXP = /[\uD800-\uDBFF][\uDC00-\uDFFF]/g,
+	  // Match everything outside of normal chars and " (quote character)
+	  NON_ALPHANUMERIC_REGEXP = /([^\#-~| |!])/g;
+
+
+	// Good source of info about elements and attributes
+	// http://dev.w3.org/html5/spec/Overview.html#semantics
+	// http://simon.html5.org/html-elements
+
+	// Safe Void Elements - HTML5
+	// http://dev.w3.org/html5/spec/Overview.html#void-elements
+	var voidElements = makeMap("area,br,col,hr,img,wbr");
+
+	// Elements that you can, intentionally, leave open (and which close themselves)
+	// http://dev.w3.org/html5/spec/Overview.html#optional-tags
+	var optionalEndTagBlockElements = makeMap("colgroup,dd,dt,li,p,tbody,td,tfoot,th,thead,tr"),
+	    optionalEndTagInlineElements = makeMap("rp,rt"),
+	    optionalEndTagElements = angular.extend({},
+	                                            optionalEndTagInlineElements,
+	                                            optionalEndTagBlockElements);
+
+	// Safe Block Elements - HTML5
+	var blockElements = angular.extend({}, optionalEndTagBlockElements, makeMap("address,article," +
+	        "aside,blockquote,caption,center,del,dir,div,dl,figure,figcaption,footer,h1,h2,h3,h4,h5," +
+	        "h6,header,hgroup,hr,ins,map,menu,nav,ol,pre,script,section,table,ul"));
+
+	// Inline Elements - HTML5
+	var inlineElements = angular.extend({}, optionalEndTagInlineElements, makeMap("a,abbr,acronym,b," +
+	        "bdi,bdo,big,br,cite,code,del,dfn,em,font,i,img,ins,kbd,label,map,mark,q,ruby,rp,rt,s," +
+	        "samp,small,span,strike,strong,sub,sup,time,tt,u,var"));
+
+	// SVG Elements
+	// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Elements
+	var svgElements = makeMap("animate,animateColor,animateMotion,animateTransform,circle,defs," +
+	        "desc,ellipse,font-face,font-face-name,font-face-src,g,glyph,hkern,image,linearGradient," +
+	        "line,marker,metadata,missing-glyph,mpath,path,polygon,polyline,radialGradient,rect,set," +
+	        "stop,svg,switch,text,title,tspan,use");
+
+	// Special Elements (can contain anything)
+	var specialElements = makeMap("script,style");
+
+	var validElements = angular.extend({},
+	                                   voidElements,
+	                                   blockElements,
+	                                   inlineElements,
+	                                   optionalEndTagElements,
+	                                   svgElements);
+
+	//Attributes that have href and hence need to be sanitized
+	var uriAttrs = makeMap("background,cite,href,longdesc,src,usemap,xlink:href");
+
+	var htmlAttrs = makeMap('abbr,align,alt,axis,bgcolor,border,cellpadding,cellspacing,class,clear,' +
+	    'color,cols,colspan,compact,coords,dir,face,headers,height,hreflang,hspace,' +
+	    'ismap,lang,language,nohref,nowrap,rel,rev,rows,rowspan,rules,' +
+	    'scope,scrolling,shape,size,span,start,summary,target,title,type,' +
+	    'valign,value,vspace,width');
+
+	// SVG attributes (without "id" and "name" attributes)
+	// https://wiki.whatwg.org/wiki/Sanitization_rules#svg_Attributes
+	var svgAttrs = makeMap('accent-height,accumulate,additive,alphabetic,arabic-form,ascent,' +
+	    'attributeName,attributeType,baseProfile,bbox,begin,by,calcMode,cap-height,class,color,' +
+	    'color-rendering,content,cx,cy,d,dx,dy,descent,display,dur,end,fill,fill-rule,font-family,' +
+	    'font-size,font-stretch,font-style,font-variant,font-weight,from,fx,fy,g1,g2,glyph-name,' +
+	    'gradientUnits,hanging,height,horiz-adv-x,horiz-origin-x,ideographic,k,keyPoints,' +
+	    'keySplines,keyTimes,lang,marker-end,marker-mid,marker-start,markerHeight,markerUnits,' +
+	    'markerWidth,mathematical,max,min,offset,opacity,orient,origin,overline-position,' +
+	    'overline-thickness,panose-1,path,pathLength,points,preserveAspectRatio,r,refX,refY,' +
+	    'repeatCount,repeatDur,requiredExtensions,requiredFeatures,restart,rotate,rx,ry,slope,stemh,' +
+	    'stemv,stop-color,stop-opacity,strikethrough-position,strikethrough-thickness,stroke,' +
+	    'stroke-dasharray,stroke-dashoffset,stroke-linecap,stroke-linejoin,stroke-miterlimit,' +
+	    'stroke-opacity,stroke-width,systemLanguage,target,text-anchor,to,transform,type,u1,u2,' +
+	    'underline-position,underline-thickness,unicode,unicode-range,units-per-em,values,version,' +
+	    'viewBox,visibility,width,widths,x,x-height,x1,x2,xlink:actuate,xlink:arcrole,xlink:role,' +
+	    'xlink:show,xlink:title,xlink:type,xml:base,xml:lang,xml:space,xmlns,xmlns:xlink,y,y1,y2,' +
+	    'zoomAndPan');
+
+	var validAttrs = angular.extend({},
+	                                uriAttrs,
+	                                svgAttrs,
+	                                htmlAttrs);
+
+	function makeMap(str) {
+	  var obj = {}, items = str.split(','), i;
+	  for (i = 0; i < items.length; i++) obj[items[i]] = true;
+	  return obj;
+	}
+
+
+	/**
+	 * @example
+	 * htmlParser(htmlString, {
+	 *     start: function(tag, attrs, unary) {},
+	 *     end: function(tag) {},
+	 *     chars: function(text) {},
+	 *     comment: function(text) {}
+	 * });
+	 *
+	 * @param {string} html string
+	 * @param {object} handler
+	 */
+	function htmlParser(html, handler) {
+	  if (typeof html !== 'string') {
+	    if (html === null || typeof html === 'undefined') {
+	      html = '';
+	    } else {
+	      html = '' + html;
+	    }
+	  }
+	  var index, chars, match, stack = [], last = html, text;
+	  stack.last = function() { return stack[ stack.length - 1 ]; };
+
+	  while (html) {
+	    text = '';
+	    chars = true;
+
+	    // Make sure we're not in a script or style element
+	    if (!stack.last() || !specialElements[ stack.last() ]) {
+
+	      // Comment
+	      if (html.indexOf("<!--") === 0) {
+	        // comments containing -- are not allowed unless they terminate the comment
+	        index = html.indexOf("--", 4);
+
+	        if (index >= 0 && html.lastIndexOf("-->", index) === index) {
+	          if (handler.comment) handler.comment(html.substring(4, index));
+	          html = html.substring(index + 3);
+	          chars = false;
+	        }
+	      // DOCTYPE
+	      } else if (DOCTYPE_REGEXP.test(html)) {
+	        match = html.match(DOCTYPE_REGEXP);
+
+	        if (match) {
+	          html = html.replace(match[0], '');
+	          chars = false;
+	        }
+	      // end tag
+	      } else if (BEGING_END_TAGE_REGEXP.test(html)) {
+	        match = html.match(END_TAG_REGEXP);
+
+	        if (match) {
+	          html = html.substring(match[0].length);
+	          match[0].replace(END_TAG_REGEXP, parseEndTag);
+	          chars = false;
+	        }
+
+	      // start tag
+	      } else if (BEGIN_TAG_REGEXP.test(html)) {
+	        match = html.match(START_TAG_REGEXP);
+
+	        if (match) {
+	          // We only have a valid start-tag if there is a '>'.
+	          if (match[4]) {
+	            html = html.substring(match[0].length);
+	            match[0].replace(START_TAG_REGEXP, parseStartTag);
+	          }
+	          chars = false;
+	        } else {
+	          // no ending tag found --- this piece should be encoded as an entity.
+	          text += '<';
+	          html = html.substring(1);
+	        }
+	      }
+
+	      if (chars) {
+	        index = html.indexOf("<");
+
+	        text += index < 0 ? html : html.substring(0, index);
+	        html = index < 0 ? "" : html.substring(index);
+
+	        if (handler.chars) handler.chars(decodeEntities(text));
+	      }
+
+	    } else {
+	      html = html.replace(new RegExp("(.*)<\\s*\\/\\s*" + stack.last() + "[^>]*>", 'i'),
+	        function(all, text) {
+	          text = text.replace(COMMENT_REGEXP, "$1").replace(CDATA_REGEXP, "$1");
+
+	          if (handler.chars) handler.chars(decodeEntities(text));
+
+	          return "";
+	      });
+
+	      parseEndTag("", stack.last());
+	    }
+
+	    if (html == last) {
+	      throw $sanitizeMinErr('badparse', "The sanitizer was unable to parse the following block " +
+	                                        "of html: {0}", html);
+	    }
+	    last = html;
+	  }
+
+	  // Clean up any remaining tags
+	  parseEndTag();
+
+	  function parseStartTag(tag, tagName, rest, unary) {
+	    tagName = angular.lowercase(tagName);
+	    if (blockElements[ tagName ]) {
+	      while (stack.last() && inlineElements[ stack.last() ]) {
+	        parseEndTag("", stack.last());
+	      }
+	    }
+
+	    if (optionalEndTagElements[ tagName ] && stack.last() == tagName) {
+	      parseEndTag("", tagName);
+	    }
+
+	    unary = voidElements[ tagName ] || !!unary;
+
+	    if (!unary)
+	      stack.push(tagName);
+
+	    var attrs = {};
+
+	    rest.replace(ATTR_REGEXP,
+	      function(match, name, doubleQuotedValue, singleQuotedValue, unquotedValue) {
+	        var value = doubleQuotedValue
+	          || singleQuotedValue
+	          || unquotedValue
+	          || '';
+
+	        attrs[name] = decodeEntities(value);
+	    });
+	    if (handler.start) handler.start(tagName, attrs, unary);
+	  }
+
+	  function parseEndTag(tag, tagName) {
+	    var pos = 0, i;
+	    tagName = angular.lowercase(tagName);
+	    if (tagName)
+	      // Find the closest opened tag of the same type
+	      for (pos = stack.length - 1; pos >= 0; pos--)
+	        if (stack[ pos ] == tagName)
+	          break;
+
+	    if (pos >= 0) {
+	      // Close all the open elements, up the stack
+	      for (i = stack.length - 1; i >= pos; i--)
+	        if (handler.end) handler.end(stack[ i ]);
+
+	      // Remove the open elements from the stack
+	      stack.length = pos;
+	    }
+	  }
+	}
+
+	var hiddenPre=document.createElement("pre");
+	var spaceRe = /^(\s*)([\s\S]*?)(\s*)$/;
+	/**
+	 * decodes all entities into regular string
+	 * @param value
+	 * @returns {string} A string with decoded entities.
+	 */
+	function decodeEntities(value) {
+	  if (!value) { return ''; }
+
+	  // Note: IE8 does not preserve spaces at the start/end of innerHTML
+	  // so we must capture them and reattach them afterward
+	  var parts = spaceRe.exec(value);
+	  var spaceBefore = parts[1];
+	  var spaceAfter = parts[3];
+	  var content = parts[2];
+	  if (content) {
+	    hiddenPre.innerHTML=content.replace(/</g,"&lt;");
+	    // innerText depends on styling as it doesn't display hidden elements.
+	    // Therefore, it's better to use textContent not to cause unnecessary
+	    // reflows. However, IE<9 don't support textContent so the innerText
+	    // fallback is necessary.
+	    content = 'textContent' in hiddenPre ?
+	      hiddenPre.textContent : hiddenPre.innerText;
+	  }
+	  return spaceBefore + content + spaceAfter;
+	}
+
+	/**
+	 * Escapes all potentially dangerous characters, so that the
+	 * resulting string can be safely inserted into attribute or
+	 * element text.
+	 * @param value
+	 * @returns {string} escaped text
+	 */
+	function encodeEntities(value) {
+	  return value.
+	    replace(/&/g, '&amp;').
+	    replace(SURROGATE_PAIR_REGEXP, function(value) {
+	      var hi = value.charCodeAt(0);
+	      var low = value.charCodeAt(1);
+	      return '&#' + (((hi - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000) + ';';
+	    }).
+	    replace(NON_ALPHANUMERIC_REGEXP, function(value) {
+	      return '&#' + value.charCodeAt(0) + ';';
+	    }).
+	    replace(/</g, '&lt;').
+	    replace(/>/g, '&gt;');
+	}
+
+	/**
+	 * create an HTML/XML writer which writes to buffer
+	 * @param {Array} buf use buf.jain('') to get out sanitized html string
+	 * @returns {object} in the form of {
+	 *     start: function(tag, attrs, unary) {},
+	 *     end: function(tag) {},
+	 *     chars: function(text) {},
+	 *     comment: function(text) {}
+	 * }
+	 */
+	function htmlSanitizeWriter(buf, uriValidator) {
+	  var ignore = false;
+	  var out = angular.bind(buf, buf.push);
+	  return {
+	    start: function(tag, attrs, unary) {
+	      tag = angular.lowercase(tag);
+	      if (!ignore && specialElements[tag]) {
+	        ignore = tag;
+	      }
+	      if (!ignore && validElements[tag] === true) {
+	        out('<');
+	        out(tag);
+	        angular.forEach(attrs, function(value, key) {
+	          var lkey=angular.lowercase(key);
+	          var isImage = (tag === 'img' && lkey === 'src') || (lkey === 'background');
+	          if (validAttrs[lkey] === true &&
+	            (uriAttrs[lkey] !== true || uriValidator(value, isImage))) {
+	            out(' ');
+	            out(key);
+	            out('="');
+	            out(encodeEntities(value));
+	            out('"');
+	          }
+	        });
+	        out(unary ? '/>' : '>');
+	      }
+	    },
+	    end: function(tag) {
+	        tag = angular.lowercase(tag);
+	        if (!ignore && validElements[tag] === true) {
+	          out('</');
+	          out(tag);
+	          out('>');
+	        }
+	        if (tag == ignore) {
+	          ignore = false;
+	        }
+	      },
+	    chars: function(chars) {
+	        if (!ignore) {
+	          out(encodeEntities(chars));
+	        }
+	      }
+	  };
+	}
+
+
+	// define ngSanitize module and register $sanitize service
+	angular.module('ngSanitize', []).provider('$sanitize', $SanitizeProvider);
+
+	/* global sanitizeText: false */
+
+	/**
+	 * @ngdoc filter
+	 * @name linky
+	 * @kind function
+	 *
+	 * @description
+	 * Finds links in text input and turns them into html links. Supports http/https/ftp/mailto and
+	 * plain email address links.
+	 *
+	 * Requires the {@link ngSanitize `ngSanitize`} module to be installed.
+	 *
+	 * @param {string} text Input text.
+	 * @param {string} target Window (_blank|_self|_parent|_top) or named frame to open links in.
+	 * @returns {string} Html-linkified text.
+	 *
+	 * @usage
+	   <span ng-bind-html="linky_expression | linky"></span>
+	 *
+	 * @example
+	   <example module="linkyExample" deps="angular-sanitize.js">
+	     <file name="index.html">
+	       <script>
+	         angular.module('linkyExample', ['ngSanitize'])
+	           .controller('ExampleController', ['$scope', function($scope) {
+	             $scope.snippet =
+	               'Pretty text with some links:\n'+
+	               'http://angularjs.org/,\n'+
+	               'mailto:us@somewhere.org,\n'+
+	               'another@somewhere.org,\n'+
+	               'and one more: ftp://127.0.0.1/.';
+	             $scope.snippetWithTarget = 'http://angularjs.org/';
+	           }]);
+	       </script>
+	       <div ng-controller="ExampleController">
+	       Snippet: <textarea ng-model="snippet" cols="60" rows="3"></textarea>
+	       <table>
+	         <tr>
+	           <td>Filter</td>
+	           <td>Source</td>
+	           <td>Rendered</td>
+	         </tr>
+	         <tr id="linky-filter">
+	           <td>linky filter</td>
+	           <td>
+	             <pre>&lt;div ng-bind-html="snippet | linky"&gt;<br>&lt;/div&gt;</pre>
+	           </td>
+	           <td>
+	             <div ng-bind-html="snippet | linky"></div>
+	           </td>
+	         </tr>
+	         <tr id="linky-target">
+	          <td>linky target</td>
+	          <td>
+	            <pre>&lt;div ng-bind-html="snippetWithTarget | linky:'_blank'"&gt;<br>&lt;/div&gt;</pre>
+	          </td>
+	          <td>
+	            <div ng-bind-html="snippetWithTarget | linky:'_blank'"></div>
+	          </td>
+	         </tr>
+	         <tr id="escaped-html">
+	           <td>no filter</td>
+	           <td><pre>&lt;div ng-bind="snippet"&gt;<br>&lt;/div&gt;</pre></td>
+	           <td><div ng-bind="snippet"></div></td>
+	         </tr>
+	       </table>
+	     </file>
+	     <file name="protractor.js" type="protractor">
+	       it('should linkify the snippet with urls', function() {
+	         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+	             toBe('Pretty text with some links: http://angularjs.org/, us@somewhere.org, ' +
+	                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+	         expect(element.all(by.css('#linky-filter a')).count()).toEqual(4);
+	       });
+
+	       it('should not linkify snippet without the linky filter', function() {
+	         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText()).
+	             toBe('Pretty text with some links: http://angularjs.org/, mailto:us@somewhere.org, ' +
+	                  'another@somewhere.org, and one more: ftp://127.0.0.1/.');
+	         expect(element.all(by.css('#escaped-html a')).count()).toEqual(0);
+	       });
+
+	       it('should update', function() {
+	         element(by.model('snippet')).clear();
+	         element(by.model('snippet')).sendKeys('new http://link.');
+	         expect(element(by.id('linky-filter')).element(by.binding('snippet | linky')).getText()).
+	             toBe('new http://link.');
+	         expect(element.all(by.css('#linky-filter a')).count()).toEqual(1);
+	         expect(element(by.id('escaped-html')).element(by.binding('snippet')).getText())
+	             .toBe('new http://link.');
+	       });
+
+	       it('should work with the target property', function() {
+	        expect(element(by.id('linky-target')).
+	            element(by.binding("snippetWithTarget | linky:'_blank'")).getText()).
+	            toBe('http://angularjs.org/');
+	        expect(element(by.css('#linky-target a')).getAttribute('target')).toEqual('_blank');
+	       });
+	     </file>
+	   </example>
+	 */
+	angular.module('ngSanitize').filter('linky', ['$sanitize', function($sanitize) {
+	  var LINKY_URL_REGEXP =
+	        /((ftp|https?):\/\/|(www\.)|(mailto:)?[A-Za-z0-9._%+-]+@)\S*[^\s.;,(){}<>"”’]/,
+	      MAILTO_REGEXP = /^mailto:/;
+
+	  return function(text, target) {
+	    if (!text) return text;
+	    var match;
+	    var raw = text;
+	    var html = [];
+	    var url;
+	    var i;
+	    while ((match = raw.match(LINKY_URL_REGEXP))) {
+	      // We can not end in these as they are sometimes found at the end of the sentence
+	      url = match[0];
+	      // if we did not match ftp/http/www/mailto then assume mailto
+	      if (!match[2] && !match[4]) {
+	        url = (match[3] ? 'http://' : 'mailto:') + url;
+	      }
+	      i = match.index;
+	      addText(raw.substr(0, i));
+	      addLink(url, match[0].replace(MAILTO_REGEXP, ''));
+	      raw = raw.substring(i + match[0].length);
+	    }
+	    addText(raw);
+	    return $sanitize(html.join(''));
+
+	    function addText(text) {
+	      if (!text) {
+	        return;
+	      }
+	      html.push(sanitizeText(text));
+	    }
+
+	    function addLink(url, text) {
+	      html.push('<a ');
+	      if (angular.isDefined(target)) {
+	        html.push('target="',
+	                  target,
+	                  '" ');
+	      }
+	      html.push('href="',
+	                url.replace(/"/g, '&quot;'),
+	                '">');
+	      addText(text);
+	      html.push('</a>');
+	    }
+	  };
+	}]);
+
+
+	})(window, window.angular);
+
 
 /***/ },
 

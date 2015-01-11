@@ -1,1 +1,19 @@
-<h1 class="jumbotron shadow-z-5">{{packData.state}}</h1>
+
+<div ng-if="!packData.actor">
+  <h1>{{packData.state}}</h1>
+  <input
+  class="btn btn-primary btn-success btn-xl btn-raised"
+  ng-click="setActor($event)"
+  value="I wanna be actor !"
+  />
+</div>
+<div ng-if="packData.actor">
+
+  <p>Current actor: {{packData.actor.name}}</p>
+  <h6>{{packData.state}}</h6>
+  <input
+  class="btn btn-primary btn-warning btn-xl btn-raised"
+  ng-click="unsetActor($event)"
+  value="Set this action free..."
+  />
+</div>
