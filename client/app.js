@@ -20,7 +20,8 @@ angular
       'qibud.org.ideas',
       'qibud.org.missions',
       'qibud.org.projects',
-      'qibud.org.actions'
+      'qibud.org.actions',
+      'qibud.org.results'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {

@@ -10,7 +10,7 @@ function ($scope, $state, $stateParams, api)
   console.log("MissionViewerCtrl start...");
   var user        = $scope.common.user;
   $scope.packData = {
-    state: 'Waiting for projects',
+    state: 'Waiting',
     projects: [],
     team: null
   };
@@ -28,6 +28,8 @@ function ($scope, $state, $stateParams, api)
             if(projects.length > 0)
             {
               $scope.packData.state = 'Started';
+            } else {
+              $scope.packData.state = 'Waiting';
             }
 
             api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');

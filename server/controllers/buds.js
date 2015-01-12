@@ -838,7 +838,7 @@ function *deleteBud(budId)
     var parentBudId = bud.parentBud.id;
     yield mongo.buds.update(
         {_id: parentBudId},
-        {$pull: {subBuds: {id: bud._id, title: bud.title} } }
+        {$pull: {subBuds: {id: bud.id, title: bud.title} } }
     );
   }
   yield unindexer(bud);

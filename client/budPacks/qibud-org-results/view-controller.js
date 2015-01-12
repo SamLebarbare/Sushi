@@ -4,14 +4,35 @@
  * __
  */
 
-angular.module('qibud.org.actions').controller('ActionViewerCtrl',
+angular.module('qibud.org.results').controller('ResultViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
-  console.log("ActionViewerCtrl start...");
+  console.log("ResultViewerCtrl start...");
   var user        = $scope.common.user;
   $scope.packData = {
-    state: 'Free',
+    state: 'Undefined',
     actor: undefined
+  };
+
+
+  $scope.setSuccess = function ()
+  {
+    $scope.packData.state = 'Success';
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
+    if($scope.bud.parentBud) {
+      api.buds.budPacksData.get($scope.bud.parentBud.id, 'Action')
+      .success(function (packData) {
+        packData.state = 'Ended';
+        api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Action');
+      });
+
+    }
+  };
+
+  $scope.setFailed = function ()
+  {
+    $scope.packData.state = 'Failed';
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
   };
 
   $scope.isActor = function ()
@@ -48,44 +69,25 @@ function ($scope, $state, $stateParams, api)
   $scope.setActor = function ()
   {
     $scope.packData.actor = user;
-    $scope.packData.state = 'Waiting';
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Action');
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
     api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
   };
 
   $scope.unsetActor = function ()
   {
     $scope.packData.actor = undefined;
-    $scope.packData.state = 'Free';
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Action');
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
     api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
   };
 
-  api.buds.budPacksData.get($scope.bud.id, 'Action')
+  api.buds.budPacksData.get($scope.bud.id, 'Result')
     .success(function (packData)
     {
       if(packData.state) {
         $scope.packData = packData;
         console.log('packdata found:' + packData);
-        api.buds.childrenByType ($scope.bud.id, 'Result')
-          .success(function (results)
-          {
-            if(results.length > 0)
-            {
-              var scope = $scope;
-              angular.forEach(results, function (result) {
-                api.buds.budPacksData.get(result._id, 'Result')
-                  .success(function (data) {
-                    if(data.state === 'Success') {
-                      scope.packData.state = 'Ended';
-                      api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Action');
-                    }
-                  });
-              });
-            }
-          });
       } else {
-        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
+        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Result');
       }
     })
     .error(function ()

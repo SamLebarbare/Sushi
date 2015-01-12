@@ -17,3 +17,7 @@ require('./qibud-org-actions/view-controller.js');
 require('./qibud-org-ideas/pack.js');
 require('./qibud-org-ideas/edit-controller.js');
 require('./qibud-org-ideas/view-controller.js');
+
+require('./qibud-org-results/pack.js');
+require('./qibud-org-results/edit-controller.js');
+require('./qibud-org-results/view-controller.js');

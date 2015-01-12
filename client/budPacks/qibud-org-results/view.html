@@ -1,0 +1,31 @@
+<div ng-if="!packData.actor">
+  <h1>{{packData.state}}</h1>
+  <input
+  class="btn btn-primary btn-success btn-xl btn-raised"
+  ng-click="setActor($event)"
+  value="I wanna be actor !"
+  />
+</div>
+<div ng-if="packData.actor">
+  <h1>{{packData.state}}</h1>
+  <p>Actor: {{packData.actor.name}}</p>
+  <div ng-show="isActor()" ng-if="packData.state === 'Undefined'">
+    <input
+    class="btn btn-primary btn-success btn-xl btn-raised"
+    ng-click="setSuccess($event)"
+    value="It's a success!"
+    />
+    <input
+    class="btn btn-primary btn-warning btn-xl btn-raised"
+    ng-click="setFailed($event)"
+    value="It's a failure :/"
+    />
+  </div>
+  <div ng-show="isActorOrCreator()" ng-if="packData.state === 'Undefined'">
+    <input
+    class="btn btn-primary btn-warning btn-xl btn-raised"
+    ng-click="unsetActor($event)"
+    value="Unset actor..."
+    />
+  </div>
+</div>

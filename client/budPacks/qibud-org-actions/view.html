@@ -1,5 +1,5 @@
 
-<div ng-if="!packData.actor">
+<div ng-if="!packData.actor && packData.state == 'Free'">
   <h1>{{packData.state}}</h1>
   <input
   class="btn btn-primary btn-success btn-xl btn-raised"
@@ -7,13 +7,17 @@
   value="I wanna be actor !"
   />
 </div>
-<div ng-if="packData.actor">
-
-  <p>Current actor: {{packData.actor.name}}</p>
-  <h6>{{packData.state}}</h6>
-  <input
-  class="btn btn-primary btn-warning btn-xl btn-raised"
-  ng-click="unsetActor($event)"
-  value="Set this action free..."
-  />
+<div ng-if="packData.actor && packData.state == 'Waiting'">
+  <h1>Waiting for a result...</h1>
+  <p>Actor: {{packData.actor.name}}</p>
+  <div ng-show="isActorOrCreator()">
+    <input
+    class="btn btn-primary btn-warning btn-xl btn-raised"
+    ng-click="unsetActor($event)"
+    value="Set this action free..."
+    />
+  </div>
+</div>
+<div ng-if="packData.state == 'Ended'">
+  <h1>Ended successfuly! by {{packData.actor.name}}</h1>
 </div>
