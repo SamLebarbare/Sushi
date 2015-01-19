@@ -9,6 +9,7 @@ function ($scope, $state, $stateParams, $modal, api)
 {
 
   var user       = $scope.common.user;
+  $scope.typeInfo = null;
   $scope.ready = false;
   $scope.actionInProgress = false;
   $scope.followersCount = 0;
@@ -89,6 +90,9 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.showType = function (type, reload) {
     if (type !== 'Bud') {
+      api.types.get (type).success (function (typeInfo) {
+        $scope.typeInfo = typeInfo;
+      });
       $state.go('bud.viewer.' + type, $state.params, { reload: reload });
     } else {
       $state.go('bud.viewer',$state.params, { reload: reload });

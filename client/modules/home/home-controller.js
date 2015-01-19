@@ -12,23 +12,35 @@ function ($scope, $state, api, budGraph)
   {
     buds.forEach(function (bud)
     {
+      if(bud.type || bud.type !== 'Bud') {
+        api.types.get (bud.type).success (function (typeInfo) {
+          bud.typeInfo = typeInfo;
+        });
+      }
       bud.commentBox = {message: '', disabled: false};
       bud.comments   = bud.comments || [];
     });
 
     $scope.buds = buds;
-  });
 
-  api.links.findU2B(user.id, 'ACTOR').success(function (buds)
-  {
-    buds.forEach(function (bud)
+    api.links.findU2B(user.id, 'ACTOR').success(function (buds)
     {
-      bud.commentBox = {message: '', disabled: false};
-      bud.comments   = bud.comments || [];
-    });
+      buds.forEach(function (bud)
+      {
+        _.remove($scope.buds, function(b) { return b.id === bud._id; });
+        if(bud.type || bud.type !== 'Bud') {
+          api.types.get (bud.type).success (function (typeInfo) {
+            bud.typeInfo = typeInfo;
+          });
+        }
+        bud.commentBox = {message: '', disabled: false};
+        bud.comments   = bud.comments || [];
+      });
 
-    $scope.budsActingOn = buds;
+      $scope.budsActingOn = buds;
+    });
   });
+
 
   // subscribe to websocket events to receive new buds, comments, etc.
   api.buds.created.subscribe($scope, function (bud)

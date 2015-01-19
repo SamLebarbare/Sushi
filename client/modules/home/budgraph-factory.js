@@ -21,7 +21,7 @@ angular
               id: buds[i].id,
               weight: 20,
               label: buds[i].type,
-              name: buds[i].title,
+              name: '[' + buds[i].type + ']' + buds[i].title,
               faveColor: '#30426a',
               faveShape: buds[i].type == 'Team' ? 'octagon' : 'roundrectangle'
             }

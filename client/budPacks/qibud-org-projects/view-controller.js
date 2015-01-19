@@ -29,6 +29,9 @@ function ($scope, $state, $stateParams, api)
               $scope.packData.state = 'Started';
               var scope = $scope;
               angular.forEach(actions, function (action) {
+                api.types.get ('Action').success (function (typeInfo) {
+                  action.typeInfo = typeInfo;
+                });
                 api.buds.budPacksData.get(action._id, 'Action')
                 .success(function (data) {
                   if(data.state === 'Ended') {
@@ -38,7 +41,6 @@ function ($scope, $state, $stateParams, api)
                   }
                 });
               });
-              api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Project');
             } else {
               $scope.packData.state = 'Waiting';
             }

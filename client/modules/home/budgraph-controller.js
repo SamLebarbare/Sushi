@@ -15,22 +15,26 @@ function ($scope, $state, api, budGraph)
   // retrieve buds from server
   api.buds.list().success(function (buds)
   {
-
     $scope.buds = buds;
-
     for( var i = 0; i < $scope.buds.length; i++ ){
       var p = $scope.buds[i];
 
       budsById[ p.id ] = p;
     }
-
+    buds.forEach (function (bud) {
+      if(bud.type !== 'Bud') {
+        api.buds.budPacksData.get(bud.id, bud.type)
+        .success(function (data) {
+          bud.state = data.state;
+        });
+      }
+    });
     // you would probably want some ui to prevent use of budsCtrl until cy is loaded
     budGraph( $scope.buds ).then(function( budsCy ){
       cy = budsCy;
       // use this variable to hide ui until cy loaded if you want
       $scope.cyLoaded = true;
     });
-
   });
 
   $scope.onWeightChange = function(bud){

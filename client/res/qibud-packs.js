@@ -67,9 +67,9 @@
 	__webpack_require__(/*! ./qibud-org-ideas/edit-controller.js */ 32);
 	__webpack_require__(/*! ./qibud-org-ideas/view-controller.js */ 33);
 	
-	__webpack_require__(/*! ./qibud-org-results/pack.js */ 43);
-	__webpack_require__(/*! ./qibud-org-results/edit-controller.js */ 44);
-	__webpack_require__(/*! ./qibud-org-results/view-controller.js */ 45);
+	__webpack_require__(/*! ./qibud-org-results/pack.js */ 34);
+	__webpack_require__(/*! ./qibud-org-results/edit-controller.js */ 35);
+	__webpack_require__(/*! ./qibud-org-results/view-controller.js */ 36);
 
 
 /***/ },
@@ -350,10 +350,24 @@
 	            if(projects.length > 0)
 	            {
 	              $scope.packData.state = 'Started';
+	              var scope = $scope;
+	              angular.forEach(projects, function (project) {
+	                api.types.get ('Project').success (function (typeInfo) {
+	                  project.typeInfo = typeInfo;
+	                });
+	                api.buds.budPacksData.get(project._id, 'Project')
+	                .success(function (data) {
+	                  if(data.state === 'Ended') {
+	                    scope.packData.state = 'Ended';
+	                  } else {
+	                    scope.packData.state = 'Started';
+	                  }
+	                  project.state = data.state;
+	                });
+	              });
 	            } else {
 	              $scope.packData.state = 'Waiting';
 	            }
-	
 	            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
 	          });
 	      } else {
@@ -480,6 +494,9 @@
 	              $scope.packData.state = 'Started';
 	              var scope = $scope;
 	              angular.forEach(actions, function (action) {
+	                api.types.get ('Action').success (function (typeInfo) {
+	                  action.typeInfo = typeInfo;
+	                });
 	                api.buds.budPacksData.get(action._id, 'Action')
 	                .success(function (data) {
 	                  if(data.state === 'Ended') {
@@ -489,7 +506,6 @@
 	                  }
 	                });
 	              });
-	              api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Project');
 	            } else {
 	              $scope.packData.state = 'Waiting';
 	            }
@@ -821,16 +837,7 @@
 
 
 /***/ },
-/* 34 */,
-/* 35 */,
-/* 36 */,
-/* 37 */,
-/* 38 */,
-/* 39 */,
-/* 40 */,
-/* 41 */,
-/* 42 */,
-/* 43 */
+/* 34 */
 /*!********************************************!*\
   !*** ./budPacks/qibud-org-results/pack.js ***!
   \********************************************/
@@ -882,7 +889,7 @@
 
 
 /***/ },
-/* 44 */
+/* 35 */
 /*!*******************************************************!*\
   !*** ./budPacks/qibud-org-results/edit-controller.js ***!
   \*******************************************************/
@@ -904,7 +911,7 @@
 
 
 /***/ },
-/* 45 */
+/* 36 */
 /*!*******************************************************!*\
   !*** ./budPacks/qibud-org-results/view-controller.js ***!
   \*******************************************************/

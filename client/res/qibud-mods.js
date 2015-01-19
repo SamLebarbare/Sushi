@@ -747,23 +747,35 @@
 	  {
 	    buds.forEach(function (bud)
 	    {
+	      if(bud.type || bud.type !== 'Bud') {
+	        api.types.get (bud.type).success (function (typeInfo) {
+	          bud.typeInfo = typeInfo;
+	        });
+	      }
 	      bud.commentBox = {message: '', disabled: false};
 	      bud.comments   = bud.comments || [];
 	    });
 	
 	    $scope.buds = buds;
-	  });
 	
-	  api.links.findU2B(user.id, 'ACTOR').success(function (buds)
-	  {
-	    buds.forEach(function (bud)
+	    api.links.findU2B(user.id, 'ACTOR').success(function (buds)
 	    {
-	      bud.commentBox = {message: '', disabled: false};
-	      bud.comments   = bud.comments || [];
-	    });
+	      buds.forEach(function (bud)
+	      {
+	        _.remove($scope.buds, function(b) { return b.id === bud._id; });
+	        if(bud.type || bud.type !== 'Bud') {
+	          api.types.get (bud.type).success (function (typeInfo) {
+	            bud.typeInfo = typeInfo;
+	          });
+	        }
+	        bud.commentBox = {message: '', disabled: false};
+	        bud.comments   = bud.comments || [];
+	      });
 	
-	    $scope.budsActingOn = buds;
+	      $scope.budsActingOn = buds;
+	    });
 	  });
+	
 	
 	  // subscribe to websocket events to receive new buds, comments, etc.
 	  api.buds.created.subscribe($scope, function (bud)
@@ -829,7 +841,7 @@
 	              id: buds[i].id,
 	              weight: 20,
 	              label: buds[i].type,
-	              name: buds[i].title,
+	              name: '[' + buds[i].type + ']' + buds[i].title,
 	              faveColor: '#30426a',
 	              faveShape: buds[i].type == 'Team' ? 'octagon' : 'roundrectangle'
 	            }
@@ -984,22 +996,26 @@
 	  // retrieve buds from server
 	  api.buds.list().success(function (buds)
 	  {
-	
 	    $scope.buds = buds;
-	
 	    for( var i = 0; i < $scope.buds.length; i++ ){
 	      var p = $scope.buds[i];
 	
 	      budsById[ p.id ] = p;
 	    }
-	
+	    buds.forEach (function (bud) {
+	      if(bud.type !== 'Bud') {
+	        api.buds.budPacksData.get(bud.id, bud.type)
+	        .success(function (data) {
+	          bud.state = data.state;
+	        });
+	      }
+	    });
 	    // you would probably want some ui to prevent use of budsCtrl until cy is loaded
 	    budGraph( $scope.buds ).then(function( budsCy ){
 	      cy = budsCy;
 	      // use this variable to hide ui until cy loaded if you want
 	      $scope.cyLoaded = true;
 	    });
-	
 	  });
 	
 	  $scope.onWeightChange = function(bud){
@@ -1176,6 +1192,7 @@
 	{
 	
 	  var user       = $scope.common.user;
+	  $scope.typeInfo = null;
 	  $scope.ready = false;
 	  $scope.actionInProgress = false;
 	  $scope.followersCount = 0;
@@ -1256,6 +1273,9 @@
 	
 	  $scope.showType = function (type, reload) {
 	    if (type !== 'Bud') {
+	      api.types.get (type).success (function (typeInfo) {
+	        $scope.typeInfo = typeInfo;
+	      });
 	      $state.go('bud.viewer.' + type, $state.params, { reload: reload });
 	    } else {
 	      $state.go('bud.viewer',$state.params, { reload: reload });

@@ -28,10 +28,24 @@ function ($scope, $state, $stateParams, api)
             if(projects.length > 0)
             {
               $scope.packData.state = 'Started';
+              var scope = $scope;
+              angular.forEach(projects, function (project) {
+                api.types.get ('Project').success (function (typeInfo) {
+                  project.typeInfo = typeInfo;
+                });
+                api.buds.budPacksData.get(project._id, 'Project')
+                .success(function (data) {
+                  if(data.state === 'Ended') {
+                    scope.packData.state = 'Ended';
+                  } else {
+                    scope.packData.state = 'Started';
+                  }
+                  project.state = data.state;
+                });
+              });
             } else {
               $scope.packData.state = 'Waiting';
             }
-
             api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
           });
       } else {
