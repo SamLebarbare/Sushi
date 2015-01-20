@@ -8,7 +8,6 @@
     "font-awesome": "~4.1.0",
     "jquery": "~2",
     "bootstrap-social": "~4",
-    "angular-sanitize": "~1",
     "angular-bootstrap": "~0.11.0",
     "angular-ui-router": "~0.2.11",
     "angular-ui-router-breadcrumbs": "~0.0.2",
