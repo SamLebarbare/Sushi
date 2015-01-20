@@ -1,4 +1,5 @@
 var path = require('path');
+var ngminPlugin = require('ngmin-webpack-plugin')
 module.exports = {
   entry: {
       ext:   path.join(__dirname, '/ext-deps.js'),
@@ -11,5 +12,8 @@ module.exports = {
   },
   resolve: {
     modulesDirectories: ['node_modules', 'bower_components'],
-  }
+  },
+  plugins: [
+    new ngminPlugin() // or, new ngminPlugin({dynamic: true}) for dynamic mode.
+  ]
 };

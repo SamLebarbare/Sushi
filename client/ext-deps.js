@@ -1,5 +1,5 @@
 require('angular');
-require('angular-sanitize');
+require('angular-module-sanitize');
 require('angular-cookies');
 require('lodash');
 require('angular-ui-router/release/angular-ui-router.min.js');
