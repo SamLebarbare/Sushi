@@ -103,9 +103,9 @@
         </tab-heading>
         <br>
         <div class="list-group">
-          <div class="list-group-item" ng-repeat="type in common.availableTypes" ng-click="evolve(type.id)">
+          <div class="list-group-item" ng-repeat="type in common.availableTypes">
             <div class="row-picture">
-              <i class="circle" ng-class="type.icon"></i>
+              <a class="btn btn-success btn-fab btn-raised" ng-class="type.icon" ng-click="evolve($event, type.id)"></a>
             </div>
             <div class="row-content">
               <h4 class="list-group-item-heading">{{type.id}}</h4>

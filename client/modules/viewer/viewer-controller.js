@@ -99,9 +99,20 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
-  $scope.evolve = function (type) {
-    api.buds.evolve($scope.bud, type).success(function () {
+  $scope.evolve = function ($event, type) {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+    $scope.actionInProgress = true;
 
+    api.buds.evolve($scope.bud, type).success(function () {
+      $scope.actionInProgress = false;
+    })
+    .error(function ()
+    {
+      $scope.actionInProgress = false;
     });
 
   };
