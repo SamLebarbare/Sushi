@@ -8,6 +8,7 @@ require('./dashboard/dashboard.js');
 
 require('./editor/editor.js');
 require('./editor/editor-controller.js');
+require('./editor/editor-evolve-controller.js');
 
 require('./home/home.js');
 require('./home/home-controller.js');

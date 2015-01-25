@@ -351,8 +351,10 @@ function *evolveBud(budId, type)
     this.throw(403, 'type is not valid');
   }
 
-  var bud   = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var budId = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+  bud.id = bud._id;
+  delete bud._id;
 
   if(bud.creator.id !== this.user.id)
   {

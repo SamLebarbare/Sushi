@@ -79,8 +79,8 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       return $http({method: 'POST', url: apiBase + '/buds/' + parentBudId, data: bud, headers: headers});
     },
     created: event(),
-    evolve: function (bud, type) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/evolve/' + type, data: bud, headers: headers});
+    evolve: function (budId, type) {
+      return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/evolve/' + type, headers: headers});
     },
     evolved: event(),
     follow : function(bud) {

@@ -5,7 +5,7 @@
  */
 
 angular.module('qibud.editor').controller('EditorCtrl',
-function ($scope, $state, $stateParams, $location, api)
+function ($scope, $state, $stateParams, $modal, $location, api)
 {
   var user       = $scope.common.user;
 
@@ -66,6 +66,7 @@ function ($scope, $state, $stateParams, $location, api)
   // add bud creation functions to scope
   $scope.createBud = function ($event)
   {
+
     // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
     if (!$scope.budBox.content.length || $scope.budBox.disabled)
     {
@@ -73,64 +74,100 @@ function ($scope, $state, $stateParams, $location, api)
       return;
     }
 
-    // disable the bud box and push the new bud to server
-    $scope.budBox.disabled = true;
-    api.buds.create({
-      title: $scope.budBox.title,
-      content: $scope.budBox.content,
-      privacy: $scope.budBox.privacy,
-      type   : $scope.budBox.type
-    })
-    .success(function (budId)
-    {
-      // clear the bud box and enable it
-      $scope.budBox.title = '';
-      $scope.budBox.content = '';
-      $scope.budBox.disabled = false;
+    var modalInstance = $modal.open ({
+      templateUrl: 'evolvebox.html',
+      controller: 'EvolveCtrl',
+      size: 'lg',
+      resolve: {
+        availableTypes: function () {
+          return $scope.common.availableTypes;
+        }
+      }
+    });
 
-      //redirect
-      $state.go('bud.viewer',{budId : budId},{ reload: true });
-    })
-    .error(function ()
+    var createSubBud = function (selectedType)
     {
-      // don't clear the bud box but enable it so the user can re-try
-      $scope.budBox.disabled = false;
+      // disable the bud box and push the new bud to server
+      $scope.budBox.disabled = true;
+      api.buds.createSub($scope.parentBud.id,{
+        title: $scope.budBox.title,
+        content: $scope.budBox.content,
+        privacy: $scope.budBox.privacy,
+        type   : $scope.budBox.type
+      })
+      .success(function (budId)
+        {
+          // clear the bud box and enable it
+          $scope.budBox.title = '';
+          $scope.budBox.content = '';
+          $scope.budBox.disabled = false;
+
+          console.info ('subbud created');
+          if (selectedType !== null) {//evolve if needed
+            api.buds.evolve(budId, selectedType).success(function () {
+              console.info ('bud evolve in ' + selectedType);
+              $state.go('bud.viewer.' + selectedType ,{budId : budId},{ reload: true });
+            });
+          } else {
+            $state.go('bud.viewer',{budId : budId},{ reload: true });
+          }
+        })
+        .error(function ()
+        {
+          // don't clear the bud box but enable it so the user can re-try
+          $scope.budBox.disabled = false;
+        });
+    };
+
+    var createBud = function (selectedType) {
+      // disable the bud box and push the new bud to server
+      $scope.budBox.disabled = true;
+      api.buds.create({
+        title: $scope.budBox.title,
+        content: $scope.budBox.content,
+        privacy: $scope.budBox.privacy,
+        type   : $scope.budBox.type
+      })
+      .success(function (budId)
+          {
+            // clear the bud box and enable it
+            $scope.budBox.title = '';
+            $scope.budBox.content = '';
+            $scope.budBox.disabled = false;
+
+            console.info ('bud created');
+            if (selectedType !== null) {//evolve if needed
+              api.buds.evolve(budId, selectedType).success(function () {
+                console.info ('bud evolve in ' + selectedType);
+                $state.go('bud.viewer.' + selectedType ,{budId : budId},{ reload: true });
+              });
+            } else {
+              $state.go('bud.viewer',{budId : budId},{ reload: true });
+            }
+        })
+        .error(function ()
+        {
+          // don't clear the bud box but enable it so the user can re-try
+          $scope.budBox.disabled = false;
+        });
+    };
+
+    modalInstance.result.then(function (selectedType) {
+      if ($scope.parentBud.id) {
+        createSubBud (selectedType);
+      } else {
+        createBud (selectedType);
+      }
+
+    }, function () {
+      if ($scope.parentBud.id) {
+        createSubBud (null);
+      } else {
+        createBud (null);
+      }
     });
   };
 
-  $scope.createSubBud = function ($event)
-  {
-    // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
-    if (!$scope.budBox.content.length || $scope.budBox.disabled)
-    {
-      $event.preventDefault();
-      return;
-    }
-
-    // disable the bud box and push the new bud to server
-    $scope.budBox.disabled = true;
-    api.buds.createSub($scope.parentBud.id,{
-      title: $scope.budBox.title,
-      content: $scope.budBox.content,
-      privacy: $scope.budBox.privacy,
-      type   : $scope.budBox.type
-    })
-    .success(function (budId)
-    {
-      // clear the bud box and enable it
-      $scope.budBox.title = '';
-      $scope.budBox.content = '';
-      $scope.budBox.disabled = false;
-
-      //redirect
-      $state.go('bud.viewer',{budId : budId});
-    })
-    .error(function ()
-    {
-      // don't clear the bud box but enable it so the user can re-try
-      $scope.budBox.disabled = false;
-    });
-  };
 
   $scope.updateBud = function ($event)
   {

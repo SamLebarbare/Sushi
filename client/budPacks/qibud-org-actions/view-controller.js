@@ -28,7 +28,7 @@ function ($scope, $state, $stateParams, api)
           {
             var scope = $scope;
             angular.forEach(results, function (result) {
-              api.buds.budPacksData.get(result._id, 'Result')
+              api.buds.budPacksData.get(result.id, 'Result')
               .success(function (data) {
                 if(data.state === 'Success') {
                   scope.packData.state = 'Ended';

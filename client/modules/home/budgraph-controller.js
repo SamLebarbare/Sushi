@@ -21,14 +21,7 @@ function ($scope, $state, api, budGraph)
 
       budsById[ p.id ] = p;
     }
-    buds.forEach (function (bud) {
-      if(bud.type !== 'Bud') {
-        api.buds.budPacksData.get(bud.id, bud.type)
-        .success(function (data) {
-          bud.state = data.state;
-        });
-      }
-    });
+
     // you would probably want some ui to prevent use of budsCtrl until cy is loaded
     budGraph( $scope.buds ).then(function( budsCy ){
       cy = budsCy;
@@ -37,15 +30,6 @@ function ($scope, $state, api, budGraph)
     });
   });
 
-  $scope.onWeightChange = function(bud){
-     budGraph.setBudWeight( bud.id, bud.qi );
-  };
-
-  budGraph.onWeightChange(function(id, weight){
-    budsById[id].qi = weight;
-
-    $scope.$apply();
-  });
 
   budGraph.onClick(function(id){
     $state.go('bud.viewer',{budId : id});

@@ -11,14 +11,17 @@ function ($scope, $state, $stateParams, $location, api)
   $scope.packData = {
     members : []
   };
-  api.buds.budPacksData.get($scope.bud.id, 'Team')
+
+  var afterLoad = function () {
+    api.buds.budPacksData.get($scope.bud.id, 'Team')
     .success(function (packData)
     {
       if(packData.members) {
         console.log('packdata loaded');
         $scope.packData = packData;
       }
-
     });
+  };
+
 
 });

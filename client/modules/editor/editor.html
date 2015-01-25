@@ -69,7 +69,7 @@
           <input
           ng-if="budBox.action == 'subbud'"
           class="btn btn-primary btn-success btn-xl btn-raised"
-          ng-click="createSubBud($event)"
+          ng-click="createBud($event)"
           value="Create child bud"
           ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
           />
@@ -142,7 +142,31 @@
     </tabset>
   </nav>
 </section>
-
+<script type="text/ng-template" id="evolvebox.html">
+<div class="modal-header">
+  <h3 class="modal-title">Evolve your bud ? </h3>
+</div>
+<div class="modal-body">
+<div class="list-group">
+<div class="list-group-item" ng-repeat="type in availableTypes">
+  <div ng-show="type.id != 'Bud'">
+    <div class="row-picture">
+      <a class="btn btn-success btn-fab btn-raised" ng-class="type.icon" ng-click="setSelected(type.id)"></a>
+    </div>
+    <div class="row-content">
+      <h4 class="list-group-item-heading">{{type.id}}</h4>
+      <p class="list-group-item-text">{{type.desc}}</p>
+    </div>
+  </div>
+</div>
+<div class="list-group-separator"></div>
+</div>
+</div>
+<div class="modal-footer">
+<button class="btn btn-primary" ng-click="ok(selectedType)" ng-show="selectedType != 'Bud'" >Evolve in {{selectedType}}</button>
+<button class="btn btn-warning" ng-click="cancel()">later...</button>
+</div>
+</script>
 <!--
         <i class="fa fa-edit"></i> Edit your {{bud.type ? bud.type : 'bud'}}
         <i class="fa fa-leaf"> Parent bud: {{parentBud.title}}</i>

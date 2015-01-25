@@ -12,7 +12,10 @@ var route = require('koa-route'),
     createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     findUser2BudIds   = require('../graph-entities/findUser2BudIds'),
+    packdata          = require('../bud-entities/packdata'),
+    types             = require('../config/types'),
     ws = require('../config/ws'),
+    foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
 
 // register koa routes
@@ -33,6 +36,13 @@ function *findU2B(userId, type)
   var budIds = yield findUser2BudIds (userId, type);
   var buds   = yield mongo.buds.find(
                   {_id: { $in: budIds }}).toArray();
+  var scope = this;
+  yield * foreach(buds, function * (bud) {
+    bud.id = bud._id;
+    delete bud._id;
+    bud.dataCache = packdata.getPack (bud, bud.type);
+    bud.typeInfo = types[bud.type];
+  });
   this.status = 200;
   this.body   = buds;
 }

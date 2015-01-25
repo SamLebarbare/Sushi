@@ -8,22 +8,36 @@ angular
     .module('qibud.home')
     .factory('budGraph', [ '$q', function( $q ) {
       var cy;
+
       var budGraph = function(buds) {
         var deferred = $q.defer();
 
         // put buds model in cy.js
         var eles = [];
         for( var i = 0; i < buds.length; i++ ){
+          var bud = buds[i];
+          var info;
+
+
+          if (bud.dataCache.state) {
+            info = '[' + bud.type + '] ' + bud.dataCache.state;
+          }  else {
+            info = bud.title;
+          }
 
           eles.push({
             group: 'nodes',
             data: {
-              id: buds[i].id,
-              weight: 20,
-              label: buds[i].type,
-              name: '[' + buds[i].type + ']' + buds[i].title,
+              id: bud.id,
+              type: bud.typeInfo,
+              weight: bud.qi,
+              size: 200,
+              label: {
+                content: bud.type
+              },
+              name: info,
               faveColor: '#30426a',
-              faveShape: buds[i].type == 'Team' ? 'octagon' : 'roundrectangle'
+              faveShape: 'roundrectangle'
             }
           });
         }
@@ -54,7 +68,8 @@ angular
               .selector('node')
                 .css({
                   'shape': 'data(faveShape)',
-                  'width': 'mapData(weight, 10, 10, 10, 10)',
+                  'width': 'data(size)',
+                  'height': 100,
                   'content': 'data(name)',
                   'text-valign': 'center',
                   'text-outline-width': 2,
@@ -84,8 +99,9 @@ angular
                 }),
 
             layout: {
-              name: 'cose',
-              padding: 10
+              name: 'breadthfirst',
+              directed: true,
+              padding: 5
             },
 
             elements: eles,
@@ -95,12 +111,6 @@ angular
 
               cy.on('cxtdrag', 'node', function(e){
                 var node = this;
-                var dy = Math.abs( e.cyPosition.x - node.position().x );
-                var weight = Math.round( dy*2 );
-
-                node.data('weight', weight);
-
-                fire('onWeightChange', [ node.id(), node.data('weight') ]);
               });
 
               cy.on('tap', 'node', function(e){
@@ -134,14 +144,6 @@ angular
 
         listeners.push(fn);
       }
-
-      budGraph.setBudWeight = function(id, weight){
-        cy.$('#' + id).data('weight', weight);
-      };
-
-      budGraph.onWeightChange = function(fn){
-        listen('onWeightChange', fn);
-      };
 
       budGraph.onClick = function(fn){
         listen('onClick', fn);

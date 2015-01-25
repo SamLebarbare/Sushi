@@ -1,13 +1,13 @@
 <div class="row">
     <div class="col-lg-3 col-md-6 col-xs-12" ng-repeat="bud in packData.actions" id="bud_{{bud.id}}">
-      <div class="widget shadow-z-5">
+      <div class="widget">
         <div class="widget-body">
           <div class="widget-icon green pull-left">
             <i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon">{{bud.qi}}</i>
           </div>
           <div class="widget-content pull-left">
             <div class="title">
-              <a ui-sref="bud.viewer.Action({budId : bud._id})">{{bud.title}}</a>
+              <a ui-sref="bud.viewer.Action({budId : bud.id})">{{bud.title}} ({{bud.dataCache.state}})</a>
             </div>
             <div class="comment">
               {{bud.createdTime | date:'medium'}}

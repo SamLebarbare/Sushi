@@ -14,7 +14,24 @@ function ($scope, $state, $stateParams, api)
     actor: undefined
   };
 
+  var afterLoad = function () {
+    api.buds.budPacksData.get($scope.bud.id, 'Result')
+    .success(function (packData)
+      {
+        if(packData.state) {
+          $scope.packData = packData;
+          console.log('packdata found:' + packData);
+        } else {
+          api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Result');
+        }
+      })
+      .error(function ()
+    {
+      console.log('error while loading packdata');
+    });
+  };
 
+  $scope.load (afterLoad);
   $scope.setSuccess = function ()
   {
     $scope.packData.state = 'Success';
@@ -63,7 +80,7 @@ function ($scope, $state, $stateParams, api)
 
   $scope.isActorOrCreator = function ()
   {
-    return (isActor() || isCreator());
+    return ($scope.isActor() || $scope.isCreator());
   }
 
   $scope.setActor = function ()
@@ -79,20 +96,5 @@ function ($scope, $state, $stateParams, api)
     api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
     api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
   };
-
-  api.buds.budPacksData.get($scope.bud.id, 'Result')
-    .success(function (packData)
-    {
-      if(packData.state) {
-        $scope.packData = packData;
-        console.log('packdata found:' + packData);
-      } else {
-        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Result');
-      }
-    })
-    .error(function ()
-    {
-      console.log('error while loading packdata');
-    });
 
 });

@@ -13,33 +13,33 @@ function ($scope, $state, $stateParams, api)
     state: 'Waiting',
     actions: []
   };
-
-  api.buds.budPacksData.get($scope.bud.id, 'Project')
+  var afterLoad = function () {
+    api.buds.budPacksData.get($scope.bud.id, 'Project')
     .success(function (packData)
-    {
-      if(packData.state) {
-        $scope.packData = packData;
-        console.log('packdata found:' + packData);
-        api.buds.childrenByType ($scope.bud.id, 'Action')
-          .success(function (actions)
+  {
+    if(packData.state) {
+      $scope.packData = packData;
+      console.log('packdata found:' + packData);
+      api.buds.childrenByType ($scope.bud.id, 'Action')
+      .success(function (actions)
+        {
+          $scope.packData.actions = actions;
+          if(actions.length > 0)
           {
-            $scope.packData.actions = actions;
-            if(actions.length > 0)
-            {
-              $scope.packData.state = 'Started';
-              var scope = $scope;
-              angular.forEach(actions, function (action) {
-                if(action.dataCache.state === 'Ended') {
-                  scope.packData.state = 'Ended';
-                } else {
-                  scope.packData.state = 'Started';
-                }
-              });
-            } else {
-              $scope.packData.state = 'Waiting';
-            }
-            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
-          });
+            $scope.packData.state = 'Started';
+            var scope = $scope;
+            angular.forEach(actions, function (action) {
+              if(action.dataCache.state === 'Ended') {
+                scope.packData.state = 'Ended';
+              } else {
+                scope.packData.state = 'Started';
+              }
+            });
+          } else {
+            $scope.packData.state = 'Waiting';
+          }
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+        });
       } else {
         api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Project');
       }
@@ -48,5 +48,9 @@ function ($scope, $state, $stateParams, api)
     {
       console.log('error while loading packdata');
     });
+  };
+
+  $scope.load (afterLoad);
+
 
 });

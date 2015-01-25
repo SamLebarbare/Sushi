@@ -9,7 +9,7 @@
         </div>
         <div class="widget-content pull-left">
           <div class="title">
-            <a ui-sref="bud.viewer({budId : bud._id})">{{bud.title}}</a>
+            <a ui-sref="bud.viewer({budId : bud.id})">{{bud.title}}</a>
           </div>
           <div class="comment">
             <h5>{{bud.type}} <b ng-if="bud.dataCache.state">{{bud.dataCache.state}}</b></h5>

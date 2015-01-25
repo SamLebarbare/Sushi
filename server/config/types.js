@@ -1,9 +1,9 @@
 module.exports = {
-  Idea : {
+  Bud : {
     id:'Bud',
     desc:'Evolve me!',
     defaultChilds: [],
-    icon: 'mdi-image-wb-incandescent'
+    icon: 'fa fa-leaf'
   },
   Idea : {
     id:'Idea',
