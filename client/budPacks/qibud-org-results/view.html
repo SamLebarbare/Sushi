@@ -1,5 +1,4 @@
 <div ng-if="!packData.actor">
-  <h1>{{packData.state}}</h1>
   <input
   class="btn btn-primary btn-success btn-xl btn-raised"
   ng-click="setActor($event)"
@@ -7,7 +6,6 @@
   />
 </div>
 <div ng-if="packData.actor">
-  <h1>{{packData.state}}</h1>
   <p>Actor: {{packData.actor.name}}</p>
   <div ng-show="isActor()" ng-if="packData.state === 'Undefined'">
     <input

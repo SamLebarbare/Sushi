@@ -29,17 +29,11 @@ function ($scope, $state, $stateParams, api)
               $scope.packData.state = 'Started';
               var scope = $scope;
               angular.forEach(actions, function (action) {
-                api.types.get ('Action').success (function (typeInfo) {
-                  action.typeInfo = typeInfo;
-                });
-                api.buds.budPacksData.get(action._id, 'Action')
-                .success(function (data) {
-                  if(data.state === 'Ended') {
-                    scope.packData.state = 'Ended';
-                  } else {
-                    scope.packData.state = 'Started';
-                  }
-                });
+                if(action.dataCache.state === 'Ended') {
+                  scope.packData.state = 'Ended';
+                } else {
+                  scope.packData.state = 'Started';
+                }
               });
             } else {
               $scope.packData.state = 'Waiting';

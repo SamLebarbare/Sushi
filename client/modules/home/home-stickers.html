@@ -12,7 +12,8 @@
             <a ui-sref="bud.viewer({budId : bud._id})">{{bud.title}}</a>
           </div>
           <div class="comment">
-            {{bud.createdTime | date:'medium'}}
+            <h5>{{bud.type}} <b ng-if="bud.dataCache.state">{{bud.dataCache.state}}</b></h5>
+            <h6>Created by <b>{{bud.creator.name}}</b><h6>
           </div>
         </div>
         <div class="clearfix"></div>
@@ -35,7 +36,9 @@
             <a ui-sref="bud.viewer({budId : bud.id})">{{bud.title}}</a>
           </div>
           <div class="comment">
-            {{bud.createdTime | date:'medium'}}
+            <h5>{{bud.type}} <b nf-if="bud.dataCache.state">{{bud.dataCache.state}}</b></h5>
+            <h6 ng-if="bud.dataCache.actor">actor <b>{{bud.dataCache.actor.name}}</b><h6>
+            <h6>Created by <b>{{bud.creator.name}}</b><h6>
           </div>
         </div>
         <div class="clearfix"></div>

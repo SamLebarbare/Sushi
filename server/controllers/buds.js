@@ -21,6 +21,7 @@ var route = require('koa-route'),
     indexer           = require('../indexer/addBud'),
     unindexer         = require('../indexer/removeBud'),
     search           = require('../indexer/searchBud'),
+    types             = require('../config/types'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -66,12 +67,19 @@ function *relatedChilds(budId, type)
   console.log(relatedBudsIds);
   var buds = yield mongo.buds.find(
       {_id: { $in: relatedBudsIds }}).toArray();
-
+  var scope = this;
+  yield * foreach(buds, function * (bud) {
+        bud.id = bud._id;
+        delete bud._id;
+        bud.dataCache = packdata.getPack (bud, bud.type);
+        bud.typeInfo = types[bud.type];
+        bud.qi = yield updateQi(scope.user, bud, 0);
+      });
   this.body = buds;
 }
 
 /**
- * Lists last 15 posts with latest 15 comments in them.
+ * Lists all user buds
  */
 function *listBuds()
 {
@@ -84,6 +92,8 @@ function *listBuds()
   yield * foreach(buds, function * (bud) {
     bud.id = bud._id;
     delete bud._id;
+    bud.dataCache = packdata.getPack (bud, bud.type);
+    bud.typeInfo = types[bud.type];
     bud.qi = yield updateQi(scope.user, bud, 0);
     console.log(bud.qi);
   });
@@ -103,7 +113,8 @@ function *viewBud(budId)
   {
     bud.id = bud._id;
     delete bud._id;
-
+    bud.dataCache = packdata.getPack (bud, bud.type);
+    bud.typeInfo  = types[bud.type];
     this.body = bud;
 
     bud.qi  = yield updateQi(this.user, bud, 0);
@@ -129,6 +140,8 @@ function *createBud()
   bud.creator = this.user;
   bud.createdTime = new Date();
   bud.qi = 0;
+  bud.type = 'Bud';
+
   var results = yield mongo.buds.insert(bud);
 
   bud.id = bud._id;
@@ -155,7 +168,7 @@ function *createBud()
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
-  if(bud.type && bud.type !== 'Bud') {
+  if(bud.type) {
     var packData = {
       type : bud.type,
       data : {}
@@ -236,7 +249,7 @@ function *createSubBud(parentBudId)
   ws.notify('qi.updated', parentBud);
   ws.notify('buds.created', bud);
   ws.notify('buds.updated', parentBud);
-  if(bud.type && bud.type !== 'Bud') {
+  if(bud.type) {
     var packData = {
       type : bud.type,
       data : {}
@@ -420,8 +433,6 @@ function *shareBud(budId)
     yield createBud2UserRel(user, bud, 'SHARED_TO');
 
   });
-
-  bud.qi = yield updateQi(this.user, bud, 1);
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
@@ -812,7 +823,7 @@ function *getPackData(budId, type)
 
   var packData = packdata.getPack (bud, type);
   console.log(packData);
-  this.status = 201;
+  this.status = 200;
   this.body = packData;
 }
 

@@ -16,10 +16,12 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.sponsorsCount = 0;
   $scope.supportersCount = 0;
   $scope.supportValue = 0;
+  $scope.shareCount = 0;
   // retrieve one bud from server
 
-  $scope.load = function ()
+  $scope.load = function (callback)
   {
+    console.info ('loading...');
     $scope.ready = false;
     api.buds.view($stateParams.budId).success(function (bud)
     {
@@ -27,7 +29,6 @@ function ($scope, $state, $stateParams, $modal, api)
       bud.comments   = bud.comments || [];
 
       $scope.bud = bud;
-      $scope.showType ($scope.bud.type, false);
       if(bud.followers)
       {
           $scope.followersCount = bud.followers.length;
@@ -79,20 +80,26 @@ function ($scope, $state, $stateParams, $modal, api)
         $scope.supporter = false;
       }
 
+      if(bud.shares)
+      {
+        $scope.shareCount = bud.shares.length;
+      }
+
       $scope.ready = true;
+      $scope.showType ($scope.bud.type, false);
+      console.info ('loaded!');
+
+      if (callback) {
+        callback();
+      }
 
     });
-
-
   }
   //Init view
   $scope.load();
 
   $scope.showType = function (type, reload) {
     if (type !== 'Bud') {
-      api.types.get (type).success (function (typeInfo) {
-        $scope.typeInfo = typeInfo;
-      });
       $state.go('bud.viewer.' + type, $state.params, { reload: reload });
     } else {
       $state.go('bud.viewer',$state.params, { reload: reload });
@@ -143,6 +150,15 @@ function ($scope, $state, $stateParams, $modal, api)
       $state.go('home.stickers');
     });
   };
+
+  $scope.canDelete = function () {
+    if(!$scope.bud) {
+      return false;
+    }
+    var goodUser = ($scope.bud.creator.id == $scope.common.user.id);
+    var noSubBuds = (!$scope.bud.subBuds || $scope.bud.subBuds.length == 0);
+    return goodUser && noSubBuds;
+  }
 
   $scope.share = function () {
     api.actors.list().success(function (actors)
@@ -422,13 +438,17 @@ function ($scope, $state, $stateParams, $modal, api)
     if ($scope.bud.id === bud.id)
     {
       $scope.bud = bud;
+      if(bud.shares)
+      {
+        $scope.shareCount = bud.shares.length;
+      }
     }
   });
 
   api.buds.evolved.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
-      $scope.showType(bud.type, true);
+      $scope.load ();
     }
   });
 

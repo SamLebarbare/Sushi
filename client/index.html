@@ -42,10 +42,6 @@
             <span class="menu-icon glyphicon glyphicon-transfer"></span>
           </a>
         </li>
-        <li class="sidebar-title" ng-show="results.length > 0"><span>SEARCH RESULT</span></li>
-        <li class="sidebar-list">
-          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
-        </li>
         <li class="sidebar-title"><span>NAVIGATION</span></li>
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="home.timeline">Timeline <span class="menu-icon fa fa-clock-o"></span></a>
@@ -90,9 +86,6 @@
         <div class="row header">
           <div class="col-xs-2">
             <div class="meta" breadcrumbs>
-              <div class="page">
-                {{breadcrumbs[0].text}}
-              </div>
               <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
                 <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
               </div>
@@ -182,7 +175,10 @@
         <!-- End Header Bar -->
 
         <!-- Main Content -->
-
+        <div class="jumbotron" ng-show="results.length > 0">
+          <h6>Search results:</h6>
+          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
+        </div>
         <section data-ui-view>
         </section>
       </div><!-- End Page Content -->

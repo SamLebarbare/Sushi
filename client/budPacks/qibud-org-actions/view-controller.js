@@ -14,6 +14,40 @@ function ($scope, $state, $stateParams, api)
     actor: undefined
   };
 
+  var afterLoad = function () {
+    api.buds.budPacksData.get($scope.bud.id, 'Action')
+    .success(function (packData)
+      {
+        if(packData.state) {
+          $scope.packData = packData;
+          console.log('packdata found:' + packData);
+          api.buds.childrenByType ($scope.bud.id, 'Result')
+          .success(function (results)
+        {
+          if(results.length > 0)
+          {
+            var scope = $scope;
+            angular.forEach(results, function (result) {
+              api.buds.budPacksData.get(result._id, 'Result')
+              .success(function (data) {
+                if(data.state === 'Success') {
+                  scope.packData.state = 'Ended';
+                  api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Action');
+                }
+              });
+            });
+          }
+        });
+      } else {
+        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
+      }
+    })
+    .error(function ()
+    {
+      console.log('error while loading packdata');
+    });
+  };
+
   $scope.isActor = function ()
   {
     if ($scope.packData.actor !== undefined) {
@@ -42,7 +76,7 @@ function ($scope, $state, $stateParams, api)
 
   $scope.isActorOrCreator = function ()
   {
-    return (isActor() || isCreator());
+    return ($scope.isActor() || $scope.isCreator());
   }
 
   $scope.setActor = function ()
@@ -51,6 +85,7 @@ function ($scope, $state, $stateParams, api)
     $scope.packData.state = 'Waiting';
     api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Action');
     api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
   };
 
   $scope.unsetActor = function ()
@@ -59,38 +94,8 @@ function ($scope, $state, $stateParams, api)
     $scope.packData.state = 'Free';
     api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Action');
     api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
   };
 
-  api.buds.budPacksData.get($scope.bud.id, 'Action')
-    .success(function (packData)
-    {
-      if(packData.state) {
-        $scope.packData = packData;
-        console.log('packdata found:' + packData);
-        api.buds.childrenByType ($scope.bud.id, 'Result')
-          .success(function (results)
-          {
-            if(results.length > 0)
-            {
-              var scope = $scope;
-              angular.forEach(results, function (result) {
-                api.buds.budPacksData.get(result._id, 'Result')
-                  .success(function (data) {
-                    if(data.state === 'Success') {
-                      scope.packData.state = 'Ended';
-                      api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Action');
-                    }
-                  });
-              });
-            }
-          });
-      } else {
-        api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
-      }
-    })
-    .error(function ()
-    {
-      console.log('error while loading packdata');
-    });
-
+  $scope.load (afterLoad);
 });
