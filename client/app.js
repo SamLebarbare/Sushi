@@ -21,7 +21,8 @@ angular
       'qibud.org.missions',
       'qibud.org.projects',
       'qibud.org.actions',
-      'qibud.org.results'
+      'qibud.org.results',
+      'smart-table'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {
