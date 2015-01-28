@@ -97,6 +97,9 @@ function *linkedinCallback() {
       _id: (yield mongo.getNextSequence('userId')),
       email: profile.emailAddress,
       name: profile.firstName + ' ' + profile.lastName,
+      xp: 0,
+      lvl: 1,
+      skills: [],
       picture: (yield request.get(profile.pictureUrl, {encoding: 'base64'})).body
     };
     var results = yield mongo.users.insert(user);

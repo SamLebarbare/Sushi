@@ -18,9 +18,11 @@ function ($scope, $state, $stateParams, $location, api)
         if(packData.state) {
           $scope.packData = packData;
           console.log('packdata found:' + packData);
-          if ($scope.bud.sponsors.length > 0) {
-            $scope.packData.state = 'Sponsored';
-            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+          if ($scope.bud.sponsors) {
+            if ($scope.bud.sponsors.length > 0){
+              $scope.packData.state = 'Sponsored';
+              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+            }          
           } else {
             $scope.packData.state = 'Waiting';
             api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');

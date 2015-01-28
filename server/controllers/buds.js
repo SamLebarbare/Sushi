@@ -18,6 +18,7 @@ var route = require('koa-route'),
     setType           = require('../graph-entities/setTypeOnBud'),
     clearBud          = require('../graph-entities/clearBud'),
     packdata          = require('../bud-entities/packdata'),
+    xp                = require('../user-entities/xp'),
     indexer           = require('../indexer/addBud'),
     unindexer         = require('../indexer/removeBud'),
     search           = require('../indexer/searchBud'),
@@ -140,7 +141,6 @@ function *createBud()
   bud.creator = this.user;
   bud.createdTime = new Date();
   bud.qi = 0;
-  bud.type = 'Bud';
 
   var results = yield mongo.buds.insert(bud);
 
@@ -183,6 +183,12 @@ function *createBud()
 
     ws.notify('buds.evolved', bud);
   }
+
+  xp.gainXP (this.user, 5);
+  yield mongo.users.update(
+    {_id: this.user.id},
+    {$set: {xp: this.user.xp, lvl: this.user.lvl} }
+  );
 }
 
 /**
@@ -263,7 +269,14 @@ function *createSubBud(parentBudId)
     yield setType(this.user, bud, bud.type);
 
     ws.notify('buds.evolved', bud);
+
   }
+
+  xp.gainXP (this.user, 5);
+  yield mongo.users.update(
+    {_id: this.user.id},
+    {$set: {xp: this.user.xp, lvl: this.user.lvl} }
+  );
 }
 
 /**

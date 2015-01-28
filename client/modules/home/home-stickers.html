@@ -1,31 +1,5 @@
-<div ng-show="budsActingOn">
-  <table st-table="displayedBuds1" st-safe-src="budsActingOn" class="table table-striped table-hover ">
-    <h1>I'm actor on<h1>
-    <thead>
-      <tr>
-        <th st-sort="qi">Qi</th>
-        <th st-sort="type">Type</th>
-        <th st-sort="title">Title</th>
-        <th st-sort="creator.name">Creator</th>
-        <th st-sort="dataCache.actor.name">Actor</th>
-        <th st-sort="dataCache.state">State</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="bud in displayedBuds1" class="active" ui-sref="bud.viewer({budId : bud.id})">
-        <td>{{bud.qi}}</i></td>
-        <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"> {{bud.type}}</td>
-        <td>{{bud.title}}</td>
-        <td>{{bud.creator.name}}</td>
-        <td>{{bud.dataCache.actor.name}}</td>
-        <td><b>{{bud.dataCache.state}}</b></td>
-      </tr>
-    </tbody>
-  </table>
-</div>
 <div ng-show="buds">
-  <table st-table="displayedBuds2" st-safe-src="buds" class="table table-striped table-hover ">
-    <h1>I can see<h1>
+  <table st-table="displayedBuds" st-safe-src="buds" class="table table-striped table-hover ">
     <thead>
       <tr>
         <th st-sort="qi">Qi</th>
@@ -37,8 +11,8 @@
       </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="bud in displayedBuds2" class="active" ui-sref="bud.viewer({budId : bud.id})">
-        <td>{{bud.qi}}</i></td>
+      <tr ng-repeat="bud in displayedBuds" class="active" ui-sref="bud.viewer({budId : bud.id})">
+        <td>{{bud.qi}}</td>
         <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"> {{bud.type}}</td>
         <td>{{bud.title}}</td>
         <td>{{bud.creator.name}}</td>

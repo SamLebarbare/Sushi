@@ -7,25 +7,14 @@
 angular.module('qibud.home').controller('HomeCtrl',
 function ($scope, $state, $filter, api, budGraph)
 {
-  var user       = $scope.common.user;
-  $scope.itemsByPage = 25;
-  $scope.displayedBuds1 = [];
-  $scope.displayedBuds2 = [];
+  var user             = $scope.common.user;
+  $scope.itemsByPage   = 25;
+  $scope.displayedBuds = [];
 
   api.buds.list().success(function (buds)
   {
     $scope.buds = buds;
-    $scope.displayedBuds2 = [].concat($scope.buds);
-    api.links.findU2B(user.id, 'ACTOR').success(function (buds)
-    {
-      buds.forEach(function (bud)
-      {
-        _.remove($scope.buds, function(b) { return b.id === bud._id; });
-      });
-
-      $scope.budsActingOn = buds;
-      $scope.displayedBuds1 = [].concat($scope.budsActingOn);
-    });
+    $scope.displayedBuds = [].concat($scope.buds);
   });
 
 

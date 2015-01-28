@@ -11,13 +11,13 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('bud.profile', {
+          .state('profile', {
             url: "/profile",
             title: 'User Profile',
             breadcrumb: {
               class: 'highlight',
               text: 'User Profile',
-              stateName: 'bud.profile'
+              stateName: 'profile'
             },
             templateUrl: 'modules/profile/profile.html',
             controller: 'ProfileCtrl'

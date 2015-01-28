@@ -1,4 +1,11 @@
-<h4><span style="text-decoration: underline;">{{user.name}}</span>'s Profile</h4>
-
-<div><strong>ID: </strong> {{user.id}}</div>
-<div><strong>Mail: </strong> {{user.email}}</div>
+<div class="container-fluid">
+  <section>
+    <div class="widget-icon pull-right">
+      <h1 class="green">Level <i class="circle">{{user.lvl}}</i></h1>
+      <h1 class="orange"><i class="circle">{{user.xp}}</i> XP</h1>
+    </div>
+    <div class="jumbotron">
+      <h1>{{user.name}}</h1>
+    </div>
+  </section>
+</div>

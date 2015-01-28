@@ -83,6 +83,8 @@ function ($scope, $state, $stateParams, $modal, api)
       if(bud.shares)
       {
         $scope.shareCount = bud.shares.length;
+      } else {
+        $scope.shareCount = 0;
       }
 
       $scope.ready = true;
@@ -168,6 +170,9 @@ function ($scope, $state, $stateParams, $modal, api)
         controller: 'ShareboxCtrl',
         size: 'lg',
         resolve: {
+          shares: function () {
+            return $scope.bud.shares;
+          },
           users: function () {
             return actors.users;
           },
@@ -180,7 +185,7 @@ function ($scope, $state, $stateParams, $modal, api)
       modalInstance.result.then(function (actors) {
         //share to ->
         api.buds.share($scope.bud, actors).success(function (bud) {
-
+          console.info ('shared!');
         });
 
       }, function () {

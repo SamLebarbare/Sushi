@@ -106,7 +106,7 @@ function ($scope, $state, $stateParams, $modal, $location, api)
           if (selectedType !== null) {//evolve if needed
             api.buds.evolve(budId, selectedType).success(function () {
               console.info ('bud evolve in ' + selectedType);
-              $state.go('bud.viewer.' + selectedType ,{budId : budId},{ reload: true });
+              $state.go('bud.viewer',{budId : budId},{ reload: true });
             });
           } else {
             $state.go('bud.viewer',{budId : budId},{ reload: true });
@@ -139,7 +139,7 @@ function ($scope, $state, $stateParams, $modal, $location, api)
             if (selectedType !== null) {//evolve if needed
               api.buds.evolve(budId, selectedType).success(function () {
                 console.info ('bud evolve in ' + selectedType);
-                $state.go('bud.viewer.' + selectedType ,{budId : budId},{ reload: true });
+                $state.go('bud.viewer',{budId : budId},{ reload: true });
               });
             } else {
               $state.go('bud.viewer',{budId : budId},{ reload: true });
@@ -153,14 +153,14 @@ function ($scope, $state, $stateParams, $modal, $location, api)
     };
 
     modalInstance.result.then(function (selectedType) {
-      if ($scope.parentBud.id) {
+      if ($scope.parentBud) {
         createSubBud (selectedType);
       } else {
         createBud (selectedType);
       }
 
     }, function () {
-      if ($scope.parentBud.id) {
+      if ($scope.parentBub) {
         createSubBud (null);
       } else {
         createBud (null);

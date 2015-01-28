@@ -50,7 +50,7 @@
           <a ui-sref="home.budgraph">Bud graph <span class="menu-icon fa fa-share-alt"></span></a>
         </li>
         <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="home.stickers">Bud stickers <span class="menu-icon fa fa-list-alt"></span></a>
+          <a ui-sref="home.stickers">Bud list <span class="menu-icon fa fa-list-alt"></span></a>
         </li>
         <li class="sidebar-title separator"><span>Actions</span></li>
         <li class="sidebar-list" ui-sref-active="active">
@@ -100,11 +100,15 @@
           </div>
           <div class="col-xs-6">
             <div class="user pull-right">
+              <div class="item">
+                <h6 class="green">Level {{common.user.lvl}}</h6>
+                <h6 class="orange">{{common.user.xp}} XP</h6>
+              </div>
               <div class="item dropdown">
                 <a class="dropdown-toggle">
                   <img ng-src="{{common.user.picture}}" alt="">
                 </a>
-                <ul class="dropdown-menu dropdown-menu-right">
+                <ul class="dropdown-menu dropdown-menu-right shadow-z-5">
                   <li class="dropdown-header">
                     {{common.user.name}}
                   </li>
