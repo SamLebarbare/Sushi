@@ -607,13 +607,6 @@
           $scope.budBox.content = $stateParams.content;
         }
         $scope.editorOptions = { uiColor: '#000000' };
-        $scope.setType = function (type) {
-          if (type === 'Bud') {
-            $state.go('bud.editor');
-          } else {
-            $state.go('bud.editor.' + type);
-          }
-        };
         // add bud creation functions to scope
         $scope.createBud = function ($event) {
           // don't let the user type in blank lines or submit empty/whitespace only bud, or type in something when bud is being created
@@ -712,7 +705,6 @@
           $scope.editedBud.title = $scope.budBox.title;
           $scope.editedBud.content = $scope.budBox.content;
           $scope.editedBud.privacy = $scope.budBox.privacy;
-          $scope.editedBud.type = $scope.budBox.type === 'Bud' ? '' : $scope.budBox.type;
           api.buds.update($scope.editedBud).success(function (bud) {
             //redirect
             $state.go('bud.viewer', { budId: $scope.editedBud.id }, { reload: true });
@@ -1166,7 +1158,7 @@
         //Init view
         $scope.load();
         $scope.showType = function (type, reload) {
-          if (type !== 'Bud') {
+          if (type != 'Bud') {
             $state.go('bud.viewer.' + type, $state.params, { reload: reload });
           } else {
             $state.go('bud.viewer', $state.params, { reload: reload });
@@ -1193,6 +1185,9 @@
           } else {
             return false;
           }
+        };
+        $scope.edit = function () {
+          $state.go('bud.editor', { budId: $scope.bud });
         };
         $scope.editSubBud = function () {
           $state.go('bud.editor', { parentBud: $scope.bud });

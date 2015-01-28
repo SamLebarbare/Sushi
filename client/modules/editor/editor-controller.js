@@ -55,14 +55,6 @@ function ($scope, $state, $stateParams, $modal, $location, api)
 
   $scope.editorOptions = {uiColor: '#000000'};
 
-  $scope.setType = function (type) {
-    if(type === 'Bud') {
-      $state.go('bud.editor');
-    } else {
-      $state.go('bud.editor.' + type);
-    }
-  };
-
   // add bud creation functions to scope
   $scope.createBud = function ($event)
   {
@@ -184,11 +176,6 @@ function ($scope, $state, $stateParams, $modal, $location, api)
     $scope.editedBud.title   = $scope.budBox.title;
     $scope.editedBud.content = $scope.budBox.content;
     $scope.editedBud.privacy = $scope.budBox.privacy;
-    $scope.editedBud.type    = $scope.budBox.type === 'Bud' ?
-                                '' : $scope.budBox.type;
-
-
-
 
     api.buds.update($scope.editedBud).success(function (bud)
     {

@@ -2,14 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Welcome to Qibud - Sign In, Sign Up or Learn More</title>
+  <title>Welcome to Qibud - Sign In, Sign Up</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
   <link rel="stylesheet" href="bower_components/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="bower_components/bootstrap-social/bootstrap-social.css">
   <style type="text/css">
     body {
-      background-color: #f8f8f8;
+      min-height: 100%;
+      max-width: 100%;
+      height: auto;
+      background-color: black;
+      background-image: url('/images/bg.jpg');
+      background-repeat: no-repeat;
+      background-position:50% 50%;  /* Sets reference point to scale from */
+      background-size:cover;        /* Sets background image to cover entire element */
     }
 
     /* Left-side bullets and large logo */
@@ -51,26 +58,13 @@
   </style>
 </head>
 <body>
-<div class="navbar navbar-default navbar-static-top">
-  <div class="container visible-xs">
-    <div class="navbar-header">
-      <a class="navbar-brand" href="/">
-         <img class="brand-image" src="images/qibud.png" alt="QIBUD">
-      </a>
-    </div>
-  </div>
-  <div class="container ">
-    <ul class="nav navbar-nav navbar-right">
-    </ul>
-  </div>
-</div>
 <div class="container">
   <div class="row">
     <div class="col-sm-6">
       <h2>Sign In</h2>
 
       <p>
-        Welcome to <strong>QiBud</strong>. Please enter your account info. <br>
+        Welcome to <img class="brand-image" src="images/qibud.png" alt="QIBUD"><strong>Bud</strong>. Please enter your account info. <br>
       </p>
 
       <form action="/signin" method="post" style="width: 50%">
@@ -98,14 +92,11 @@
       </form>
       <br>
     </div>
+    <div class="col-sm-6">
+    </div>
   </div>
-  <hr>
-  <footer>
-    <p>
-      qibud
-    </p>
-  </footer>
 </div>
+
 
 <script src="bower_components/jquery/dist/jquery.js"></script>
 <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>

@@ -17,11 +17,11 @@
       </div>
       <div class="form-control-wrapper">
         <input class="form-control input-lg"
+        autofocus
         type="text"
         name="budTitle"
         ng-disabled="budBox.disabled"
-        ng-model="budBox.title"
-        autofocus
+        ng-model="budBox.title"    
         required />
         <div class="floating-label">Your bud title</div>
         <span class="material-input"></span>
@@ -34,10 +34,10 @@
         name="message"
         placeholder="Type your bud here..."
         ng-disabled="budBox.disabled">
-      </textarea>
-      <span class="help-block">
-        May the Qi be with you!
-      </span>
+        </textarea>
+        <span class="help-block">
+          May the Qi be with you!
+        </span>
     </div>
     <div class="form-group">
       <label for=""><strong>Privacy: </strong></label>

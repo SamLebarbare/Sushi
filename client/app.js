@@ -22,7 +22,9 @@ angular
       'qibud.org.projects',
       'qibud.org.actions',
       'qibud.org.results',
-      'smart-table'
+      'qibud.org.issues',
+      'smart-table',
+      'growlNotifications'
     ])
 
     .config(function ($stateProvider, $urlRouterProvider) {

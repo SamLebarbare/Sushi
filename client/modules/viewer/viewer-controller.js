@@ -101,7 +101,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.load();
 
   $scope.showType = function (type, reload) {
-    if (type !== 'Bud') {
+    if (type != 'Bud') {
       $state.go('bud.viewer.' + type, $state.params, { reload: reload });
     } else {
       $state.go('bud.viewer',$state.params, { reload: reload });
@@ -138,6 +138,10 @@ function ($scope, $state, $stateParams, $modal, api)
       return false;
     }
   }
+
+  $scope.edit = function () {
+    $state.go('bud.editor',{budId : $scope.bud});
+  };
 
   $scope.editSubBud = function () {
     $state.go('bud.editor',{parentBud : $scope.bud});

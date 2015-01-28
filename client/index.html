@@ -25,11 +25,15 @@
   <link rel="stylesheet" href="/bower_components/bootstrap-material-design/dist/css/material-wfont.min.css">
   <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
   <link rel="stylesheet" href="/timeline.css">
-  <!-- <link rel="stylesheet" href="/app.css"> -->
-
+  <link rel="stylesheet" href="/app.css">
 </head>
 
 <body ng-controller="DashboardCtrl" style="background-color: white;">
+  <growl-notifications></growl-notifications>
+  <growl-notification class="alert alert-dismissable alert-success fading"  ttl="10000">
+    <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
+    <p>Welcome {{common.user.name}}!</p>
+  </growl-notification>
   <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak  ng-controller="SearchCtrl">
 
     <!-- Sidebar -->

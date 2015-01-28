@@ -73,16 +73,12 @@
     __webpack_require__(25);
     __webpack_require__(26);
     __webpack_require__(27);
+    __webpack_require__(43);
+    __webpack_require__(44);
     __webpack_require__(28);
     __webpack_require__(29);
     __webpack_require__(30);
-    __webpack_require__(31);
-    __webpack_require__(32);
-    __webpack_require__(33);
-    __webpack_require__(34);
-    __webpack_require__(35);
-    __webpack_require__(36);
-    __webpack_require__(37);  /***/
+    __webpack_require__(31);  /***/
   },
   ,
   ,
@@ -143,21 +139,6 @@
             stateName: 'bud.editor.Team'
           }
         });
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
-    angular.module('qibud.org.teams').controller('TeamEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
       }
     ]);  /***/
   },
@@ -267,22 +248,6 @@
     /**
 	 * __
 	 */
-    angular.module('qibud.org.missions').controller('MissionEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
-        console.log('MissionEditorCtrl start...');
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
     angular.module('qibud.org.missions').controller('MissionViewerCtrl', [
       '$scope',
       '$state',
@@ -377,22 +342,6 @@
     /**
 	 * __
 	 */
-    angular.module('qibud.org.projects').controller('ProjectEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
-        console.log('ProjectEditorCtrl start...');
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
     angular.module('qibud.org.projects').controller('ProjectViewerCtrl', [
       '$scope',
       '$state',
@@ -478,22 +427,6 @@
             stateName: 'bud.editor.Action'
           }
         });
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
-    angular.module('qibud.org.actions').controller('ActionEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
-        console.log('ActionEditorCtrl start...');
       }
     ]);  /***/
   },
@@ -630,23 +563,6 @@
     /**
 	 * __
 	 */
-    angular.module('qibud.org.ideas').controller('IdeaEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
-        var user = $scope.common.user;
-        $scope.packData = {};
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
     angular.module('qibud.org.ideas').controller('IdeaViewerCtrl', [
       '$scope',
       '$state',
@@ -740,22 +656,6 @@
     /**
 	 * __
 	 */
-    angular.module('qibud.org.results').controller('ResultEditorCtrl', [
-      '$scope',
-      '$state',
-      '$stateParams',
-      '$location',
-      'api',
-      function ($scope, $state, $stateParams, $location, api) {
-        console.log('ResultEditorCtrl start...');
-      }
-    ]);  /***/
-  },
-  function (module, exports, __webpack_require__) {
-    'use strict';
-    /**
-	 * __
-	 */
     angular.module('qibud.org.results').controller('ResultViewerCtrl', [
       '$scope',
       '$state',
@@ -830,6 +730,132 @@
           api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
           api.links.deleteU2B(user.id, 'ACTOR', $scope.bud.id);
         };
+      }
+    ]);  /***/
+  },
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  ,
+  function (module, exports, __webpack_require__) {
+    'use strict';
+    /**
+	 * Bud project
+	 */
+    angular.module('qibud.org.issues', [
+      'ui.router',
+      'ui.bootstrap',
+      'qibud.common'
+    ]).config([
+      '$stateProvider',
+      '$urlRouterProvider',
+      function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('bud.viewer.Issue', {
+          url: '/Issue',
+          views: {
+            'summary': {
+              templateUrl: 'budPacks/qibud-org-issues/view.html',
+              controller: 'IssueViewerCtrl'
+            }
+          },
+          breadcrumb: {
+            class: 'highlight',
+            text: 'Bud Issue',
+            stateName: 'bud.viewer.Issue'
+          }
+        });
+      }
+    ]);  /***/
+  },
+  function (module, exports, __webpack_require__) {
+    'use strict';
+    /**
+	 * __
+	 */
+    angular.module('qibud.org.issues').controller('IssueViewerCtrl', [
+      '$scope',
+      '$state',
+      '$stateParams',
+      'api',
+      function ($scope, $state, $stateParams, api) {
+        console.log('IssueViewerCtrl start...');
+        var user = $scope.common.user;
+        $scope.packData = {
+          state: 'Free',
+          actor: undefined
+        };
+        var afterLoad = function () {
+          api.buds.budPacksData.get($scope.bud.id, 'Issue').success(function (packData) {
+            if (packData.state) {
+              $scope.packData = packData;
+              console.log('packdata found:' + packData);
+              api.buds.childrenByType($scope.bud.id, 'Result').success(function (results) {
+                if (results.length > 0) {
+                  var scope = $scope;
+                  angular.forEach(results, function (result) {
+                    api.buds.budPacksData.get(result.id, 'Result').success(function (data) {
+                      if (data.state === 'Success') {
+                        scope.packData.state = 'Ended';
+                        api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Issue');
+                      }
+                    });
+                  });
+                }
+              });
+            } else {
+              api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Issue');
+            }
+          }).error(function () {
+            console.log('error while loading packdata');
+          });
+        };
+        $scope.isActor = function () {
+          if ($scope.packData.actor !== undefined) {
+            if ($scope.packData.actor === user) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        };
+        $scope.isCreator = function () {
+          if ($scope.bud.creator !== undefined) {
+            if ($scope.bud.creator === user) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        };
+        $scope.isActorOrCreator = function () {
+          return $scope.isActor() || $scope.isCreator();
+        };
+        $scope.setActor = function () {
+          $scope.packData.actor = user;
+          $scope.packData.state = 'Assigned';
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
+          api.links.createU2B(user.id, 'ACTOR', $scope.bud.id);
+          $scope.load();
+        };
+        $scope.unsetActor = function () {
+          $scope.packData.actor = undefined;
+          $scope.packData.state = 'Free';
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
+          api.links.deleteU2B(user.id, 'ACTOR', $scope.bud.id);
+          $scope.load();
+        };
+        $scope.load(afterLoad);
       }
     ]);  /***/
   }  /******/
