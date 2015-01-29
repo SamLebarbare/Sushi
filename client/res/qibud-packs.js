@@ -57,7 +57,7 @@
   /******/
   // __webpack_public_path__
   /******/
-  __webpack_require__.p = '';
+  __webpack_require__.p = './res/';
   /******/
   /******/
   // Load entry module and return exports
@@ -73,12 +73,14 @@
     __webpack_require__(25);
     __webpack_require__(26);
     __webpack_require__(27);
-    __webpack_require__(43);
-    __webpack_require__(44);
     __webpack_require__(28);
     __webpack_require__(29);
     __webpack_require__(30);
-    __webpack_require__(31);  /***/
+    __webpack_require__(31);
+    __webpack_require__(32);
+    __webpack_require__(33);
+    __webpack_require__(34);
+    __webpack_require__(35);  /***/
   },
   ,
   ,
@@ -176,7 +178,7 @@
           api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Team');
           api.links.deleteU2B(user.id, 'MEMBER', $scope.bud.id);
         };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.users.list().success(function (users) {
             $scope.users = users;
             api.buds.budPacksData.get($scope.bud.id, 'Team').success(function (packData) {
@@ -191,8 +193,10 @@
               } else {
                 api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Team');
               }
+              done();
             }).error(function () {
               console.log('error while loading packdata');
+              done();
             });
           });
         };
@@ -261,7 +265,7 @@
           projects: [],
           team: null
         };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.buds.budPacksData.get($scope.bud.id, 'Mission').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
@@ -282,12 +286,15 @@
                   $scope.packData.state = 'Waiting';
                 }
                 api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
+                done();
               });
             } else {
               api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Mission');
+              done();
             }
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
         };
         $scope.load(afterLoad);
@@ -354,7 +361,7 @@
           state: 'Waiting',
           actions: []
         };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.buds.budPacksData.get($scope.bud.id, 'Project').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
@@ -375,12 +382,15 @@
                   $scope.packData.state = 'Waiting';
                 }
                 api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+                done();
               });
             } else {
               api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Project');
+              done();
             }
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
         };
         $scope.load(afterLoad);
@@ -447,7 +457,7 @@
           state: 'Free',
           actor: undefined
         };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.buds.budPacksData.get($scope.bud.id, 'Action').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
@@ -463,13 +473,17 @@
                       }
                     });
                   });
+                } else {
+                  done();
                 }
               });
             } else {
               api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
+              done();
             }
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
         };
         $scope.isActor = function () {
@@ -508,6 +522,126 @@
           $scope.packData.actor = undefined;
           $scope.packData.state = 'Free';
           api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Action');
+          api.links.deleteU2B(user.id, 'ACTOR', $scope.bud.id);
+          $scope.load();
+        };
+        $scope.load(afterLoad);
+      }
+    ]);  /***/
+  },
+  function (module, exports, __webpack_require__) {
+    'use strict';
+    /**
+	 * Bud project
+	 */
+    angular.module('qibud.org.issues', [
+      'ui.router',
+      'ui.bootstrap',
+      'qibud.common'
+    ]).config([
+      '$stateProvider',
+      '$urlRouterProvider',
+      function ($stateProvider, $urlRouterProvider) {
+        $stateProvider.state('bud.viewer.Issue', {
+          url: '/Issue',
+          views: {
+            'summary': {
+              templateUrl: 'budPacks/qibud-org-issues/view.html',
+              controller: 'IssueViewerCtrl'
+            }
+          },
+          breadcrumb: {
+            class: 'highlight',
+            text: 'Bud Issue',
+            stateName: 'bud.viewer.Issue'
+          }
+        });
+      }
+    ]);  /***/
+  },
+  function (module, exports, __webpack_require__) {
+    'use strict';
+    /**
+	 * __
+	 */
+    angular.module('qibud.org.issues').controller('IssueViewerCtrl', [
+      '$scope',
+      '$state',
+      '$stateParams',
+      'api',
+      function ($scope, $state, $stateParams, api) {
+        console.log('IssueViewerCtrl start...');
+        var user = $scope.common.user;
+        $scope.packData = {
+          state: 'Free',
+          actor: undefined
+        };
+        var afterLoad = function (done) {
+          api.buds.budPacksData.get($scope.bud.id, 'Issue').success(function (packData) {
+            if (packData.state) {
+              $scope.packData = packData;
+              console.log('packdata found:' + packData);
+              api.buds.childrenByType($scope.bud.id, 'Result').success(function (results) {
+                if (results.length > 0) {
+                  var scope = $scope;
+                  angular.forEach(results, function (result) {
+                    api.buds.budPacksData.get(result.id, 'Result').success(function (data) {
+                      if (data.state === 'Success') {
+                        scope.packData.state = 'Ended';
+                        api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Issue');
+                      }
+                      done();
+                    });
+                  });
+                } else {
+                  done();
+                }
+              });
+            } else {
+              api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Issue');
+              done();
+            }
+          }).error(function () {
+            console.log('error while loading packdata');
+            done();
+          });
+        };
+        $scope.isActor = function () {
+          if ($scope.packData.actor !== undefined) {
+            if ($scope.packData.actor === user) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        };
+        $scope.isCreator = function () {
+          if ($scope.bud.creator !== undefined) {
+            if ($scope.bud.creator === user) {
+              return true;
+            } else {
+              return false;
+            }
+          } else {
+            return false;
+          }
+        };
+        $scope.isActorOrCreator = function () {
+          return $scope.isActor() || $scope.isCreator();
+        };
+        $scope.setActor = function () {
+          $scope.packData.actor = user;
+          $scope.packData.state = 'Assigned';
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
+          api.links.createU2B(user.id, 'ACTOR', $scope.bud.id);
+          $scope.load();
+        };
+        $scope.unsetActor = function () {
+          $scope.packData.actor = undefined;
+          $scope.packData.state = 'Free';
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
           api.links.deleteU2B(user.id, 'ACTOR', $scope.bud.id);
           $scope.load();
         };
@@ -572,7 +706,7 @@
       function ($scope, $state, $stateParams, $location, api) {
         var user = $scope.common.user;
         $scope.packData = { state: 'Waiting' };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.buds.budPacksData.get($scope.bud.id, 'Idea').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
@@ -586,11 +720,14 @@
                 $scope.packData.state = 'Waiting';
                 api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
               }
+              done();
             } else {
               api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Idea');
+              done();
             }
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
           api.buds.sponsorsChanged.subscribe($scope, function (bud) {
             if ($scope.bud.id === bud.id) {
@@ -668,7 +805,7 @@
           state: 'Undefined',
           actor: undefined
         };
-        var afterLoad = function () {
+        var afterLoad = function (done) {
           api.buds.budPacksData.get($scope.bud.id, 'Result').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
@@ -676,8 +813,10 @@
             } else {
               api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Result');
             }
+            done();
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
         };
         $scope.load(afterLoad);
@@ -733,23 +872,12 @@
       }
     ]);  /***/
   },
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
-  ,
   function (module, exports, __webpack_require__) {
     'use strict';
     /**
-	 * Bud project
+	 * Bud Info
 	 */
-    angular.module('qibud.org.issues', [
+    angular.module('qibud.org.infos', [
       'ui.router',
       'ui.bootstrap',
       'qibud.common'
@@ -757,18 +885,18 @@
       '$stateProvider',
       '$urlRouterProvider',
       function ($stateProvider, $urlRouterProvider) {
-        $stateProvider.state('bud.viewer.Issue', {
-          url: '/Issue',
+        $stateProvider.state('bud.viewer.Info', {
+          url: '/idea',
           views: {
             'summary': {
-              templateUrl: 'budPacks/qibud-org-issues/view.html',
-              controller: 'IssueViewerCtrl'
+              templateUrl: 'budPacks/qibud-org-infos/view.html',
+              controller: 'InfoViewerCtrl'
             }
           },
           breadcrumb: {
             class: 'highlight',
-            text: 'Bud Issue',
-            stateName: 'bud.viewer.Issue'
+            text: 'Bud Info',
+            stateName: 'bud.viewer.Info'
           }
         });
       }
@@ -779,81 +907,50 @@
     /**
 	 * __
 	 */
-    angular.module('qibud.org.issues').controller('IssueViewerCtrl', [
+    angular.module('qibud.org.infos').controller('InfoViewerCtrl', [
       '$scope',
       '$state',
       '$stateParams',
+      '$location',
       'api',
-      function ($scope, $state, $stateParams, api) {
-        console.log('IssueViewerCtrl start...');
+      function ($scope, $state, $stateParams, $location, api) {
         var user = $scope.common.user;
-        $scope.packData = {
-          state: 'Free',
-          actor: undefined
-        };
-        var afterLoad = function () {
-          api.buds.budPacksData.get($scope.bud.id, 'Issue').success(function (packData) {
+        $scope.packData = { state: 'Unshared' };
+        var afterLoad = function (done) {
+          api.buds.budPacksData.get($scope.bud.id, 'Info').success(function (packData) {
             if (packData.state) {
               $scope.packData = packData;
               console.log('packdata found:' + packData);
-              api.buds.childrenByType($scope.bud.id, 'Result').success(function (results) {
-                if (results.length > 0) {
-                  var scope = $scope;
-                  angular.forEach(results, function (result) {
-                    api.buds.budPacksData.get(result.id, 'Result').success(function (data) {
-                      if (data.state === 'Success') {
-                        scope.packData.state = 'Ended';
-                        api.buds.budPacksData.set($scope.bud.id, scope.packData, 'Issue');
-                      }
-                    });
-                  });
+              if ($scope.shareCount > 0) {
+                $scope.packData.state = 'Shared';
+              } else {
+                $scope.packData.state = 'Unshared';
+              }
+              if ($scope.bud.sponsors) {
+                if ($scope.bud.sponsors.length > 0) {
+                  $scope.packData.state = 'Relevant';
                 }
-              });
+              }
+              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Info');
+              done();
             } else {
-              api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Issue');
+              api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Info');
+              done();
             }
           }).error(function () {
             console.log('error while loading packdata');
+            done();
           });
-        };
-        $scope.isActor = function () {
-          if ($scope.packData.actor !== undefined) {
-            if ($scope.packData.actor === user) {
-              return true;
-            } else {
-              return false;
+          api.buds.sharesChanged.subscribe($scope, function (bud) {
+            if ($scope.bud.id === bud.id) {
+              $scope.load(afterLoad);
             }
-          } else {
-            return false;
-          }
-        };
-        $scope.isCreator = function () {
-          if ($scope.bud.creator !== undefined) {
-            if ($scope.bud.creator === user) {
-              return true;
-            } else {
-              return false;
+          });
+          api.buds.sponsorsChanged.subscribe($scope, function (bud) {
+            if ($scope.bud.id === bud.id) {
+              $scope.load(afterLoad);
             }
-          } else {
-            return false;
-          }
-        };
-        $scope.isActorOrCreator = function () {
-          return $scope.isActor() || $scope.isCreator();
-        };
-        $scope.setActor = function () {
-          $scope.packData.actor = user;
-          $scope.packData.state = 'Assigned';
-          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
-          api.links.createU2B(user.id, 'ACTOR', $scope.bud.id);
-          $scope.load();
-        };
-        $scope.unsetActor = function () {
-          $scope.packData.actor = undefined;
-          $scope.packData.state = 'Free';
-          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
-          api.links.deleteU2B(user.id, 'ACTOR', $scope.bud.id);
-          $scope.load();
+          });
         };
         $scope.load(afterLoad);
       }

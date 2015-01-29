@@ -60,6 +60,12 @@
     "karma-jasmine": "~0",
     "supertest": "~0",
     "should": "~4",
-    "webpack": "^1.4.13"
+    "webpack": "^1.4.13",
+    "style-loader": ">=0.6.4",
+    "css-loader": ">=0.6.12",
+    "script-loader": ">=0.5.2",
+    "less-loader": ">=0.7.2",
+    "file-loader": ">=0.5.1",
+    "url-loader": ">=0.5.5"
   }
 }

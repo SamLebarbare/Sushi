@@ -4,32 +4,34 @@
  * __
  */
 
-angular.module('qibud.org.ideas').controller('IdeaViewerCtrl',
+angular.module('qibud.org.infos').controller('InfoViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;
   $scope.packData = {
-    state: 'Waiting'
+    state: 'Unshared'
   };
   var afterLoad = function (done) {
-    api.buds.budPacksData.get($scope.bud.id, 'Idea')
+    api.buds.budPacksData.get($scope.bud.id, 'Info')
     .success(function (packData)
       {
         if(packData.state) {
           $scope.packData = packData;
           console.log('packdata found:' + packData);
+          if ($scope.shareCount > 0) {
+            $scope.packData.state = 'Shared';
+          } else {
+            $scope.packData.state = 'Unshared';
+          }
           if ($scope.bud.sponsors) {
             if ($scope.bud.sponsors.length > 0){
-              $scope.packData.state = 'Sponsored';
-              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+              $scope.packData.state = 'Relevant';
             }
-          } else {
-            $scope.packData.state = 'Waiting';
-            api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
           }
+          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Info');
           done ();
         } else {
-          api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Idea');
+          api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Info');
           done ();
         }
       })
@@ -39,16 +41,17 @@ function ($scope, $state, $stateParams, $location, api)
       done ();
     });
 
+    api.buds.sharesChanged.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.load (afterLoad);
+      }
+    });
+
     api.buds.sponsorsChanged.subscribe($scope, function (bud) {
       if ($scope.bud.id === bud.id)
       {
-        if (bud.sponsors.length > 0) {
-          $scope.packData.state = 'Sponsored';
-          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-        } else {
-          $scope.packData.state = 'Waiting';
-          api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-        }
+        $scope.load (afterLoad);
       }
     });
   };

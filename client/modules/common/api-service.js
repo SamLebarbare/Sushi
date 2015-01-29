@@ -107,6 +107,7 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     share : function(bud, users) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
     },
+    sharesChanged: event(),
     budPacksData: {
       create : function (budId, packData, type) {
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});

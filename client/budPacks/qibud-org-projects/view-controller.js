@@ -13,7 +13,7 @@ function ($scope, $state, $stateParams, api)
     state: 'Waiting',
     actions: []
   };
-  var afterLoad = function () {
+  var afterLoad = function (done) {
     api.buds.budPacksData.get($scope.bud.id, 'Project')
     .success(function (packData)
   {
@@ -39,14 +39,17 @@ function ($scope, $state, $stateParams, api)
             $scope.packData.state = 'Waiting';
           }
           api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+          done ();
         });
       } else {
         api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Project');
+        done ();
       }
     })
     .error(function ()
     {
       console.log('error while loading packdata');
+      done ();
     });
   };
 

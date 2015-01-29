@@ -463,6 +463,7 @@ function *shareBud(budId)
   yield mongo.events.insert(budShared);
 
   ws.notify('qi.updated', bud);
+  ws.notify('buds.sharesChanged', bud);
 }
 
 /**

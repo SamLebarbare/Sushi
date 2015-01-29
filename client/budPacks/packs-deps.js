@@ -18,3 +18,6 @@ require('./qibud-org-ideas/view-controller.js');
 
 require('./qibud-org-results/pack.js');
 require('./qibud-org-results/view-controller.js');
+
+require('./qibud-org-infos/pack.js');
+require('./qibud-org-infos/view-controller.js');

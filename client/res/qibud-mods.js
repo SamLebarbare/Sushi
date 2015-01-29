@@ -57,7 +57,7 @@
   /******/
   // __webpack_public_path__
   /******/
-  __webpack_require__.p = '';
+  __webpack_require__.p = './res/';
   /******/
   /******/
   // Load entry module and return exports
@@ -337,6 +337,7 @@
               headers: headers
             });
           },
+          sharesChanged: event(),
           budPacksData: {
             create: function (budId, packData, type) {
               return $http({
@@ -1104,6 +1105,7 @@
         // retrieve one bud from server
         $scope.load = function (callback) {
           console.info('loading...');
+          $scope.actionInProgress = true;
           $scope.ready = false;
           api.buds.view($stateParams.budId).success(function (bud) {
             bud.commentBox = {
@@ -1151,7 +1153,11 @@
             $scope.showType($scope.bud.type, false);
             console.info('loaded!');
             if (callback) {
-              callback();
+              callback(function () {
+                $scope.actionInProgress = false;
+              });
+            } else {
+              $scope.actionInProgress = false;
             }
           });
         };

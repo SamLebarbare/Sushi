@@ -29,7 +29,7 @@ function ($scope, $state, $stateParams, $location, api)
     api.links.deleteU2B(user.id,'MEMBER',$scope.bud.id);
   };
 
-  var afterLoad = function () {
+  var afterLoad = function (done) {
     api.users.list().success(function (users)
     {
       $scope.users = users;
@@ -47,10 +47,12 @@ function ($scope, $state, $stateParams, $location, api)
         } else {
           api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Team');
         }
+        done ();
       })
       .error(function ()
       {
         console.log('error while loading packdata');
+        done ();
       });
     });
   };

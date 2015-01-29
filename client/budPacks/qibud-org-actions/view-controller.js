@@ -14,7 +14,7 @@ function ($scope, $state, $stateParams, api)
     actor: undefined
   };
 
-  var afterLoad = function () {
+  var afterLoad = function (done) {
     api.buds.budPacksData.get($scope.bud.id, 'Action')
     .success(function (packData)
       {
@@ -36,15 +36,19 @@ function ($scope, $state, $stateParams, api)
                 }
               });
             });
+          } else {
+            done ();
           }
         });
       } else {
         api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Action');
+        done ();
       }
     })
     .error(function ()
     {
       console.log('error while loading packdata');
+      done ();
     });
   };
 

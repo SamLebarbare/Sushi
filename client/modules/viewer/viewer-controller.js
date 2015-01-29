@@ -22,6 +22,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.load = function (callback)
   {
     console.info ('loading...');
+    $scope.actionInProgress = true;
     $scope.ready = false;
     api.buds.view($stateParams.budId).success(function (bud)
     {
@@ -92,7 +93,11 @@ function ($scope, $state, $stateParams, $modal, api)
       console.info ('loaded!');
 
       if (callback) {
-        callback();
+        callback(function () {
+          $scope.actionInProgress = false;
+        });
+      } else {
+        $scope.actionInProgress = false;
       }
 
     });

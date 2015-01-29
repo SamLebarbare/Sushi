@@ -14,7 +14,7 @@ function ($scope, $state, $stateParams, api)
     actor: undefined
   };
 
-  var afterLoad = function () {
+  var afterLoad = function (done) {
     api.buds.budPacksData.get($scope.bud.id, 'Result')
     .success(function (packData)
       {
@@ -24,10 +24,12 @@ function ($scope, $state, $stateParams, api)
         } else {
           api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Result');
         }
+        done ();
       })
       .error(function ()
     {
       console.log('error while loading packdata');
+      done ();
     });
   };
 
