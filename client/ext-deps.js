@@ -10,4 +10,3 @@ require('angular-bootstrap/ui-bootstrap-tpls.min.js');
 require('angular-ui-tinymce/src/tinymce');
 require('angular-smart-table');
 require('angular-growl-notifications/dist/angular-growl-notifications.min.js');
-require ('./bower_components/tinymce/tinymce.min.js');

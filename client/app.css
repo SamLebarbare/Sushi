@@ -1,7 +1,7 @@
 growl-notifications {
   position: fixed;
-  top: 250px;
-  right: 10px;
+  top: 10px;
+  right: 20%;
   z-index: 1000;
 }
 
