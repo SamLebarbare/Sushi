@@ -1,6 +1,6 @@
 growl-notifications {
   position: fixed;
-  top: 150px;
+  top: 250px;
   right: 10px;
   z-index: 1000;
 }

@@ -13,14 +13,14 @@ var _           = require('lodash'),
 
 // register koa routes
 exports.init = function (app) {
-  app.use(route.get('/api/actors', listActors));
+  app.use(route.get('/api/actors/:includeMe', listActors));
 };
 
 
 /**
  * List actors
  */
-function *listActors() {
+function *listActors(includeMe) {
 
   var currentUID = this.user.id;
 
@@ -34,12 +34,15 @@ function *listActors() {
   {
     user.id = user._id;
     delete user._id;
-    delete user.picture;
+    //delete user.picture;
   });
 
   actors.users = users;
 
-  _.remove(actors.users, function(u) { return u.id === currentUID});
+  if(!includeMe) {
+    _.remove(actors.users, function(u) { return u.id === currentUID});
+  }
+
 
   var teamsIds = yield getTeamsIds();
   var teamBuds = yield mongo.buds.find(
@@ -52,7 +55,9 @@ function *listActors() {
       name   : bud.title,
       members: packData.members
     }
+    if(!includeMe) {
     _.remove(team.members, function(u) { return u.id === currentUID});
+    }
     actors.teams.push(team);
   });
 

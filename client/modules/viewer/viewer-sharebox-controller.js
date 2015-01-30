@@ -19,11 +19,14 @@ angular.module('qibud.viewer').controller('ShareboxCtrl', function ($scope, $mod
   $scope.addTeam = function (team) {
     angular.forEach(team.members, function (user) {
       var canShare = true;
-      angular.forEach(shares[0], function (share){
-        if (user.id === share.id) {
-          canShare = false;
-        }
-      });
+      if(shares) {
+        angular.forEach(shares[0], function (share){
+          if (user.id === share.id) {
+            canShare = false;
+          }
+        });
+      }
+
       if(canShare) {
         $scope.selectedUsers.push(user);
         _.remove($scope.users, function(u) { return u.id === user.id; });

@@ -1,6 +1,8 @@
 var path = require('path');
-var ngminPlugin = require('ngmin-webpack-plugin')
+var ngminPlugin = require('ngmin-webpack-plugin');
+var webpack = require('webpack');
 module.exports = {
+  devtool: "eval",
   entry: {
       css:   path.join(__dirname, '/css-deps.js'),
       ext:   path.join(__dirname, '/ext-deps.js'),
@@ -26,6 +28,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new ngminPlugin() // or, new ngminPlugin({dynamic: true}) for dynamic mode.
+    new ngminPlugin(), // or, new ngminPlugin({dynamic: true}) for dynamic mode.
+    new webpack.optimize.LimitChunkCountPlugin({maxChunks: 15})
   ]
 };

@@ -165,8 +165,12 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
   };
 
   api.actors = {
-    list: function () {
-      return $http({method: 'GET', url: apiBase + '/actors', headers: headers});
+    list: function (includeMe) {
+      var me = false;
+      if(includeMe) {
+        me = includeMe;
+      }
+      return $http({method: 'GET', url: apiBase + '/actors/' + me, headers: headers});
     }
   };
 

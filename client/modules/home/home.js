@@ -15,11 +15,11 @@ angular
         title: 'Dashboard',
         breadcrumb: {
           class: 'highlight',
-          text: 'Bud stickers',
-          stateName: 'bud.home.stickers'
+          text: 'Bud list',
+          stateName: 'bud.home.list'
         },
         url: "/stickers",
-        templateUrl: 'modules/home/home-stickers.html',
+        templateUrl: 'modules/home/home-list.html',
         controller: 'HomeCtrl'
       })
       .state('home.budgraph', {
@@ -29,9 +29,20 @@ angular
           text: 'Bud Graph',
           stateName: 'bud.home.budgraph'
         },
-        url: "/graph",
+        url: "/budgraph",
         templateUrl: 'modules/home/home-budgraph.html',
         controller: 'BudgraphCtrl'
+      })
+      .state('home.socialgraph', {
+        title: 'Social Graph',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'Social Graph',
+          stateName: 'bud.home.socialgraph'
+        },
+        url: "/socialgraph",
+        templateUrl: 'modules/home/home-socialgraph.html',
+        controller: 'SocialgraphCtrl'
       })
       .state('home.timeline', {
         title: 'Bud Timeline',

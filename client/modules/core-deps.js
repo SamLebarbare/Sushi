@@ -14,6 +14,8 @@ require('./home/home.js');
 require('./home/home-controller.js');
 require('./home/budgraph-factory.js');
 require('./home/budgraph-controller.js');
+require('./home/socialgraph-factory.js');
+require('./home/socialgraph-controller.js');
 require('./home/timeline-controller.js');
 
 require('./profile/profile.js');

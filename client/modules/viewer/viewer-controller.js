@@ -148,6 +148,19 @@ function ($scope, $state, $stateParams, $modal, api)
     $state.go('bud.editor',{budId : $scope.bud});
   };
 
+  $scope.canEdit = function ()
+  {
+    if(!$scope.bud) {
+      return false;
+    }
+
+    if($scope.bud.creator.id === user.id) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   $scope.editSubBud = function () {
     $state.go('bud.editor',{parentBud : $scope.bud});
   };
@@ -451,11 +464,7 @@ function ($scope, $state, $stateParams, $modal, api)
   api.buds.updated.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
-      $scope.bud = bud;
-      if(bud.shares)
-      {
-        $scope.shareCount = bud.shares.length;
-      }
+      $scope.load ();
     }
   });
 
@@ -469,7 +478,14 @@ function ($scope, $state, $stateParams, $modal, api)
   api.qi.updated.subscribe($scope, function (bud) {
     if ($scope.bud.id === bud.id)
     {
-      $scope.bud.qi = bud.qi;
+      $scope.load ();
+    }
+  });
+
+  api.buds.sharesChanged.subscribe($scope, function (bud) {
+    if ($scope.bud.id === bud.id)
+    {
+      $scope.load ();
     }
   });
 

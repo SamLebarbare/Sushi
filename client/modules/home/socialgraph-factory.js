@@ -6,57 +6,65 @@ var cytoscape = require('cytoscape');
 
 angular
     .module('qibud.home')
-    .factory('budGraph', [ '$q', function( $q ) {
+    .factory('socialGraph', [ '$q', function( $q ) {
       var cy;
 
-      var budGraph = function(buds) {
+      var socialGraph = function(actors) {
         var deferred = $q.defer();
-
-        // put buds model in cy.js
+        var teams = actors.teams;
+        var users = actors.users;
+        // put actors model in cy.js
         var eles = [];
-        for( var i = 0; i < buds.length; i++ ){
-          var bud = buds[i];
-          var info;
-
-
-          if (bud.dataCache.state) {
-            info = '[' + bud.type + '] ' + bud.dataCache.state;
-          }  else {
-            info = bud.title;
-          }
+        for( var i = 0; i < teams.length; i++ ){
+          var team = teams[i];
 
           eles.push({
             group: 'nodes',
             data: {
-              id: bud.id,
-              type: bud.typeInfo,
-              weight: bud.qi,
-              size: 100,
-              label: {
-                content: bud.type
-              },
-              name: info,
+              id: team.id,
+              type: 'Team',
+              size: team.members.length * 100,
+              name: team.name,
+              picture: 'none',
               faveColor: '#30426a',
               faveShape: 'roundrectangle'
             }
           });
+          console.log (team.name + ' ' + team.id);
         }
 
-        for( var i = 0; i < buds.length; i++ ){
-          if(buds[i].subBuds) {
-            for( var s = 0; s < buds[i].subBuds.length; s++ ) {
-              eles.push({
-                group: 'edges',
-                data: {
-                  source: buds[i].id,
-                  target: buds[i].subBuds[s].id,
-                  faveColor: '#30426a',
-                  strength: 0.1
-                }
-              });
-            }
-          }
+        for( var i = 0; i < users.length; i++ ){
+          var user = users[i];
 
+          eles.push({
+            group: 'nodes',
+            data: {
+              id: 'x' + user.id,
+              type: 'Member',
+              size: 100,
+              name: user.name,
+              picture: 'url(data:image/png;base64,' + user.picture + ')',
+              faveColor: '#45322a',
+              faveShape: 'ellipse'
+            }
+          });
+
+          console.log (user.name + ' ' + user.id);
+        }
+
+        for( var i = 0; i < teams.length; i++ ){
+          for( var s = 0; s < teams[i].members.length; s++ ) {
+            eles.push({
+              group: 'edges',
+              data: {
+                source: teams[i].id,
+                target: 'x' + teams[i].members[s].id,
+                faveColor: '#30426a',
+                strength: 1
+              }
+            });
+            console.log (teams[i].id + ' ->' + teams[i].members[s].id);
+          }
         }
 
         $(function(){ // on dom ready
@@ -70,10 +78,10 @@ angular
                   'shape': 'data(faveShape)',
                   'width': 'data(size)',
                   'height': 100,
-                  'content': 'data(name)',
                   'text-valign': 'top',
+                  'content': 'data(name)',
                   'text-outline-width': 2,
-                  'background-image': 'url(/images/qibud.png)',
+                  'background-image': 'data(picture)',
                   'background-fit': 'cover',
                   'color': '#fff',
                   'box-shadow': '0 10px 18px rgba(0,0,0,.22),0 14px 45px rgba(0,0,0,.25)'
@@ -87,8 +95,8 @@ angular
                 .css({
                   'opacity': 0.666,
                   'width': 'mapData(strength, 35, 50, 2, 6)',
-                  'target-arrow-shape': 'triangle',
-                  'source-arrow-shape': 'circle',
+                  'target-arrow-shape': 'circle',
+                  'source-arrow-shape': 'triangle',
                   'line-color': 'data(faveColor)',
                   'source-arrow-color': 'data(faveColor)',
                   'target-arrow-color': 'data(faveColor)'
@@ -100,9 +108,9 @@ angular
                 }),
 
             layout: {
-              name: 'breadthfirst',
-              directed: true,
-              padding: 5
+              name: 'circle',
+              fit: true, // whether to fit the viewport to the graph
+              padding: 30 // the padding on fit
             },
 
             elements: eles,
@@ -128,10 +136,10 @@ angular
         return deferred.promise;
       };
 
-      budGraph.listeners = {};
+      socialGraph.listeners = {};
 
       function fire(e, args){
-        var listeners = budGraph.listeners[e];
+        var listeners = socialGraph.listeners[e];
 
         for( var i = 0; listeners && i < listeners.length; i++ ){
           var fn = listeners[i];
@@ -141,15 +149,15 @@ angular
       }
 
       function listen(e, fn){
-        var listeners = budGraph.listeners[e] = budGraph.listeners[e] || [];
+        var listeners = socialGraph.listeners[e] = socialGraph.listeners[e] || [];
 
         listeners.push(fn);
       }
 
-      budGraph.onClick = function(fn){
+      socialGraph.onClick = function(fn){
         listen('onClick', fn);
       };
 
-      return budGraph;
+      return socialGraph;
 
     }]);

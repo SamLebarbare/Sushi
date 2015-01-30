@@ -13,7 +13,6 @@
     "angular-ui-router-breadcrumbs": "~0.0.2",
     "lodash": "~2",
     "angular-ui-tinymce": "latest",
-    "cytoscape": "latest",
     "bootstrap-material-design": "~0.1.6",
     "angular-smart-table": "~1.4.8",
     "angular-growl-notifications": "~2.1.2",

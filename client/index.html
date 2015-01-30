@@ -23,7 +23,7 @@
 
 <body ng-controller="DashboardCtrl" style="background-color: white;">
   <growl-notifications></growl-notifications>
-  <growl-notification class="alert alert-dismissable alert-success fading"  ttl="10000">
+  <growl-notification class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
     <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
     <p>Welcome {{common.user.name}}!</p>
   </growl-notification>
@@ -45,6 +45,9 @@
         </li>
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="home.budgraph">Bud graph <span class="menu-icon fa fa-share-alt"></span></a>
+        </li>
+        <li class="sidebar-list" ui-sref-active="active">
+          <a ui-sref="home.socialgraph">Social graph <span class="menu-icon fa fa-users"></span></a>
         </li>
         <li class="sidebar-list" ui-sref-active="active">
           <a ui-sref="home.stickers">Bud list <span class="menu-icon fa fa-list-alt"></span></a>
@@ -186,22 +189,15 @@
     </div><!-- End Content Wrapper -->
   </div><!-- End Page Wrapper -->
 
-<script src="/bower_components/jquery/dist/jquery.js"></script>
-<script src="/bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
-<script src="/bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
-<script>
+<script src="/bower_components/jquery/dist/jquery.js">
     $(document).ready(function() {
         $.material.init();
     });
 </script>
-
-<script src="/bower_components/cytoscape/dist/cytoscape.js"></script>
-<script src="/bower_components/tinymce/tinymce.min.js"></script>
-<script src="/bower_components/angular/angular.min.js"></script>
-<script src="/res/qibud-css.js"></script>
-<script src="/res/qibud-ext.js"></script>
-<script src="/res/qibud-mods.js"></script>
-<script src="/res/qibud-packs.js"></script>
+<script src="/res/qibud-css.js" charset="utf-8"></script>
+<script src="/res/qibud-ext.js" charset="utf-8"></script>
+<script src="/res/qibud-mods.js" charset="utf-8"></script>
+<script src="/res/qibud-packs.js" charset="utf-8"></script>
 <script src="/app.js"></script>
 </body>
 </html>

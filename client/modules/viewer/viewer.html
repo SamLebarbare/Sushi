@@ -1,7 +1,7 @@
 <div class="container-fluid">
   <section ng-show="actionInProgress">
     <h6>Please wait...</h6>
-    <div class="sk-spinner sk-spinner-fading-circle">
+    <div class="sk-spinner sk-spinner-fading-circle shadow-z-5">
       <div class="sk-circle1 sk-circle"></div>
       <div class="sk-circle2 sk-circle"></div>
       <div class="sk-circle3 sk-circle"></div>
@@ -18,18 +18,25 @@
   </section>
   <section ng-show="!actionInProgress">
     <ul class="clear-fix">
-      <div class="btn-group btn-group-xs">
-        <button class="btn orange" ui-sref="bud.editor({budId: bud.id})" ng-disabled="actionInProgress"><i class="fa fa-edit"></i>
+      <div class="btn-group btn-group-xs" ng-if="canEdit()">
+        <button class="btn orange" ui-sref="bud.editor({budId: bud.id})"  ng-disabled="actionInProgress"><i class="fa fa-edit"></i>
           Edit
         </button>
       </div>
-      <div class="btn-group btn-group-xs">
-        <button class="btn btn-primary" ng-click="share()" ng-if="canShare()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
+      <div class="btn-group btn-group-xs" ng-if="canShare()">
+        <button class="btn btn-primary" ng-click="share()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
           Share
         </button>
         <button class="btn btn-default" disabled>
           {{shareCount}} users
         </button>
+        <growl-notification ng-show="shareCount == 0" class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
+          <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
+          <p>Hey! Share me!</p>
+          <button class="btn btn-primary" ng-click="share()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
+            Share
+          </button>
+        </growl-notification>
       </div>
       <div class="btn-group btn-group-xs">
         <button class="btn btn-primary" ui-sref="bud.editor({budId: null,parentBudId: bud.id})" ng-disabled="actionInProgress"><i class="fa fa-share-alt"></i>

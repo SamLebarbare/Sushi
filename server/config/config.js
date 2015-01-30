@@ -43,7 +43,7 @@ var platformConfig = {
       linkedin: {
         clientId: '77u90yjt9shkkx',
         clientSecret: 'cy4SSvLboSiEDg6S',
-        callbackUrl: 'http://qibud.ngrok.com/signin/linkedin/callback',
+        callbackUrl: 'http://localhost:3000/signin/linkedin/callback',
         scope : 'r_basicprofile%20r_emailaddress%20r_network'
       }
     }
