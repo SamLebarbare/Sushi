@@ -17,8 +17,8 @@ function TransactionStream(url, options) {
 
   var self = this;
   var transactionId;
-  var debounceTime = options && options.debounceTime || 0;
-  var batchSize    = options && options.batchSize || 10000;
+  var debounceTime = options && options.debounceTime || 2;
+  var batchSize    = options && options.batchSize || 4000;
   var metadata     = options && options.metadata;
 
   this.commit = function () {
