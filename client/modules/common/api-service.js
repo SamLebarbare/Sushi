@@ -65,6 +65,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     view: function (budId) {
       return $http({method: 'GET', url: apiBase + '/buds/' + budId + '/view', headers: headers});
     },
+    getbyids: function (ids) {
+      return $http({method: 'GET', url: apiBase + '/buds/getbyids/', data: ids, headers: headers});
+    },
     update: function (bud) {
       return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/update', data: bud, headers: headers});
     },

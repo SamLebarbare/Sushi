@@ -33,9 +33,11 @@
         <growl-notification ng-show="shareCount == 0" class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
           <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
           <p>Hey! Share me!</p>
-          <button class="btn btn-primary" ng-click="share()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
-            Share
-          </button>
+          <div class="btn-group btn-group-xs">
+            <button class="btn btn-primary" ng-click="share()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
+              Share
+            </button>
+          </div>
         </growl-notification>
       </div>
       <div class="btn-group btn-group-xs">

@@ -93,10 +93,11 @@
           </div>
           <div class="col-xs-4">
               <input type="text"
+                ng-click="show()"
                 class="form-control input-lg"
                 ng-model="query"
                 placeholder="Search..."
-                ng-change="search(query)">
+                ng-change="search(query)" />
           </div>
           <div class="col-xs-6">
             <div class="user pull-right">
@@ -179,9 +180,23 @@
         <!-- End Header Bar -->
 
         <!-- Main Content -->
-        <div class="jumbotron" ng-show="results.length > 0">
-          <h6>Search results:</h6>
-          <a ui-sref="bud.viewer({budId : r._source.id})" ng-repeat="r in results" ng-show="r._source.id">{{r._source.title}}<span class="menu-icon fa fa-leaf"></span></a>
+        <div style="z-index: 1000;" class="jumbotron" ng-show="results.length > 0 && visible">
+          <button type="button" class="close"  ng-click="hide()"> close ×</button>
+          <h2>Search results:</h2>
+
+          <table st-table="displayedBuds" st-safe-src="results" class="table table-striped table-hover ">
+            <thead>
+              <tr>
+                <th st-sort="title">Title</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr ng-repeat="bud in displayedBuds" class="active" ui-sref="bud.viewer({budId : bud._source.id})" ng-click="hide()">
+                <td>{{bud._source.title}}</td>
+              </tr>
+            </tbody>
+          </table>
+          <small>TIPS: You can filter buds by clicking column headers</small>
         </div>
         <section data-ui-view>
         </section>

@@ -1,26 +1,31 @@
 <div ng-show="buds">
-  <table st-table="displayedBuds" st-safe-src="buds" class="table table-striped table-hover ">
-    <thead>
-      <tr>
-        <th st-sort="qi">Qi</th>
-        <th st-sort="type">Type</th>
-        <th st-sort="title">Title</th>
-        <th st-sort="creator.name">Creator</th>
-        <th st-sort="dataCache.actor.name">Actor</th>
-        <th st-sort="dataCache.state">State</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr ng-repeat="bud in displayedBuds" class="active" ui-sref="bud.viewer({budId : bud.id})">
-        <td>{{bud.qi}}</td>
-        <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"> {{bud.type}}</td>
-        <td>{{bud.title}}</td>
-        <td>{{bud.creator.name}}</td>
-        <td>{{bud.dataCache.actor.name}}</td>
-        <td><b>{{bud.dataCache.state}}</b></td>
-      </tr>
-  </tbody>
-</table>
+  <div class="jumbotron">
+    <h2>Bud List</h2>
+
+    <table st-table="displayedBuds" st-safe-src="buds" class="table table-striped table-hover ">
+      <thead>
+        <tr>
+          <th st-sort="qi">Qi</th>
+          <th st-sort="type">Type</th>
+          <th st-sort="title">Title</th>
+          <th st-sort="creator.name">Creator</th>
+          <th st-sort="dataCache.actor.name">Actor</th>
+          <th st-sort="dataCache.state">State</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="bud in displayedBuds" class="active" ui-sref="bud.viewer({budId : bud.id})">
+          <td>{{bud.qi}}</td>
+          <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"></i> {{bud.type}}</td>
+          <td>{{bud.title}}</td>
+          <td>{{bud.creator.name}}</td>
+          <td>{{bud.dataCache.actor.name}}</td>
+          <td><b>{{bud.dataCache.state}}</b></td>
+        </tr>
+    </tbody>
+  </table>
+  <small>TIPS: You can filter buds by clicking column headers</small>
+  </div>
 </div>
 <style>
 .st-sort-ascent:before{

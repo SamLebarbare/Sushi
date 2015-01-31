@@ -131,6 +131,7 @@ function *viewBud(budId)
 
 }
 
+
 /**
  * Saves a new bud in the database after proper validations.
  */
@@ -285,7 +286,6 @@ function *createSubBud(parentBudId)
 function *updateBud()
 {
   var bud  = yield parse(this);
-  console.log(JSON.stringify(bud.budPacksData));
   if(bud.creator.id !== this.user.id)
   {
     this.throw(403, 'You are not the creator of this bud');
