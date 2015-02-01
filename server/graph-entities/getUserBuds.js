@@ -21,13 +21,17 @@ module.exports = function *(user)
               "WHERE bud.creatorId = " + user.id + " " +
               "RETURN bud.bid " +
               "UNION " +
+              "MATCH (bud:Bud)<-[:ACTOR]-(user:User) " +
+              "WHERE user.uid = " + user.id + " " +
+              "RETURN bud.bid " +
+              "UNION " +
               "MATCH (bud:Bud)-[:SHARED_TO]->(user:User) " +
               "WHERE user.uid = " + user.id + " " +
               "RETURN bud.bid " +
               "UNION " +
               "MATCH (bud:Bud)<-[:MEMBER]-(user:User) " +
               "WHERE user.uid = " + user.id + " " +
-              "RETURN bud.bid;"; 
+              "RETURN bud.bid;";
 
   transaction.write(query);
   transaction.commit();

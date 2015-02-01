@@ -25,7 +25,7 @@ function ($scope, $state, api, socialGraph)
 
 
   socialGraph.onClick(function(id){
-    $state.go('bud.viewer',{budId : id});
+    
   });
 
 });

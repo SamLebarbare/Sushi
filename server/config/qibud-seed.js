@@ -9,6 +9,7 @@ var createBudWithUser = require('../graph-entities/userCreateBud');
 var clearGraph        = require('../graph-entities/clearGraph');
 var createUser2BudRel = require('../graph-entities/addUser2BudRelation');
 var createIndexes     = require('../graph-entities/createIndexes');
+var foreach           = require('generator-foreach');
 /**
  * Populates the database with seed data.
  * @param overwrite Overwrite existing database even if it is not empty.
@@ -46,12 +47,15 @@ module.exports = function *(overwrite)
     yield createES();
 
     // create neo4j nodes for buds
-    var user = users[0];
 
-    //clean mongo id before graph insertion
-    user.id = user._id;
+    var user = users[0];
+    yield * foreach(users, function * (user) {
+      //clean mongo id before graph insertion
+      user.id = user._id;
+      yield createUser (user);
+    });
     yield createIndexes();
-    yield createUser (user);
+
 
     console.log('QIBUD SEED INSTALLED');
   }

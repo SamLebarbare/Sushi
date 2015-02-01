@@ -100,6 +100,23 @@
 
   </div>
 
+  <div class="jumbotron" ng-show="supportersCount > 0">
+    <h3>In support</h2>
+    <div ng-repeat="user in bud.supporters">
+      <div class="widget-icon pull-right">
+        <div class="btn-group btn-group-xs">
+          <button class="btn green" disabled>Level <i class="circle">{{user.lvl}}</i></button>
+          <button class="btn orange" disabled><i class="circle">{{user.xp}}</i> XP</button>
+        </div>
+      </div>
+      <div class="panel panel-default">
+        <div class="panel-body">
+          <img ng-src="/api/users/{{user.id}}/picture" width="50px" alt="" / > {{user.name}}
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="jumbotron">
     <h3>Feeback</h3>
     <div class="form-control-wrapper">
