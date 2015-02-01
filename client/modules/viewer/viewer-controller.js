@@ -32,8 +32,20 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
+  $scope.getParentPackData = function (type, callback) {
+    if($scope.bud.parentBud !== undefined) {
+      var parentBudId = $scope.bud.parentBud.id;
+      api.buds.budPacksData.get($scope.bud.parentBud.id, type)
+      .success (function (packData) {
+        callBack (packData);
+      });
+    } else {
+      callBack (null);
+    }
+  };
 
-  
+
+
   // retrieve one bud from server
 
   $scope.load = function (callback)
