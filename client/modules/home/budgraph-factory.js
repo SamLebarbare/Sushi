@@ -20,7 +20,7 @@ angular
 
 
           if (bud.dataCache.state) {
-            info = '[' + bud.type + '] ' + bud.dataCache.state;
+            info = bud.title + ' (' + bud.dataCache.state + ')';
           }  else {
             info = bud.title;
           }
@@ -32,9 +32,7 @@ angular
               type: bud.typeInfo,
               weight: bud.qi,
               size: 100,
-              label: {
-                content: bud.type
-              },
+              picture: 'url(/images/'+ bud.type + '.png)',
               name: info,
               faveColor: '#30426a',
               faveShape: 'roundrectangle'
@@ -73,7 +71,7 @@ angular
                   'content': 'data(name)',
                   'text-valign': 'top',
                   'text-outline-width': 2,
-                  'background-image': 'url(/images/qibud.png)',
+                  'background-image': 'data(picture)',
                   'background-fit': 'cover',
                   'color': '#fff',
                   'box-shadow': '0 10px 18px rgba(0,0,0,.22),0 14px 45px rgba(0,0,0,.25)'

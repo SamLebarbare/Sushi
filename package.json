@@ -16,7 +16,7 @@
   "scripts": {
     "start": "grunt",
     "test": "node --debug --harmony node_modules/grunt-cli/bin/grunt test",
-    "postinstall": "bower install",
+    "postinstall": "bower install && webpack --progress --production",
     "postupdate": "bower update"
   },
   "dependencies": {
