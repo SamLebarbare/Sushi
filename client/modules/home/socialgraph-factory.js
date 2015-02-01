@@ -23,9 +23,9 @@ angular
             data: {
               id: team.id,
               type: 'Team',
-              size: team.members.length * 100,
+              size: 100,
               name: team.name,
-              picture: 'none',
+              picture: 'url(/images/Team.svg)',
               faveColor: '#30426a',
               faveShape: 'roundrectangle'
             }
@@ -83,7 +83,7 @@ angular
                   'text-outline-width': 2,
                   'background-image': 'data(picture)',
                   'background-fit': 'cover',
-                  'color': '#fff',
+                  'color': '#ffffff',
                   'box-shadow': '0 10px 18px rgba(0,0,0,.22),0 14px 45px rgba(0,0,0,.25)'
                 })
               .selector(':selected')

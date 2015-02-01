@@ -32,7 +32,7 @@ angular
               type: bud.typeInfo,
               weight: bud.qi,
               size: 100,
-              picture: 'url(/images/'+ bud.type + '.png)',
+              picture: 'url(/images/'+ bud.type + '.svg)',
               name: info,
               faveColor: '#30426a',
               faveShape: 'roundrectangle'
@@ -73,7 +73,7 @@ angular
                   'text-outline-width': 2,
                   'background-image': 'data(picture)',
                   'background-fit': 'cover',
-                  'color': '#fff',
+                  'color': '#ffffff',
                   'box-shadow': '0 10px 18px rgba(0,0,0,.22),0 14px 45px rgba(0,0,0,.25)'
                 })
               .selector(':selected')

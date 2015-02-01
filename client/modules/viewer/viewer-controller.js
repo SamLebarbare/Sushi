@@ -17,6 +17,23 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.supportersCount = 0;
   $scope.supportValue = 0;
   $scope.shareCount = 0;
+
+  // Helpers for bud packs
+  $scope.startParentIfNeeded = function (type) {
+    if($scope.bud.parentBud !== undefined) {
+      var parentBudId = $scope.bud.parentBud.id;
+      api.buds.budPacksData.get($scope.bud.parentBud.id, type)
+      .success (function (packData) {
+        if (packData.state == 'Waiting') {
+          packData.state = 'Started';
+          api.buds.budPacksData.set(parentBudId, packData, type);
+        }
+      });
+    }
+  };
+
+
+  
   // retrieve one bud from server
 
   $scope.load = function (callback)

@@ -14,6 +14,10 @@ function ($scope, $state, $stateParams, api)
     actions: []
   };
   var afterLoad = function (done) {
+    //Parent state apply
+    $scope.startParentIfNeeded ('Mission');
+
+    //Inner state management
     api.buds.budPacksData.get($scope.bud.id, 'Project')
     .success(function (packData)
   {

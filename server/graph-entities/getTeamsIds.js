@@ -8,13 +8,13 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 /**
  * Return all bud teams
  */
-module.exports = function *(user)
+module.exports = function *()
 {
   var transaction = cypher.transaction();
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Team)<-[:MEMBER]-(:User) " +
+  var query = "MATCH (bud:Team) " +
               "RETURN bud.bid;"
 
   transaction.write(query);
