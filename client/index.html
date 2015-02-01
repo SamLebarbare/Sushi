@@ -22,165 +22,165 @@
 </head>
 
 <body ng-controller="DashboardCtrl" style="background-color: white;">
-  <growl-notifications></growl-notifications>
-  <growl-notification class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
+  <growl-notifications ng-cloak></growl-notifications>
+  <growl-notification ng-cloak class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
     <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
     <p>Welcome {{common.user.name}}!</p>
   </growl-notification>
   <div id="page-wrapper" ng-class="{'active': toggle}" ng-cloak  ng-controller="SearchCtrl">
 
-    <!-- Sidebar -->
+  <!-- Sidebar -->
 
-    <div class="shadow-z-5" id="sidebar-wrapper">
-      <ul class="sidebar">
-        <li class="sidebar-main">
-          <a ng-click="toggleSidebar()">
-            QiBud Menu
-            <span class="menu-icon glyphicon glyphicon-transfer"></span>
-          </a>
-        </li>
-        <li class="sidebar-title"><span>NAVIGATION</span></li>
-        <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="home.timeline">Timeline <span class="menu-icon fa fa-clock-o"></span></a>
-        </li>
-        <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="home.budgraph">Bud graph <span class="menu-icon fa fa-share-alt"></span></a>
-        </li>
-        <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="home.socialgraph">Social graph <span class="menu-icon fa fa-users"></span></a>
-        </li>
-        <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="home.stickers">Bud list <span class="menu-icon fa fa-list-alt"></span></a>
-        </li>
-        <li class="sidebar-title separator"><span>Actions</span></li>
-        <li class="sidebar-list" ui-sref-active="active">
-          <a ui-sref="bud.editor">New bud <span class="menu-icon fa fa-pencil-square-o"></span></a>
-        </li>
-      </ul>
-      <div class="sidebar-footer">
-        <div class="col-xs-4">
-          <a href="https://github.com/Loupio/qibud" target="_blank">
-            Github
-          </a>
-        </div>
-        <div class="col-xs-4">
-          <a target="_blank">
-            About
-          </a>
-        </div>
-        <div class="col-xs-4">
-          <a href="http://www.qibud.com">
-            Support
-          </a>
-        </div>
+  <div ng-cloak class="shadow-z-5" id="sidebar-wrapper">
+    <ul class="sidebar">
+      <li class="sidebar-main">
+        <a ng-click="toggleSidebar()">
+          QiBud Menu
+          <span class="menu-icon glyphicon glyphicon-transfer"></span>
+        </a>
+      </li>
+      <li class="sidebar-title"><span>NAVIGATION</span></li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.timeline">Timeline <span class="menu-icon fa fa-clock-o"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.budgraph">Bud graph <span class="menu-icon fa fa-share-alt"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.socialgraph">Social graph <span class="menu-icon fa fa-users"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.stickers">Bud list <span class="menu-icon fa fa-list-alt"></span></a>
+      </li>
+      <li class="sidebar-title separator"><span>Actions</span></li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="bud.editor">New bud <span class="menu-icon fa fa-pencil-square-o"></span></a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="col-xs-4">
+        <a href="https://github.com/Loupio/qibud" target="_blank">
+          Github
+        </a>
+      </div>
+      <div class="col-xs-4">
+        <a target="_blank">
+          About
+        </a>
+      </div>
+      <div class="col-xs-4">
+        <a href="http://www.qibud.com">
+          Support
+        </a>
       </div>
     </div>
+  </div>
 
-    <!-- End Sidebar -->
+  <!-- End Sidebar -->
 
-    <div id="content-wrapper" >
-      <div class="page-content" style="background-color: white;">
+  <div id="content-wrapper" ng-cloak>
+    <div class="page-content" style="background-color: white;">
 
-        <!-- Header Bar -->
+      <!-- Header Bar -->
 
-        <div class="row header">
-          <div class="col-xs-2">
-            <div class="meta" breadcrumbs>
-              <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
-                <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
-              </div>
-            </div>
-          </div>
-          <div class="col-xs-4">
-              <input type="text"
-                ng-click="show()"
-                class="form-control input-lg"
-                ng-model="query"
-                placeholder="Search..."
-                ng-change="search(query)" />
-          </div>
-          <div class="col-xs-6">
-            <div class="user pull-right">
-              <div class="item">
-                <h6 class="green">Level {{common.user.lvl}}</h6>
-                <h6 class="orange">{{common.user.xp}} XP</h6>
-              </div>
-              <div class="item dropdown">
-                <a class="dropdown-toggle">
-                  <img ng-src="{{common.user.picture}}" alt="">
-                </a>
-                <ul class="dropdown-menu dropdown-menu-right shadow-z-5">
-                  <li class="dropdown-header">
-                    {{common.user.name}}
-                  </li>
-                  <li class="divider"></li>
-                  <li class="link">
-                    <a ui-sref="profile">
-                      Profile
-                    </a>
-                  </li>
-                  <li class="link">
-                    <a ng-click="common.clearDatabase()">
-                      Clear Database
-                    </a>
-                  </li>
-                  <li class="link">
-                    <a href="#">
-                      Menu Item
-                    </a>
-                  </li>
-                  <li class="divider"></li>
-                  <li class="link">
-                    <a href="" ng-click="common.logout()">
-                      Logout
-                    </a>
-                  </li>
-                </ul>
-              </div>
-              <div class="item dropdown">
-               <a href="#" class="dropdown-toggle">
-                  <i class="fa fa-envelope-o"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-right" ng-controller="MailboxCtrl">
-                  <li class="dropdown-header">
-                    Emails
-                  </li>
-                  <script type="text/ng-template" id="mail.html">
-                      <div class="modal-header">
-                          <h3 class="modal-title">{{email.subject}}</h3>
-                      </div>
-                      <div class="modal-body">
-                        To:
-                        <div class="table-responsive">
-                          <table class="table table-hover">
-                            <tbody>
-                              <tr ng-repeat="mail in email.to">
-                                <td><span><i class="fa fa-user"></i></span> {{ mail }}</td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
-                        <div class="well" ng-bind-html="email.content"></div>
-                      </div>
-                      <div class="modal-footer">
-                          <button class="btn btn-primary" ng-click="ok()">Convert to bud</button>
-                          <button class="btn btn-warning" ng-click="cancel()">Delete</button>
-                      </div>
-                  </script>
-                  <li class="divider"></li>
-                  <li ng-repeat="email in emails">
-                    <a ng-click="openEmail(email)">{{email.subject}}</a>
-                  </li>
-                </ul>
-              </div>
+      <div class="row header">
+        <div class="col-xs-2">
+          <div class="meta" breadcrumbs>
+            <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
+              <a ng-class="breadcrumb.class" ui-sref="{{breadcrumb.stateName}}">{{breadcrumb.text}}</a>
             </div>
           </div>
         </div>
+        <div class="col-xs-4">
+            <input type="text"
+              ng-click="show()"
+              class="form-control input-lg"
+              ng-model="query"
+              placeholder="Search..."
+              ng-change="search(query)" />
+        </div>
+        <div class="col-xs-6">
+          <div class="user pull-right">
+            <div class="item">
+              <h6 class="green">Level {{common.user.lvl}}</h6>
+              <h6 class="orange">{{common.user.xp}} XP</h6>
+            </div>
+            <div class="item dropdown">
+              <a class="dropdown-toggle">
+                <img ng-src="{{common.user.picture}}" alt="">
+              </a>
+              <ul class="dropdown-menu dropdown-menu-right shadow-z-5">
+                <li class="dropdown-header">
+                  {{common.user.name}}
+                </li>
+                <li class="divider"></li>
+                <li class="link">
+                  <a ui-sref="profile">
+                    Profile
+                  </a>
+                </li>
+                <li class="link">
+                  <a ng-click="common.clearDatabase()">
+                    Clear Database
+                  </a>
+                </li>
+                <li class="link">
+                  <a href="#">
+                    Menu Item
+                  </a>
+                </li>
+                <li class="divider"></li>
+                <li class="link">
+                  <a href="" ng-click="common.logout()">
+                    Logout
+                  </a>
+                </li>
+              </ul>
+            </div>
+            <div class="item dropdown">
+             <a href="#" class="dropdown-toggle">
+                <i class="fa fa-envelope-o"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-right" ng-controller="MailboxCtrl">
+                <li class="dropdown-header">
+                  Emails
+                </li>
+                <script type="text/ng-template" id="mail.html">
+                    <div class="modal-header">
+                        <h3 class="modal-title">{{email.subject}}</h3>
+                    </div>
+                    <div class="modal-body">
+                      To:
+                      <div class="table-responsive">
+                        <table class="table table-hover">
+                          <tbody>
+                            <tr ng-repeat="mail in email.to">
+                              <td><span><i class="fa fa-user"></i></span> {{ mail }}</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                      <div class="well" ng-bind-html="email.content"></div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-primary" ng-click="ok()">Convert to bud</button>
+                        <button class="btn btn-warning" ng-click="cancel()">Delete</button>
+                    </div>
+                </script>
+                <li class="divider"></li>
+                <li ng-repeat="email in emails">
+                  <a ng-click="openEmail(email)">{{email.subject}}</a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
 
         <!-- End Header Bar -->
 
         <!-- Main Content -->
-        <div style="z-index: 1000;" class="jumbotron" ng-show="results.length > 0 && visible">
+        <div ng-cloak style="z-index: 1000;" class="jumbotron" ng-show="results.length > 0 && visible">
           <button type="button" class="close"  ng-click="hide()"> close ×</button>
           <h2>Search results:</h2>
 
