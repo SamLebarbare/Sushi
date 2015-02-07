@@ -4,14 +4,14 @@
  * Home controller simply lists all the buds from everyone on the front page.
  */
 
-angular.module('qibud.home').controller('HomeCtrl',
+angular.module('qibud.home').controller('InvitationsCtrl',
 function ($scope, $state, $filter, api)
 {
   var user             = $scope.common.user;
   $scope.itemsByPage   = 10;
   $scope.displayedBuds = [];
 
-  api.buds.list().success(function (buds)
+  api.links.findU2B(user.id, 'INVITED').success(function (buds)
   {
     $scope.buds = buds;
     $scope.displayedBuds = [].concat($scope.buds);

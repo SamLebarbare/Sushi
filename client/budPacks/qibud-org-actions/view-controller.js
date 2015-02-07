@@ -40,6 +40,7 @@ function ($scope, $state, $stateParams, api)
                 }
               });
             });
+            done ();
           } else {
             done ();
           }

@@ -12,6 +12,7 @@ require('./editor/editor-evolve-controller.js');
 
 require('./home/home.js');
 require('./home/home-controller.js');
+require('./home/invitations-controller.js');
 require('./home/budgraph-factory.js');
 require('./home/budgraph-controller.js');
 require('./home/socialgraph-factory.js');

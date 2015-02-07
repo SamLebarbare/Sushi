@@ -1,0 +1,128 @@
+<button ng-if="packData.state == 'Waiting' && canEditMeeting ()" class="btn btn-success" ng-click="startMeeting ()"  ng-disabled="actionInProgress"><i class="fa fa-soccer-ball-o"></i>
+  Start Meeting !
+</button>
+<button ng-if="packData.state == 'Started' && canEditMeeting ()" class="btn btn-warning" ng-click="finishMeeting ()"  ng-disabled="actionInProgress"><i class="fa fa-legal"></i>
+  Finish Meeting...
+</button>
+<div ng-if="canEditMeeting ()" ng-show="users.length > 0">
+  Choose participants:
+  <div class="table-responsive">
+    <table class="table table-hover">
+      <tbody>
+        <tr ng-repeat="user in users"><td ng-click="addUser(user)"><span><i class="fa fa-user"></i></span> {{ user.name }}</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<h2>Meeting invited participants</h2>
+<div ng-repeat="p in packData.participations">
+  <div class="widget-icon pull-right">
+    <div class="btn-group btn-group-xs">
+      <button ng-if="!canSetParticipantState (p.user.id)" class="btn green" disabled>Level <i class="circle">{{p.user.lvl}}</i></button>
+      <button ng-if="canEditMeeting ()"  class="btn btn-danger" ng-click="rmUser(p.user)"  ng-disabled="actionInProgress"><i class="mdi-content-remove-circle"></i>
+        Remove participation
+      </button>
+    </div>
+    <div class="btn-group btn-group-xs">
+      <button ng-if="canSetParticipantState (p.user.id)"  class="btn btn-danger" ng-click="setParticipantState(p.user.id, 'Declined')"  ng-disabled="actionInProgress"><i class="fa fa-thumbs-o-down"></i>
+        Decline
+      </button>
+    </div>
+    <div class="btn-group btn-group-xs">
+      <button ng-if="canSetParticipantState (p.user.id)"  class="btn btn-warning" ng-click="setParticipantState(p.user.id, 'Provisory')"  ng-disabled="actionInProgress"><i class="fa fa-question-circle"></i>
+        Accept provisory
+      </button>
+    </div>
+    <div class="btn-group btn-group-xs">
+      <button ng-if="canSetParticipantState (p.user.id)"  class="btn btn-success" ng-click="setParticipantState(p.user.id, 'Accepted')"  ng-disabled="actionInProgress"><i class="fa fa-thumbs-o-up"></i>
+        Accept
+      </button>
+    </div>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <img ng-src="/api/users/{{p.user.id}}/picture" width="50px" alt="" / > {{p.user.name}} - <b>{{p.state}}</b>
+    </div>
+  </div>
+</div>
+<div ng-show="buds">
+  <table st-table="displayedBuds4Meeting" st-safe-src="budpack.buds" class="table table-striped table-hover ">
+    <h2>Meeting buds</h2>
+    <thead>
+      <tr>
+        <th st-sort="qi">Qi</th>
+        <th st-sort="type">Type</th>
+        <th st-sort="title">Title</th>
+        <th st-sort="creator.name">Creator</th>
+        <th st-sort="dataCache.actor.name">Actor</th>
+        <th st-sort="dataCache.state">State</th>
+        <th/>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="bud in displayedBuds4Meeting" class="active">
+        <td>{{bud.qi}}</td>
+        <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"></i> {{bud.type}}</td>
+        <td>{{bud.title}}</td>
+        <td>{{bud.creator.name}}</td>
+        <td>{{bud.dataCache.actor.name}}</td>
+        <td><b>{{bud.dataCache.state}}</b></td>
+        <td><div class="btn-group btn-group-xs"><button ng-if="canEditMeeting ()"  class="btn btn-danger" ng-click="removeBudFromMeeting(bud)"  ng-disabled="actionInProgress"><i class="mdi-content-plus"></i>
+          Remove from meeting
+        </button></div></td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <td st-pagination="" st-items-by-page="10" colspan="4" />
+    </tfoot>
+  </table>
+</div>
+<div ng-if="canEditMeeting ()" ng-show="users.length > 0">
+  <div ng-show="buds">
+      <table st-table="displayedBuds" st-safe-src="buds" class="table table-striped table-hover ">
+        <h2>Choose buds to include:</h2>
+        <thead>
+          <tr>
+            <th st-sort="qi">Qi</th>
+            <th st-sort="type">Type</th>
+            <th st-sort="title">Title</th>
+            <th st-sort="creator.name">Creator</th>
+            <th st-sort="dataCache.actor.name">Actor</th>
+            <th st-sort="dataCache.state">State</th>
+            <th/>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="bud in displayedBuds" class="active">
+            <td>{{bud.qi}}</td>
+            <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"></i> {{bud.type}}</td>
+            <td>{{bud.title}}</td>
+            <td>{{bud.creator.name}}</td>
+            <td>{{bud.dataCache.actor.name}}</td>
+            <td><b>{{bud.dataCache.state}}</b></td>
+            <td><div class="btn-group btn-group-xs"><button ng-if="canEditMeeting ()"  class="btn btn-xs btn-success" ng-click="addBudToMeeting(bud)"  ng-disabled="actionInProgress"><i class="mdi-content-plus"></i>
+              Add to meeting
+            </button></div></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <td st-pagination="" st-items-by-page="10" colspan="4" />
+        </tfoot>
+      </table>
+  </div>
+  <button ng-if="packData.state == 'Waiting'" class="btn btn-success" ng-click="startMeeting ()"  ng-disabled="actionInProgress"><i class="fa fa-thumbs-o-up"></i>
+    Start Meeting !
+  </button>
+  <button ng-if="packData.state == 'Started'" class="btn btn-warning" ng-click="finishMeeting ()"  ng-disabled="actionInProgress"><i class="fa fa-legal"></i>
+    Finish Meeting...
+  </button>
+</div>
+<style>
+.st-sort-ascent:before{
+  content: '\25B2';
+}
+
+.st-sort-descent:before{
+  content: '\25BC';
+}
+</style>

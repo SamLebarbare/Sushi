@@ -11,8 +11,8 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-      .state('home.stickers', {
-        title: 'Dashboard',
+      .state('home.budlist', {
+        title: 'Bud list',
         breadcrumb: {
           class: 'highlight',
           text: 'Bud list',
@@ -21,6 +21,17 @@ angular
         url: "/stickers",
         templateUrl: 'modules/home/home-list.html',
         controller: 'HomeCtrl'
+      })
+      .state('home.invitations', {
+        title: 'Invitations',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'Invitations list',
+          stateName: 'bud.home.list'
+        },
+        url: "/stickers",
+        templateUrl: 'modules/home/invitations-list.html',
+        controller: 'InvitationsCtrl'
       })
       .state('home.budgraph', {
         title: 'Bud Graph',

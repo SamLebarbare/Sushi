@@ -21,3 +21,6 @@ require('./qibud-org-results/view-controller.js');
 
 require('./qibud-org-infos/pack.js');
 require('./qibud-org-infos/view-controller.js');
+
+require('./qibud-org-meetings/pack.js');
+require('./qibud-org-meetings/view-controller.js');

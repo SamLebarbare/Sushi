@@ -24,6 +24,7 @@ angular
       'qibud.org.results',
       'qibud.org.issues',
       'qibud.org.infos',
+      'qibud.org.meetings',
       'smart-table',
       'growlNotifications'
     ])

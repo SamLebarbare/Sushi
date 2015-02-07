@@ -200,7 +200,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.delete = function () {
     api.buds.delete($scope.bud.id).success(function (){
-      $state.go('home.stickers');
+      $state.go('bud.home.list');
     });
   };
 
