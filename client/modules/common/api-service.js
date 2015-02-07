@@ -51,6 +51,8 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     $rootScope.$apply();
   };
 
+  api.userupdate = event();
+
   // api http endpoints and websocket events
   api.buds = {
     search: function (query) {

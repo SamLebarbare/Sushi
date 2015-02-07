@@ -185,11 +185,8 @@ function *createBud()
     ws.notify('buds.evolved', bud);
   }
 
-  xp.gainXP (this.user, 5);
-  yield mongo.users.update(
-    {_id: this.user.id},
-    {$set: {xp: this.user.xp, lvl: this.user.lvl} }
-  );
+  yield xp.gainMainXP (this.user, 50);
+  ws.notify('userupdate', this.user);
 }
 
 /**
@@ -273,11 +270,8 @@ function *createSubBud(parentBudId)
 
   }
 
-  xp.gainXP (this.user, 5);
-  yield mongo.users.update(
-    {_id: this.user.id},
-    {$set: {xp: this.user.xp, lvl: this.user.lvl} }
-  );
+  yield xp.gainMainXP (this.user, 50);
+  ws.notify('userupdate', this.user);
 }
 
 /**
@@ -765,6 +759,8 @@ function *createComment(budId)
   delete comment._id;
   ws.notify('qi.updated', bud);
   ws.notify('buds.comments.created', comment);
+  yield xp.gainMainXP (this.user, 2);
+  ws.notify('userupdate', this.user);
 }
 
 

@@ -67,6 +67,12 @@ angular
           common.onlineIndicatorStyle = {'background-color': 'green'};
         });
 
+        api.userupdate.subscribe(function (user) {
+          if (user.id === common.user.id) {
+            common.user = user;
+          }
+        });
+
         api.disconnected.subscribe(function () {
           common.onlineIndicatorStyle = {'background-color': 'lightgrey'};
         });

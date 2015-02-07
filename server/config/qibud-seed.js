@@ -47,8 +47,6 @@ module.exports = function *(overwrite)
     yield createES();
 
     // create neo4j nodes for buds
-
-    var user = users[0];
     yield * foreach(users, function * (user) {
       //clean mongo id before graph insertion
       user.id = user._id;

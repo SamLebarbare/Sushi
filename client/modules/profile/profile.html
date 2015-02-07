@@ -2,10 +2,15 @@
   <section>
     <div class="widget-icon pull-right">
       <h1 class="green">Level <i class="circle">{{user.lvl}}</i></h1>
-      <h1 class="orange"><i class="circle">{{user.xp}}</i> XP</h1>
     </div>
     <div class="jumbotron">
       <h1>{{user.name}}</h1>
+
+      <h3>Leveling</h3>
+      <h4>{{user.xp}} / {{user.neededXp}} XP
+      <div class="progress">
+        <div class="progress-bar progress-bar-success" style="width: {{user.progress}}%"></div>
+      </div>
     </div>
   </section>
 </div>

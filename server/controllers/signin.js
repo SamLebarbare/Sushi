@@ -25,7 +25,7 @@ exports.init = function (app) {
  */
 function *signin() {
   var credentials = yield parse(this);
-  var user = yield mongo.users.findOne({email: credentials.email}, {email: 1, name: 1, password: 1});
+  var user = yield mongo.users.findOne({email: credentials.email});
 
   if (!user) {
     this.throw(401, 'Incorrect e-mail address.');
@@ -91,7 +91,7 @@ function *linkedinCallback() {
 
   var profile = JSON.parse(profileResponse.body);
   console.log (profile);
-  var user = yield mongo.users.findOne({email: profile.emailAddress}, {email: 1, name: 1});
+  var user = yield mongo.users.findOne({email: profile.emailAddress});
   if (!user) {
     user = {
       _id: (yield mongo.getNextSequence('userId')),
