@@ -1,19 +1,22 @@
-<div class="row">
-  <ul class="timeline" style="background-color: white;">
-    <li ng-repeat="event in events | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-        <div class="timeline-badge" ui-sref="bud.viewer({budId : event.target})" popover="View bud" popover-trigger="mouseenter">
-          <i class="fa fa-comment"></i>
-        </div>
-        <div class="timeline-panel">
-            <div class="timeline-heading">
-                <h4 class="timeline-title">{{event.actor.name}}</h4>
-                <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{event.when | date:'short'}}</small>
-                </p>
-            </div>
-            <div class="timeline-body">
-              <p>{{event.type}}</p>
-            </div>
-        </div>
-    </li>
-  </ul>
-</div>
+<ul class="cbp_tmtimeline">
+  <li ng-repeat="event in events | orderBy:'_id':true ">
+    <time class="cbp_tmtime" datetime="{{event.when}}"><span>{{event.when | date:'dd MMMM'}}</span> <span>{{event.when | date:'hh:mm'}}</span></time>
+    <div class="cbp_tmicon"><i class="fa fa-start" /></div>
+    <div class="cbp_tmlabel">
+      <div ng-if="event.type = 'created'">
+        <h2>New bud</h2>
+        <blockquote>
+          <p>{{event.title}}</p>
+          <small>Creator <cite title="Source Title">{{event.actor.name}}</cite></small>
+        </blockquote>
+        <a ui-sref="bud.viewer({budId : event.target})" class="btn btn-info">View bud</a>
+      </div>
+      <div ng-if="event.type = 'subcreated'">
+        <h2>{{event.actor.name}} created a sub bud :</h2>
+        <p>"{{event.title}}"</p>
+        <p>parend bud: "{{event.parent}}"
+        <a ui-sref="bud.viewer({budId : event.target})" class="btn btn-info">View bud</a>
+      </div>
+    </div>
+  </li>
+</ul>

@@ -156,16 +156,6 @@ function *createBud()
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
   yield indexer(bud);
 
-  var budCreated = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.created',
-    when: bud.createdTime
-  };
-
-  yield mongo.events.insert(budCreated);
-
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
   ws.notify('buds.created', bud);
@@ -237,16 +227,6 @@ function *createSubBud(parentBudId)
       {_id: parentBud.id},
       {$set: {qi: parentBud.qi}}
   );
-
-  var budCreated = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.created',
-    when: bud.createdTime
-  };
-
-  yield mongo.events.insert(budCreated);
 
   // now notify everyone about this new bud
   ws.notify('qi.updated', bud);
@@ -335,15 +315,6 @@ function *updateBud()
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
   yield indexer(bud);
 
-  var budUpdated = {
-    actor: this.user,
-    target: bud.id,
-    type: 'buds.updated',
-    when: bud.lastUpdate
-  };
-
-  yield mongo.events.insert(budUpdated);
-
   ws.notify('buds.updated', bud);
 }
 
@@ -401,15 +372,13 @@ function *evolveBud(budId, type)
 
     yield indexer(bud);
 
-    var budEvolved = {
-      actor: this.user,
-      target: bud.id,
-      qi: bud.qi,
-      type: 'buds.evolved',
-      when: new Date()
-    };
+    if (types[type].hasOwnProperty('skills')) {
+      yield xp.gainSkillXP (this.user,types[type].skills.creator, 20);
+      console.log (JSON.stringify (this.user));
+      ws.notify('userupdate', this.user);
+    }
 
-    yield mongo.events.insert(budEvolved);
+
   }
 
   bud.qi       = yield updateQi (this.user, bud, 0);
@@ -445,16 +414,6 @@ function *shareBud(budId)
 
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-
-  var budShared= {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.shared',
-    when: new Date()
-  };
-
-  yield mongo.events.insert(budShared);
 
   ws.notify('qi.updated', bud);
   ws.notify('buds.sharesChanged', bud);
@@ -495,15 +454,6 @@ function *sponsorBud()
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  var budSponsored = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.sponsored',
-    when: new Date()
-  };
-
-  yield mongo.events.insert(budSponsored);
 
   ws.notify('qi.updated', bud);
   ws.notify('buds.sponsorsChanged', bud);
@@ -584,16 +534,6 @@ function *supportBud(budId, supportValue)
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  var budSupported = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.supported',
-    when: new Date()
-  };
-
-  yield mongo.events.insert(budSupported);
-
   ws.notify('qi.updated', bud);
   ws.notify('buds.supportersChanged', bud);
 }
@@ -669,16 +609,6 @@ function *followBud()
   this.status = 201;
   this.body = bud.id.toString(); // we need .toString() here to return text/plain response
 
-  var budFollowed = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.followed',
-    when: new Date()
-  };
-
-  yield mongo.events.insert(budFollowed);
-
   ws.notify('buds.followersChanged', bud);
 }
 
@@ -734,25 +664,14 @@ function *createComment(budId)
       {$push: {comments: comment}}
   );
 
-  var bud = {
-    id : budId
-  };
-  bud.qi = yield updateQi(this.user, bud, 1);
 
 
   this.status = 201;
   this.body = commentId.toString(); // we need .toString() here to return text/plain response
 
-  var budCommented = {
-    actor: this.user,
-    target: bud.id,
-    qi: bud.qi,
-    type: 'buds.commented',
-    when: new Date()
+  var bud = {
+    id : budId
   };
-
-  yield mongo.events.insert(budCommented);
-
   // now notify everyone about this new comment
   comment.id = comment._id;
   comment.budId = budId;
@@ -773,7 +692,6 @@ function *createPackData(budId, type)
   budId      = new ObjectID(budId);
 
   var result = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
-  console.log('XXX:' + JSON.stringify(result));
   if(result) {
     // update bud document with the new packData
     var data = yield parse(this);

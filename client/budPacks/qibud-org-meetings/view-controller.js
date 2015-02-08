@@ -94,8 +94,8 @@ function ($scope, $state, $stateParams, $location, api)
         if(packData.state) {
           $scope.packData = packData;
           console.log('packdata found:' + packData);
-          $scope.packData.participations.forEach (function (user){
-            _.remove($scope.users, function(u) { return u.id === user.id; });
+          $scope.packData.participations.forEach (function (p){
+            _.remove($scope.users, function(u) { return u.id === p.user.id; });
           });
           $scope.displayedBuds4Meeting = [].concat($scope.packData.buds);
           api.buds.list().success(function (buds)

@@ -11,7 +11,7 @@ var route = require('koa-route'),
 // register koa routes
 exports.init = function (app) {
   app.use(route.post('/api/users', createUser));
-  app.use(route.get('/api/users', listUsers));
+  app.use(route.get ('/api/users', listUsers));
 };
 
 /**

@@ -3,31 +3,44 @@ module.exports = {
     id:'Bud',
     desc:'Evolve me!',
     defaultChilds: [],
-    icon: 'fa fa-leaf'
+    icon: 'fa fa-leaf',
+    xp: 20
   },
   Idea : {
     id:'Idea',
     desc:'Starting point for innovation, can be primed',
     defaultChilds: [],
-    icon: 'mdi-image-wb-incandescent'
+    icon: 'mdi-image-wb-incandescent',
+    skills: {
+      creator: 'Creativity'
+    }
   },
   Info : {
     id:'Info',
     desc:'Share information',
     defaultChilds: [],
-    icon: 'mdi-communication-message'
+    icon: 'mdi-communication-message',
+    skills: {
+      creator: 'Informator'
+    }
   },
   Action : {
     id:'Action',
     desc:'Describe work and engage people under a project',
     defaultChilds: ['Result'],
-    icon: 'mdi-image-flash-auto'
+    icon: 'mdi-image-flash-auto',
+    skills: {
+      creator: 'Organisation'
+    }
   },
   Issue : {
     id:'Issue',
     desc:'Describe blocking points',
     defaultChilds: ['Result', 'Action'],
-    icon: 'mdi-alert-warning'
+    icon: 'mdi-alert-warning',
+    skills: {
+      creator: 'Problem finder'
+    }
   },
   Result : {
     id:'Result',
@@ -39,7 +52,10 @@ module.exports = {
     id:'Project',
     desc:'Attach project to mission for defining the way to goal',
     defaultChilds: ['Info', 'Idea', 'Action'],
-    icon: 'mdi-action-assignment'
+    icon: 'mdi-action-assignment',
+    skills: {
+      creator: 'Organisation'
+    }
   },
   Meeting : {
     id:'Meeting',
@@ -51,7 +67,10 @@ module.exports = {
     id:'Mission',
     desc:'Define your strategy with some missions',
     defaultChilds: ['Project', 'Info', 'Idea'],
-    icon: 'mdi-action-class'
+    icon: 'mdi-action-class',
+    skills: {
+      creator: 'Strategy'
+    }
   },
   Team : {
     id:'Team',

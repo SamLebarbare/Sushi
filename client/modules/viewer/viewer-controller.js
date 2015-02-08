@@ -11,6 +11,7 @@ function ($scope, $state, $stateParams, $modal, api)
   var user       = $scope.common.user;
   $scope.typeInfo = null;
   $scope.ready = false;
+  $scope.follower = false;
   $scope.actionInProgress = false;
   $scope.followersCount = 0;
   $scope.sponsorsCount = 0;
@@ -449,6 +450,11 @@ function ($scope, $state, $stateParams, $modal, api)
 
     // disable the comment box and push the new comment to server
     bud.commentBox.disabled = true;
+    //follow bud automaticly
+    if (!$scope.follower) {
+      console.log ('follow');
+      $scope.followBud ();
+    }
     api.buds.comments.create(bud.id, {message: bud.commentBox.message})
         .success(function (commentId)
         {

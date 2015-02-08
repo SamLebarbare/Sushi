@@ -29,6 +29,10 @@ module.exports = function *(user)
               "WHERE user.uid = " + user.id + " " +
               "RETURN bud.bid " +
               "UNION " +
+              "MATCH (bud:Bud)<-[:FOLLOW]-(user:User) " +
+              "WHERE user.uid = " + user.id + " " +
+              "RETURN bud.bid " +
+              "UNION " +
               "MATCH (bud:Bud)<-[:MEMBER]-(user:User) " +
               "WHERE user.uid = " + user.id + " " +
               "RETURN bud.bid;";
