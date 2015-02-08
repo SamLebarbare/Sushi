@@ -1,7 +1,13 @@
 
 <div ng-if="packData.state == 'Waiting'">
-  <h2>Waiting a sponsor</h2>
+  <h2>Waiting for a sponsor, mission, project or action </h2>
 </div>
 <div ng-if="packData.state == 'Sponsored'">
-  <h1>Sponsored! by {{bud.sponsors.count}} users</h1>
+  <h2>Idea <b>Sponsored!</b></h2>
+</div>
+<div ng-if="packData.state == 'Selected'">
+  <h2>Idea <b>Selected!</b></h2>
+</div>
+<div ng-if="packData.state == 'Primed'">
+  <h2>Idea <b>Primed!</b></h2>
 </div>

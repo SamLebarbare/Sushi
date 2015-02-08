@@ -9,7 +9,8 @@ function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;
   $scope.packData = {
-    state: 'Waiting'
+    state: 'Waiting',
+    selectedBud: null
   };
   var afterLoad = function (done) {
     api.buds.budPacksData.get($scope.bud.id, 'Idea')
@@ -23,9 +24,55 @@ function ($scope, $state, $stateParams, $location, api)
               $scope.packData.state = 'Sponsored';
               api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
             }
+            done ();
           } else {
             $scope.packData.state = 'Waiting';
             api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+          }
+
+          if($scope.packData.selectedBud) {
+            if($scope.packData.selectedBud.dataCache.state === 'Ended') {
+              $scope.packData.state = 'Primed';
+              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+              done ();
+            }
+          } else {
+            api.buds.childrenByType ($scope.bud.id, 'Mission')
+            .success(function (missions)
+            {
+              if(missions.length > 0)
+              {
+                $scope.packData.state = 'Selected';
+                $scope.packData.selectedBud = missions[0];
+                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+                done ();
+              }
+            });
+
+            api.buds.childrenByType ($scope.bud.id, 'Project')
+            .success(function (projects)
+            {
+              if(projects.length > 0)
+              {
+                $scope.packData.state = 'Selected';
+                $scope.packData.selectedBud = projects[0];
+                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+                done ();
+              }
+            });
+
+            api.buds.childrenByType ($scope.bud.id, 'Action')
+            .success(function (actions)
+            {
+              if(actions.length > 0)
+              {
+                $scope.packData.state = 'Selected';
+                $scope.packData.selectedBud = actions[0];
+                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+                done ();
+              }
+            });
+            done ();
           }
           done ();
         } else {

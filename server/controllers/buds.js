@@ -14,6 +14,7 @@ var route = require('koa-route'),
     removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
     getUserBuds       = require('../graph-entities/getUserBuds'),
     getRelatedChilds  = require('../graph-entities/getRelatedChildBuds'),
+    getRelatedParents = require('../graph-entities/getRelatedParentBuds'),
     updateQi          = require('../graph-entities/updateQiOnBud'),
     setType           = require('../graph-entities/setTypeOnBud'),
     clearBud          = require('../graph-entities/clearBud'),
@@ -33,6 +34,7 @@ exports.init = function (app) {
   app.use(route.get ('/api/buds', listBuds));
   app.use(route.get ('/api/buds/:budId/view', viewBud));
   app.use(route.get ('/api/buds/:budId/child/:type', relatedChilds));
+  app.use(route.get ('/api/buds/:budId/parent/:type', relatedParent));
   app.use(route.put ('/api/buds/:budId/update', updateBud));
   app.use(route.put ('/api/buds/:budId/share', shareBud));
   app.use(route.put ('/api/buds/:budId/follow', followBud));
@@ -76,6 +78,26 @@ function *relatedChilds(budId, type)
         bud.typeInfo = types[bud.type];
         bud.qi = yield updateQi(scope.user, bud, 0);
       });
+  this.body = buds;
+}
+
+/**
+* Find related labeled buds following neo4j CHILD relationships
+*/
+function *relatedParent(budId, type)
+{
+  var relatedBudsIds = yield getRelatedParents(budId,type);
+  console.log(relatedBudsIds);
+  var buds = yield mongo.buds.find(
+  {_id: { $in: relatedBudsIds }}).toArray();
+  var scope = this;
+  yield * foreach(buds, function * (bud) {
+    bud.id = bud._id;
+    delete bud._id;
+    bud.dataCache = packdata.getPack (bud, bud.type);
+    bud.typeInfo = types[bud.type];
+    bud.qi = yield updateQi(scope.user, bud, 0);
+  });
   this.body = buds;
 }
 

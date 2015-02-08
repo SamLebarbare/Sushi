@@ -10,7 +10,8 @@ function ($scope, $state, $stateParams, $location, api)
   var user       = $scope.common.user;
   $scope.users    = [];
   $scope.packData = {
-    members : []
+    members : [],
+    missions: [],
   };
   $scope.canEditTeam = function () {
     return $scope.bud.creator.id === user.id;
@@ -37,6 +38,12 @@ function ($scope, $state, $stateParams, $location, api)
       api.buds.budPacksData.get($scope.bud.id, 'Team')
       .success(function (packData)
       {
+
+        api.buds.childrenByType ($scope.bud.id, 'Mission')
+        .success(function (missions)
+        {
+          $scope.packData.missions = missions;
+        });
 
         if(packData.members) {
           $scope.packData = packData;

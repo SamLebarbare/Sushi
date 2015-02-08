@@ -21,6 +21,12 @@ function ($scope, $state, $stateParams, api)
         if(packData.state) {
           $scope.packData = packData;
           console.log('packdata found:' + packData);
+          api.buds.parentByType ($scope.bud.id, 'Team')
+           .success(function (teams) {
+             if(teams.length > 0) {
+              $scope.packData.team = teams[0];
+             }
+           });
           api.buds.childrenByType ($scope.bud.id, 'Project')
           .success(function (projects)
             {
