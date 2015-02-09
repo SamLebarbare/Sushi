@@ -45,59 +45,69 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
-
-
-  // retrieve one bud from server
-
-  $scope.load = function (callback)
-  {
-    console.info ('loading...');
-    $scope.actionInProgress = true;
-    $scope.ready = false;
-    api.buds.view($stateParams.budId).success(function (bud)
-    {
-      bud.commentBox = {message: '', disabled: false};
-      bud.comments   = bud.comments || [];
-
-      $scope.bud = bud;
-      if(bud.followers)
+  $scope.subscribeAll = function () {
+    api.buds.comments.created.subscribe($scope, function (comment) {
+      // only add the comment if we don't have it already in the bud's comments list to avoid dupes
+      if ($scope.bud && !_.some($scope.bud.comments, function (c)
       {
-          $scope.followersCount = bud.followers.length;
-          if(bud.followers.indexOf(user.id)!== -1)
-          {
-            $scope.follower = true;
-          }
-          else
-          {
-            $scope.follower = false;
-          }
+        return c.id === comment.id;
+      }))
+      {
+        $scope.bud.comments.push(comment);
       }
-      else
-      {
-        $scope.follower = false;
-      }
+    });
 
-      if(bud.sponsors)
+    api.buds.updated.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
       {
-        $scope.sponsorsCount = bud.sponsors.length;
-        if(bud.sponsors.indexOf(user.id)!== -1)
+        $scope.load ();
+      }
+    });
+
+    api.buds.evolved.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.load ();
+      }
+    });
+
+    api.qi.updated.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.load ();
+      }
+    });
+
+    api.buds.sharesChanged.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.load ();
+      }
+    });
+
+    api.buds.followersChanged.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.bud.followers = bud.followers;
+        $scope.followersCount = bud.followers.length;
+        if(bud.followers.indexOf(user.id)!== -1)
         {
-          $scope.sponsorer = true;
+          $scope.follower = true;
         }
         else
         {
-          $scope.sponsorer = false;
+          $scope.follower = false;
         }
       }
-      else
-      {
-        $scope.sponsorer = false;
-      }
+    });
 
-      if(bud.supporters)
+    api.buds.supportersChanged.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
       {
+        $scope.bud.supporters = bud.supporters;
         $scope.supportersCount = bud.supporters.length;
-        if(bud.supporters.indexOf(user.id)!== -1)
+
+        if(bud.supporters.indexOf(user.id) !== -1)
         {
           $scope.supporter = true;
         }
@@ -106,19 +116,103 @@ function ($scope, $state, $stateParams, $modal, api)
           $scope.supporter = false;
         }
       }
+    });
+
+    api.buds.sponsorsChanged.subscribe($scope, function (bud) {
+      if ($scope.bud.id === bud.id)
+      {
+        $scope.bud.sponsors = bud.sponsors;
+        $scope.sponsorsCount = bud.sponsors.length;
+        if(bud.sponsors.indexOf(user.id) !== -1)
+        {
+          $scope.sponsorer = true;
+        }
+        else
+        {
+          $scope.sponsorer = false;
+        }
+      }
+    });
+  };
+
+  //Init view
+  $scope.init = function (bud) {
+    bud.commentBox = {message: '', disabled: false};
+    bud.comments   = bud.comments || [];
+
+    $scope.bud = bud;
+    if(bud.followers)
+    {
+      $scope.followersCount = bud.followers.length;
+      if(bud.followers.indexOf(user.id)!== -1)
+      {
+        $scope.follower = true;
+      }
+      else
+      {
+        $scope.follower = false;
+      }
+    }
+    else
+    {
+      $scope.follower = false;
+    }
+
+    if(bud.sponsors)
+    {
+      $scope.sponsorsCount = bud.sponsors.length;
+      if(bud.sponsors.indexOf(user.id)!== -1)
+      {
+        $scope.sponsorer = true;
+      }
+      else
+      {
+        $scope.sponsorer = false;
+      }
+    }
+    else
+    {
+      $scope.sponsorer = false;
+    }
+
+    if(bud.supporters)
+    {
+      $scope.supportersCount = bud.supporters.length;
+      if(bud.supporters.indexOf(user.id)!== -1)
+      {
+        $scope.supporter = true;
+      }
       else
       {
         $scope.supporter = false;
       }
+    }
+    else
+    {
+      $scope.supporter = false;
+    }
 
-      if(bud.shares)
-      {
-        $scope.shareCount = bud.shares.length;
-      } else {
-        $scope.shareCount = 0;
-      }
-
+    if(bud.shares)
+    {
+      $scope.shareCount = bud.shares.length;
+    } else {
+      $scope.shareCount = 0;
+    }
+  };
+  // retrieve one bud from server
+  $scope.load = function (callback)
+  {
+    console.info ('loading...');
+    $scope.actionInProgress = true;
+    $scope.ready = false;
+    api.buds.view($stateParams.budId).success(function (bud)
+    {
+      console.info ('init...');
+      $scope.init (bud);
+      console.info ('subscribe...');
+      $scope.subscribeAll ();
       $scope.ready = true;
+      console.info ('load budpack view...');
       $scope.showType ($scope.bud.type, false);
       console.info ('loaded!');
 
@@ -132,7 +226,9 @@ function ($scope, $state, $stateParams, $modal, api)
 
     });
   }
-  //Init view
+
+
+  //Bud (re)loader
   $scope.load();
 
   $scope.showType = function (type, reload) {
@@ -201,7 +297,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.delete = function () {
     api.buds.delete($scope.bud.id).success(function (){
-      $state.go('bud.home.list');
+      $state.go('home.budlist');
     });
   };
 
@@ -385,55 +481,6 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   }
 
-  api.buds.followersChanged.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.bud.followers = bud.followers;
-      $scope.followersCount = bud.followers.length;
-      if(bud.followers.indexOf(user.id)!== -1)
-      {
-        $scope.follower = true;
-      }
-      else
-      {
-        $scope.follower = false;
-      }
-    }
-  });
-
-  api.buds.supportersChanged.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.bud.supporters = bud.supporters;
-      $scope.supportersCount = bud.supporters.length;
-
-      if(bud.supporters.indexOf(user.id) !== -1)
-      {
-        $scope.supporter = true;
-      }
-      else
-      {
-        $scope.supporter = false;
-      }
-    }
-  });
-
-  api.buds.sponsorsChanged.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.bud.sponsors = bud.sponsors;
-      $scope.sponsorsCount = bud.sponsors.length;
-      if(bud.sponsors.indexOf(user.id) !== -1)
-      {
-        $scope.sponsorer = true;
-      }
-      else
-      {
-        $scope.sponsorer = false;
-      }
-    }
-  });
-
   $scope.createComment = function ($event, bud)
   {
     // submit the message in the comment box only if user hits 'Enter (keycode 13)'
@@ -484,44 +531,5 @@ function ($scope, $state, $stateParams, $modal, api)
     // prevent default 'Enter' button behavior (create new line) as we want 'Enter' button to do submission
     $event.preventDefault();
   };
-
-  api.buds.comments.created.subscribe($scope, function (comment) {
-    // only add the comment if we don't have it already in the bud's comments list to avoid dupes
-    if ($scope.bud && !_.some($scope.bud.comments, function (c)
-    {
-      return c.id === comment.id;
-    }))
-    {
-      $scope.bud.comments.push(comment);
-    }
-  });
-
-  api.buds.updated.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.load ();
-    }
-  });
-
-  api.buds.evolved.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.load ();
-    }
-  });
-
-  api.qi.updated.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.load ();
-    }
-  });
-
-  api.buds.sharesChanged.subscribe($scope, function (bud) {
-    if ($scope.bud.id === bud.id)
-    {
-      $scope.load ();
-    }
-  });
 
 });

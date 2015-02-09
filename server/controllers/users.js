@@ -12,6 +12,7 @@ var route = require('koa-route'),
 exports.init = function (app) {
   app.use(route.post('/api/users', createUser));
   app.use(route.get ('/api/users', listUsers));
+  app.use(route.get ('/api/users/:id', getUser));
 };
 
 /**
@@ -44,6 +45,16 @@ function *listUsers() {
     delete user.picture;
   });
 
-  this.status = 201;
+  this.status = 200;
   this.body = users;
+}
+
+function *getUser(id) {
+  var user = yield mongo.users.findOne({_id: parseInt(id)});
+  console.log (user);
+  user.id = user._id;
+  delete user._id;
+
+  this.status = 200;
+  this.body = user;
 }

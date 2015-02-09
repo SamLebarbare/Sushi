@@ -84,8 +84,8 @@
         <li>Creator : <a>{{bud.creator.name}}</a></li>
         <li ng-if="bud.dataCache.actor">Actor: <a>{{bud.dataCache.actor.name}}</a></li>
         <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
-        <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})" popover="{{bud.parentBud.type}}" popover-trigger="mouseenter">{{bud.parentBud.title}}</a></span></li>
-        <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+        <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})">{{bud.parentBud.title}}</a></span></li>
+        <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})"> [{{b.title}}] </a>)</li>
         <li ng-repeat="user in bud.shares">
           {{user.name}}
         </li>

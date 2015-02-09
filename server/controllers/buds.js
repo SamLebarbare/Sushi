@@ -41,7 +41,7 @@ exports.init = function (app) {
   app.use(route.put ('/api/buds/:budId/unfollow', unfollowBud));
   app.use(route.put ('/api/buds/:budId/sponsor', sponsorBud));
   app.use(route.put ('/api/buds/:budId/unsponsor', unsponsorBud));
-  app.use(route.put ('/api/buds/:budId/support/:supportValue', supportBud));
+  app.use(route.put ('/api/buds/:budId/support', supportBud));
   app.use(route.put ('/api/buds/:budId/evolve/:type', evolveBud));
   app.use(route.put ('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
@@ -56,7 +56,6 @@ exports.init = function (app) {
 function *searchBuds(query)
 {
   var results = yield search(query);
-  console.log(results);
   this.body = results;
 }
 
@@ -67,7 +66,6 @@ function *searchBuds(query)
 function *relatedChilds(budId, type)
 {
   var relatedBudsIds = yield getRelatedChilds(budId,type);
-  console.log(relatedBudsIds);
   var buds = yield mongo.buds.find(
       {_id: { $in: relatedBudsIds }}).toArray();
   var scope = this;
@@ -87,7 +85,6 @@ function *relatedChilds(budId, type)
 function *relatedParent(budId, type)
 {
   var relatedBudsIds = yield getRelatedParents(budId,type);
-  console.log(relatedBudsIds);
   var buds = yield mongo.buds.find(
   {_id: { $in: relatedBudsIds }}).toArray();
   var scope = this;
@@ -107,7 +104,6 @@ function *relatedParent(budId, type)
 function *listBuds()
 {
   var userBudsIds = yield getUserBuds(this.user);
-  console.log(userBudsIds);
   var buds = yield mongo.buds.find(
       {_id: { $in: userBudsIds }}).toArray();
 
@@ -118,7 +114,6 @@ function *listBuds()
     bud.dataCache = packdata.getPack (bud, bud.type);
     bud.typeInfo = types[bud.type];
     bud.qi = yield updateQi(scope.user, bud, 0);
-    console.log(bud.qi);
   });
 
   this.body = buds;
@@ -396,7 +391,6 @@ function *evolveBud(budId, type)
 
     if (types[type].hasOwnProperty('skills')) {
       yield xp.gainSkillXP (this.user,types[type].skills.creator, 20);
-      console.log (JSON.stringify (this.user));
       ws.notify('userupdate', this.user);
     }
 
@@ -518,13 +512,8 @@ function *unsponsorBud()
 /**
  * Add Support a bud
  */
-function *supportBud(budId, supportValue)
+function *supportBud(budId)
 {
-  if(supportValue > 5)
-  {
-    this.throw(403, 'Support value is not valid');
-  }
-
   var bud   = yield parse(this);
   var budId = new ObjectID(bud.id);
 
@@ -545,7 +534,7 @@ function *supportBud(budId, supportValue)
 
 
   yield createUser2BudRel(this.user, bud, 'SUPPORT');
-  bud.qi = yield updateQi(this.user, bud, supportValue);
+  bud.qi = yield updateQi(this.user, bud, this.user.lvl);
 
 
   bud = yield mongo.buds.findOne({_id : budId});
@@ -732,7 +721,7 @@ function *createPackData(budId, type)
       type: type,
       data: yield parse(this)
     };
-    console.log('create packdata:' + JSON.stringify(packData));
+    console.log('create packdata');
     // update bud document with the new packData
     var result = yield mongo.buds.update(
         {_id: budId},
@@ -774,7 +763,6 @@ function *getPackData(budId, type)
   var bud      = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
 
   var packData = packdata.getPack (bud, type);
-  console.log(packData);
   this.status = 200;
   this.body = packData;
 }

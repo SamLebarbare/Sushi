@@ -18,7 +18,7 @@ angular
           text: 'Bud list',
           stateName: 'bud.home.list'
         },
-        url: "/stickers",
+        url: "/list",
         templateUrl: 'modules/home/home-list.html',
         controller: 'HomeCtrl'
       })
@@ -29,7 +29,7 @@ angular
           text: 'Invitations list',
           stateName: 'bud.home.list'
         },
-        url: "/stickers",
+        url: "/invitations",
         templateUrl: 'modules/home/invitations-list.html',
         controller: 'InvitationsCtrl'
       })

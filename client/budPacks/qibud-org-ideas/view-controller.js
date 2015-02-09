@@ -16,6 +16,17 @@ function ($scope, $state, $stateParams, $location, api)
     api.buds.budPacksData.get($scope.bud.id, 'Idea')
     .success(function (packData)
       {
+
+        var trySetEnded = function () {
+          if($scope.packData.selectedBud) {
+            if($scope.packData.selectedBud.dataCache.state === 'Ended') {
+              $scope.packData.state = 'Primed';
+              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
+              done ();
+            }
+          }
+        };
+
         if(packData.state) {
           $scope.packData = packData;
           console.log('packdata found:' + packData);
@@ -30,50 +41,39 @@ function ($scope, $state, $stateParams, $location, api)
             api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
           }
 
-          if($scope.packData.selectedBud) {
-            if($scope.packData.selectedBud.dataCache.state === 'Ended') {
-              $scope.packData.state = 'Primed';
-              api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-              done ();
+          api.buds.childrenByType ($scope.bud.id, 'Mission')
+          .success(function (missions)
+          {
+            if(missions.length > 0)
+            {
+              $scope.packData.state = 'Selected';
+              $scope.packData.selectedBud = missions[0];
+              trySetEnded ();
+            } else {
+              api.buds.childrenByType ($scope.bud.id, 'Project')
+              .success(function (projects)
+              {
+                if(projects.length > 0)
+                {
+                  $scope.packData.state = 'Selected';
+                  $scope.packData.selectedBud = projects[0];
+                  trySetEnded ();
+                } else {
+                  api.buds.childrenByType ($scope.bud.id, 'Action')
+                  .success(function (actions)
+                  {
+                    if(actions.length > 0)
+                    {
+                      $scope.packData.state = 'Selected';
+                      $scope.packData.selectedBud = actions[0];
+                      trySetEnded ();
+                    }
+                  });
+                }
+              });
             }
-          } else {
-            api.buds.childrenByType ($scope.bud.id, 'Mission')
-            .success(function (missions)
-            {
-              if(missions.length > 0)
-              {
-                $scope.packData.state = 'Selected';
-                $scope.packData.selectedBud = missions[0];
-                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-                done ();
-              }
-            });
+          });
 
-            api.buds.childrenByType ($scope.bud.id, 'Project')
-            .success(function (projects)
-            {
-              if(projects.length > 0)
-              {
-                $scope.packData.state = 'Selected';
-                $scope.packData.selectedBud = projects[0];
-                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-                done ();
-              }
-            });
-
-            api.buds.childrenByType ($scope.bud.id, 'Action')
-            .success(function (actions)
-            {
-              if(actions.length > 0)
-              {
-                $scope.packData.state = 'Selected';
-                $scope.packData.selectedBud = actions[0];
-                api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Idea');
-                done ();
-              }
-            });
-            done ();
-          }
           done ();
         } else {
           api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Idea');
