@@ -57,7 +57,7 @@ function ($scope, $state, $stateParams, api)
   $scope.isActor = function ()
   {
     if ($scope.packData.actor !== undefined) {
-      if($scope.packData.actor === user) {
+      if($scope.packData.actor.id === user.id) {
         return true;
       } else {
         return false;
@@ -70,7 +70,7 @@ function ($scope, $state, $stateParams, api)
   $scope.isCreator = function ()
   {
     if ($scope.bud.creator !== undefined) {
-      if($scope.bud.creator === user) {
+      if($scope.bud.creator.id === user.id) {
         return true;
       } else {
         return false;

@@ -1,5 +1,24 @@
 var config = require('../../config/config');
 var mailin = require('mailin');
+var path           = require('path');
+var postmark       = require('postmark')(config.postmark.apiKey);
+
+exports.sendBud = function *(fromUser, to, bud) {
+  postmark.send({
+    From: fromLine,
+    To: to,
+    Subject: bud.title,
+    HtmlBody: bud.content,
+    TextBody: bud.content
+  }, function(err, response) {
+    if (err) {
+      console.log(err.status);
+      console.log(err.message);
+    } else {
+      console.log(response);
+    }
+  });
+}
 
 exports.init = function () {
   console.log('[QIBUD] EMAILS SERVICE START...');

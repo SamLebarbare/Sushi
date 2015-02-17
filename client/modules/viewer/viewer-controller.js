@@ -20,6 +20,7 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.shareCount = 0;
 
   // Helpers for bud packs
+
   $scope.startParentIfNeeded = function (type) {
     if($scope.bud.parentBud !== undefined) {
       var parentBudId = $scope.bud.parentBud.id;
@@ -239,7 +240,7 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
-  $scope.evolve = function ($event, type) {
+  $scope.sendByMail = function ($event) {
     if ($scope.actionInProgress)
     {
       $event.preventDefault();
@@ -247,14 +248,53 @@ function ($scope, $state, $stateParams, $modal, api)
     }
     $scope.actionInProgress = true;
 
-    api.buds.evolve($scope.bud, type).success(function () {
-      $scope.actionInProgress = false;
-    })
-    .error(function ()
-    {
-      $scope.actionInProgress = false;
+    var modalInstance = $modal.open ({
+      templateUrl: 'sendbymail.html',
+      controller: 'SendByMailCtrl',
+      size: 'lg',
+      resolve: {}
     });
 
+    modalInstance.result.then(function (to) {
+      //sendemail
+      $scope.actionInProgress = false;
+    }, function () {
+      //dismiss
+      $scope.actionInProgress = false;
+    });
+  };
+
+  $scope.evolve = function ($event) {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+    $scope.actionInProgress = true;
+
+    var modalInstance = $modal.open ({
+      templateUrl: 'evolvebox.html',
+      controller: 'EvolveCtrl',
+      size: 'lg',
+      resolve: {
+        availableTypes: function () {
+          return $scope.common.availableTypes;
+        }
+      }
+    });
+
+    modalInstance.result.then(function (selectedType) {
+      api.buds.evolve($scope.bud.id, selectedType).success(function () {
+        $scope.actionInProgress = false;
+      })
+      .error(function ()
+      {
+        $scope.actionInProgress = false;
+      });
+    }, function () {
+      //dismiss
+      $scope.actionInProgress = false;
+    });
   };
 
   $scope.canEvolve = function ()
@@ -263,7 +303,7 @@ function ($scope, $state, $stateParams, $modal, api)
       return false;
     }
 
-    if($scope.bud.type === 'Bud' && $scope.bud.creator.id === user.id) {
+    if($scope.bud.typeInfo.evolve === true && $scope.bud.creator.id === user.id) {
       return true;
     } else {
       return false;

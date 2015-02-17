@@ -18,11 +18,20 @@
   </section>
   <section ng-show="!actionInProgress">
     <ul class="clear-fix">
-      <div class="btn-group btn-group-xs" ng-if="canEdit()">
+      <div class="btn-group btn-group-xs pull-right" ng-if="canEdit()">
         <button class="btn orange" ui-sref="bud.editor({budId: bud.id})"  ng-disabled="actionInProgress"><i class="fa fa-edit"></i>
           Edit
         </button>
+        <button class="btn green" ng-click="evolve()" ng-if="canEvolve()" ng-disabled="actionInProgress"><i class="fa fa-level-up"></i>
+          Evolve
+        </button>
+        <button class="btn btn-danger" ng-click="delete()" ng-if="canDelete()" ng-disabled="actionInProgress"><i class="mdi-content-remove-circle"></i>
+          Delete
+        </button>
       </div>
+    </ul>
+    <br>
+    <ul class="clear-fix">
       <div class="btn-group btn-group-xs" ng-if="canShare()">
         <button class="btn btn-primary" ng-click="share()" ng-disabled="actionInProgress"><i class="mdi-social-share"></i>
           Share
@@ -66,86 +75,81 @@
       </div>
       <div class="btn-group btn-group-xs">
         <button class="btn btn-success" ng-click="supportBud($event)" ng-disabled="bud.creator.id == common.user.id || actionInProgress">{{supporter ? 'Unsupport' : 'Support'}}</button>
-      <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
+        <button class="btn btn-default" disabled>{{supportersCount}} supporters</button>
+      </div>
+      <div class="btn-group btn-group-xs">
+        <button class="btn btn-primary" ng-click="sendByMail($event)" ng-disabled="actionInProgress"><i class="fa fa-paper-plane"></i>
+          Send by email
+        </button>
+      </div>
+    </ul>
+    <div class="widget-icon orange pull-right"><h1> <i class="circle"> {{bud.qi}} </i> <img src="images/qibud.png" /></h1></div>
+    <div class="jumbotron">
+      <h1><i class="circle" ng-class="bud.typeInfo.icon"></i>{{bud.title}}</h1>
+      <div class="bs-component">
+        <ul class="breadcrumb" style="background-color: #f3f3f3;">
+          <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
+          <li ng-if="bud.dataCache.state">Status: <a>{{bud.dataCache.state}}</a></li>
+          <li>Creator : <a>{{bud.creator.name}}</a></li>
+          <li ng-if="bud.dataCache.actor">Actor: <a>{{bud.dataCache.actor.name}}</a></li>
+          <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
+          <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})">{{bud.parentBud.title}}</a></span></li>
+          <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})"> [{{b.title}}] </a>)</li>
+          <li ng-repeat="user in bud.shares">
+            {{user.name}}
+          </li>
+        </ul>
+      </div>
+      <div ng-if="bud.type != 'Bud'" ui-view="summary"></div>
+      <div ng-bind-html="bud.content"></div>
     </div>
-    <div class="btn-group btn-group-xs">
-      <button class="btn btn-danger" ng-click="delete()" ng-if="canDelete()" ng-disabled="actionInProgress"><i class="mdi-content-remove-circle"></i>
-        Delete
-      </button>
+
+    <div class="jumbotron" ng-show="supportersCount > 0">
+      <h3>In support</h2>
+      <div ng-repeat="user in bud.supporters">
+        <div class="widget-icon pull-right">
+          <div class="btn-group btn-group-xs">
+            <button class="btn green" disabled>Level <i class="circle">{{user.lvl}}</i></button>
+            <button class="btn orange" disabled><i class="circle">{{user.xp}}</i> XP</button>
+          </div>
+        </div>
+        <div class="panel panel-default">
+          <div class="panel-body">
+            <img ng-src="/api/users/{{user.id}}/picture" width="50px" alt="" / > {{user.name}}
+          </div>
+        </div>
+      </div>
     </div>
-  </ul>
-  <div class="widget-icon orange pull-right"><h1> <i class="circle"> {{bud.qi}} </i> <img src="images/qibud.png" /></h1></div>
-  <div class="jumbotron">
-    <h1><i class="circle" ng-class="bud.typeInfo.icon"></i>{{bud.title}}</h1>
-    <div class="bs-component">
-      <ul class="breadcrumb" style="background-color: #f3f3f3;">
-        <li><span class="divider">Type: <a>{{bud.type || 'Bud'}}</a></span></li>
-        <li ng-if="bud.dataCache.state">Status: <a>{{bud.dataCache.state}}</a></li>
-        <li>Creator : <a>{{bud.creator.name}}</a></li>
-        <li ng-if="bud.dataCache.actor">Actor: <a>{{bud.dataCache.actor.name}}</a></li>
-        <li><span class="divider">Privacy: <a>{{bud.privacy}}</a></span></li>
-        <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : bud.parentBud.id})">{{bud.parentBud.title}}</a></span></li>
-        <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in bud.subBuds" ui-sref="bud.viewer({budId : b.id})"> [{{b.title}}] </a>)</li>
-        <li ng-repeat="user in bud.shares">
-          {{user.name}}
+
+    <div class="jumbotron">
+      <h3>Feeback</h3>
+      <div class="form-control-wrapper">
+        <input class="form-control input-lg"
+        ng-model="bud.commentBox.message"
+        ng-keypress="createComment($event, bud)"
+        ng-disabled="bud.commentBox.disabled"
+        autofocus />
+        <div class="floating-label">Your feedback:</div>
+        <span class="material-input"></span>
+      </div>
+      <ul class="timeline">
+        <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
+          <div class="timeline-badge" ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" popover="Budify" popover-trigger="mouseenter">
+            <i class="fa fa-comment"></i>
+          </div>
+          <div class="timeline-panel">
+            <div class="timeline-heading">
+              <h4 class="timeline-title">{{comment.from.name}}</h4>
+              <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
+              </p>
+            </div>
+            <div class="timeline-body">
+              <p>{{comment.message}}</p>
+            </div>
+          </div>
         </li>
       </ul>
     </div>
-    <div ng-if="bud.type != 'Bud'" ui-view="summary"></div>
-    <div ng-bind-html="bud.content"></div>
-  </div>
-
-  <div ng-if="canEvolve()" heading="">
-
-  </div>
-
-  <div class="jumbotron" ng-show="supportersCount > 0">
-    <h3>In support</h2>
-    <div ng-repeat="user in bud.supporters">
-      <div class="widget-icon pull-right">
-        <div class="btn-group btn-group-xs">
-          <button class="btn green" disabled>Level <i class="circle">{{user.lvl}}</i></button>
-          <button class="btn orange" disabled><i class="circle">{{user.xp}}</i> XP</button>
-        </div>
-      </div>
-      <div class="panel panel-default">
-        <div class="panel-body">
-          <img ng-src="/api/users/{{user.id}}/picture" width="50px" alt="" / > {{user.name}}
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div class="jumbotron">
-    <h3>Feeback</h3>
-    <div class="form-control-wrapper">
-      <input class="form-control input-lg"
-      ng-model="bud.commentBox.message"
-      ng-keypress="createComment($event, bud)"
-      ng-disabled="bud.commentBox.disabled"
-      autofocus />
-      <div class="floating-label">Your feedback:</div>
-      <span class="material-input"></span>
-    </div>
-    <ul class="timeline">
-      <li ng-repeat="comment in bud.comments | orderBy:'_id':true " ng-class="{'timeline-inverted': $index % 2 != 0}">
-        <div class="timeline-badge" ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" popover="Budify" popover-trigger="mouseenter">
-          <i class="fa fa-comment"></i>
-        </div>
-        <div class="timeline-panel">
-          <div class="timeline-heading">
-            <h4 class="timeline-title">{{comment.from.name}}</h4>
-            <p><small class="text-muted"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</small>
-            </p>
-          </div>
-          <div class="timeline-body">
-            <p>{{comment.message}}</p>
-          </div>
-        </div>
-      </li>
-    </ul>
-  </div>
-
   </section>
 </div>
 <script type="text/ng-template" id="sharebox.html">
@@ -184,6 +188,48 @@
       <button class="btn btn-primary" ng-click="ok()" ng-disabled="selectedUsers.length < 1" >Share</button>
       <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
+</script>
+<script type="text/ng-template" id="evolvebox.html">
+  <div class="modal-header">
+  <h3 class="modal-title">Evolve your bud ? </h3>
+  </div>
+  <div class="modal-body">
+  <div class="list-group">
+  <div class="list-group-item" ng-repeat="type in availableTypes">
+  <div ng-show="type.evolve != false">
+    <div class="row-picture">
+    <a class="btn btn-success btn-fab btn-raised" ng-class="type.icon" ng-click="setSelected(type.id)"></a>
+    </div>
+    <div class="row-content">
+    <h4 class="list-group-item-heading">{{type.id}}</h4>
+    <p class="list-group-item-text">{{type.desc}}</p>
+    </div>
+    </div>
+    </div>
+    <div class="list-group-separator"></div>
+    </div>
+  </div>
+  <div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok(selectedType)">Evolve in {{selectedType}}</button>
+  <button class="btn btn-warning" ng-click="cancel()">later...</button>
+  </div>
+</script>
+<script type="text/ng-template" id="sendbymail.html">
+<div class="modal-header">
+  <h3 class="modal-title">Send by email </h3>
+</div>
+<div class="modal-body">
+  <div class="form-group">
+    <label for="inputEmail" class="col-lg-2 control-label">To:</label>
+    <div class="col-lg-10">
+      <input type="email" ng-model="to" class="form-control" id="inputEmail" placeholder="Email">
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <button class="btn btn-primary" ng-click="ok(to)">Send</button>
+  <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+</div>
 </script>
 
 

@@ -7,7 +7,7 @@
   />
 </div>
 <div ng-if="packData.actor && packData.state == 'Assigned'">
-  <div ng-if="isActorOrCreator()">
+  <div ng-show="isActorOrCreator()">
     <input
     class="btn btn-primary btn-warning btn-xl btn-raised"
     ng-click="unsetActor($event)"

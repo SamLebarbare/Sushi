@@ -4,7 +4,8 @@ module.exports = {
     desc:'Evolve me!',
     defaultChilds: [],
     icon: 'fa fa-leaf',
-    xp: 20
+    xp: 20,
+    evolve: true
   },
   Idea : {
     id:'Idea',
@@ -13,7 +14,8 @@ module.exports = {
     icon: 'mdi-image-wb-incandescent',
     skills: {
       creator: 'Creativity'
-    }
+    },
+    evolve: true
   },
   Info : {
     id:'Info',
@@ -22,7 +24,8 @@ module.exports = {
     icon: 'mdi-communication-message',
     skills: {
       creator: 'Informator'
-    }
+    },
+    evolve: true
   },
   Action : {
     id:'Action',
@@ -31,7 +34,8 @@ module.exports = {
     icon: 'mdi-image-flash-auto',
     skills: {
       creator: 'Organisation'
-    }
+    },
+    evolve: true
   },
   Issue : {
     id:'Issue',
@@ -40,13 +44,15 @@ module.exports = {
     icon: 'mdi-alert-warning',
     skills: {
       creator: 'Problem finder'
-    }
+    },
+    evolve: true
   },
   Result : {
     id:'Result',
     desc:'Set result of parent',
     defaultChilds: [],
-    icon: 'mdi-action-thumbs-up-down'
+    icon: 'mdi-action-thumbs-up-down',
+    evolve: true
   },
   Project : {
     id:'Project',
@@ -55,13 +61,15 @@ module.exports = {
     icon: 'mdi-action-assignment',
     skills: {
       creator: 'Organisation'
-    }
+    },
+    evolve: true
   },
   Meeting : {
     id:'Meeting',
     desc:'Meeting tool for reviewing bud',
     defaultChilds: ['Info', 'Idea'],
-    icon: 'mdi-av-movie'
+    icon: 'mdi-av-movie',
+    evolve: false
   },
   Mission : {
     id:'Mission',
@@ -70,12 +78,14 @@ module.exports = {
     icon: 'mdi-action-class',
     skills: {
       creator: 'Strategy'
-    }
+    },
+    evolve: false
   },
   Team : {
     id:'Team',
     desc:'Create team for your organisation, team can be used to share bud to team members',
     defaultChilds: ['Info', 'Idea'],
-    icon: 'mdi-social-people'
+    icon: 'mdi-social-people',
+    evolve: false
   }
 };
