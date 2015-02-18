@@ -11,7 +11,7 @@ var baseConfig = {
   app: {
     root: path.normalize(__dirname + '/../..'),
     env: process.env.NODE_ENV,
-    secret: 'mi3nind803bbfnas3' /* used in signing the jwt tokens */
+    secret: process.env.QIBUD_TOKEN
   }
 };
 

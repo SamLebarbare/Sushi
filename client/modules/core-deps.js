@@ -25,4 +25,5 @@ require('./profile/profile-controller.js');
 require('./viewer/viewer.js');
 require('./viewer/viewer-controller.js');
 require('./viewer/viewer-evolve-controller.js');
+require('./viewer/viewer-sharebox-controller.js');
 require('./viewer/viewer-sendbymail-controller.js');
