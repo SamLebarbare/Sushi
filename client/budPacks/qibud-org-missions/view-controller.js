@@ -12,7 +12,8 @@ function ($scope, $state, $stateParams, api)
   $scope.packData = {
     state: 'Waiting',
     projects: [],
-    team: null
+    actor: undefined,
+    team: undefined
   };
   var afterLoad = function (done) {
     api.buds.budPacksData.get($scope.bud.id, 'Mission')
@@ -61,4 +62,51 @@ function ($scope, $state, $stateParams, api)
   };
 
   $scope.load (afterLoad);
+
+  $scope.isActor = function ()
+  {
+    if ($scope.packData.actor !== undefined) {
+      if($scope.packData.actor.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  $scope.isCreator = function ()
+  {
+    if ($scope.bud.creator !== undefined) {
+      if($scope.bud.creator.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  $scope.isActorOrCreator = function ()
+  {
+    return ($scope.isActor() || $scope.isCreator());
+  }
+
+  $scope.setActor = function ()
+  {
+    $scope.packData.actor = user;
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
+    api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
+  };
+
+  $scope.unsetActor = function ()
+  {
+    $scope.packData.actor = undefined;
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Mission');
+    api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
+  };
 });

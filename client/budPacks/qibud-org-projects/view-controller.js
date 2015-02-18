@@ -11,6 +11,7 @@ function ($scope, $state, $stateParams, api)
   var user        = $scope.common.user;
   $scope.packData = {
     state: 'Waiting',
+    actor: undefined,
     actions: []
   };
   var afterLoad = function (done) {
@@ -59,5 +60,50 @@ function ($scope, $state, $stateParams, api)
 
   $scope.load (afterLoad);
 
+  $scope.isActor = function ()
+  {
+    if ($scope.packData.actor !== undefined) {
+      if($scope.packData.actor.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
 
+  $scope.isCreator = function ()
+  {
+    if ($scope.bud.creator !== undefined) {
+      if($scope.bud.creator.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  $scope.isActorOrCreator = function ()
+  {
+    return ($scope.isActor() || $scope.isCreator());
+  }
+
+  $scope.setActor = function ()
+  {
+    $scope.packData.actor = user;
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+    api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
+  };
+
+  $scope.unsetActor = function ()
+  {
+    $scope.packData.actor = undefined;
+    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Project');
+    api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
+    $scope.load ();
+  };
 });
