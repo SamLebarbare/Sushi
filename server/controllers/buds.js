@@ -24,6 +24,7 @@ var route = require('koa-route'),
     unindexer         = require('../indexer/removeBud'),
     search            = require('../indexer/searchBud'),
     types             = require('../config/types'),
+    emails            = require('../services/emails/index.js'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
     ObjectID = mongo.ObjectID;
@@ -47,6 +48,7 @@ exports.init = function (app) {
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:parentBudId', createSubBud));
   app.use(route.post('/api/buds/:budId/comments', createComment));
+  app.use(route.post('/api/buds/:budId/mailto/:to', sendBudByMail));
   app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
   app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
   app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
@@ -59,6 +61,14 @@ function *searchBuds(query)
   this.body = results;
 }
 
+function *sendBudByMail(budId, to)
+{
+  budId   = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+  yield emails.sendBud (this.user, to, bud);
+  this.status = 200;
+  this.body   = 'ok';
+}
 
 /**
 * Find related labeled buds following neo4j CHILD relationships

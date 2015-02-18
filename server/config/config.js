@@ -40,7 +40,7 @@ var platformConfig = {
       SMTPBanner: 'Qibud Email Service'
     },
     postmark: {
-      apiKey: 'POSTMARK_API_KEY'
+      apiKey: process.env.POSTMARK_API_KEY
     },
     oauth: {
       linkedin: {

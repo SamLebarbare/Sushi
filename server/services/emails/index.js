@@ -4,12 +4,18 @@ var path           = require('path');
 var postmark       = require('postmark')(config.postmark.apiKey);
 
 exports.sendBud = function *(fromUser, to, bud) {
+
+  var subject = fromUser.name + ' want share a ' + bud.type + ' with you!';
+  var content = '<h1>' + bud.title + '</h1><br>';
+  content    += bud.content;
+  content    += '<hr>';
+  content    += '<a href="http://qibud.loup.io/">qibud.loup.io</a>';
   postmark.send({
-    From: fromLine,
+    From: 'sam@loup.io',
     To: to,
-    Subject: bud.title,
-    HtmlBody: bud.content,
-    TextBody: bud.content
+    Subject: subject,
+    HtmlBody: content,
+    TextBody: content,
   }, function(err, response) {
     if (err) {
       console.log(err.status);

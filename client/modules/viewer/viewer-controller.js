@@ -11,6 +11,8 @@ function ($scope, $state, $stateParams, $modal, api)
   var user       = $scope.common.user;
   $scope.typeInfo = null;
   $scope.ready = false;
+  $scope.mailSended = false;
+  $scope.mailErrored = false;
   $scope.follower = false;
   $scope.actionInProgress = false;
   $scope.followersCount = 0;
@@ -247,7 +249,9 @@ function ($scope, $state, $stateParams, $modal, api)
       return;
     }
     $scope.actionInProgress = true;
-
+    $scope.mailSended = false;
+    $scope.mailErrored = false;
+    
     var modalInstance = $modal.open ({
       templateUrl: 'sendbymail.html',
       controller: 'SendByMailCtrl',
@@ -257,7 +261,15 @@ function ($scope, $state, $stateParams, $modal, api)
 
     modalInstance.result.then(function (to) {
       //sendemail
-      $scope.actionInProgress = false;
+      api.buds.sendByMail ($scope.bud.id, to)
+      .success (function (){
+        $scope.mailSended       = true;
+        $scope.actionInProgress = false;
+      })
+      .error (function (){
+        $scope.mailErrored      = true;
+        $scope.actionInProgress = false;
+      });
     }, function () {
       //dismiss
       $scope.actionInProgress = false;

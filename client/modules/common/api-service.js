@@ -131,6 +131,9 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
         return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});
       },
       created: event()
+    },
+    sendByMail: function (budId, to) {
+      return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/mailto/' + to, headers: headers});
     }
   };
 

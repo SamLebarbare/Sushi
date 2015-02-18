@@ -81,6 +81,14 @@
         <button class="btn btn-primary" ng-click="sendByMail($event)" ng-disabled="actionInProgress"><i class="fa fa-paper-plane"></i>
           Send by email
         </button>
+        <growl-notification ng-show="mailSended" class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="8000">
+          <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
+          <p>Email sent!</p>
+        </growl-notification>
+        <growl-notification ng-show="mailErrored" class="alert alert-dismissable alert-error fading shadow-z-2"  ttl="8000">
+          <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
+          <p>Error while sending mail :/</p>
+        </growl-notification>
       </div>
     </ul>
     <div class="widget-icon orange pull-right"><h1> <i class="circle"> {{bud.qi}} </i> <img src="images/qibud.png" /></h1></div>
