@@ -80,54 +80,5 @@ function ($scope, $state, $stateParams, api)
     });
   };
 
-  $scope.isActor = function ()
-  {
-    if ($scope.packData.actor !== undefined) {
-      if($scope.packData.actor.id === user.id) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  $scope.isCreator = function ()
-  {
-    if ($scope.bud.creator !== undefined) {
-      if($scope.bud.creator.id === user.id) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  $scope.isActorOrCreator = function ()
-  {
-    return ($scope.isActor() || $scope.isCreator());
-  }
-
-  $scope.setActor = function ()
-  {
-    $scope.packData.actor = user;
-    $scope.packData.state = 'Assigned';
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
-    api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
-    $scope.load ();
-  };
-
-  $scope.unsetActor = function ()
-  {
-    $scope.packData.actor = undefined;
-    $scope.packData.state = 'Free';
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Issue');
-    api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
-    $scope.load ();
-  };
-
   $scope.load (afterLoad);
 });

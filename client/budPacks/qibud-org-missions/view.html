@@ -1,15 +1,20 @@
 <div ng-if="!packData.actor">
   <input
   class="btn btn-primary btn-success btn-xl btn-raised"
-  ng-click="setActor($event)"
+  ng-click="setActor($event, packData.state, packData, load)"
   value="I wanna be actor !"
+  />
+  <input
+  class="btn btn-primary btn-success btn-xl btn-raised"
+  ng-click="assignActor($event, packData.state, packData, load)"
+  value="Assign to user"
   />
 </div>
 <div ng-if="packData.actor">
   <div ng-show="isActorOrCreator()">
     <input
     class="btn btn-primary btn-warning btn-xl btn-raised"
-    ng-click="unsetActor($event)"
+    ng-click="unsetActor($event, packData.state, packData, load)"
     value="Set this action free..."
     />
   </div>

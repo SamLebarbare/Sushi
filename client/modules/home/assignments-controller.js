@@ -1,17 +1,17 @@
 'use strict';
 
 /**
- * Display meeting invitations for user
+ * Display actore assignement for current user
  */
 
-angular.module('qibud.home').controller('InvitationsCtrl',
+angular.module('qibud.home').controller('AssignmentsCtrl',
 function ($scope, $state, $filter, api)
 {
   var user             = $scope.common.user;
   $scope.itemsByPage   = 10;
   $scope.displayedBuds = [];
 
-  api.links.findU2B(user.id, 'INVITED').success(function (buds)
+  api.links.findU2B(user.id, 'ASSIGNED').success(function (buds)
   {
     $scope.buds = buds;
     $scope.displayedBuds = [].concat($scope.buds);

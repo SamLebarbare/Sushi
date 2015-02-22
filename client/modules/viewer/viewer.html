@@ -197,6 +197,34 @@
       <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
   </div>
 </script>
+<script type="text/ng-template" id="assignbox.html">
+  <div class="modal-header">
+    <h3 class="modal-title">Assignbox</h3>
+  </div>
+  <div class="modal-body">
+    Available (click to add):
+    <div class="table-responsive">
+    <table class="table table-hover">
+    <tbody>
+    <tr ng-repeat="user in users"><td ng-click="assignUser(user)"><span><i class="fa fa-user"></i></span> {{ user.name }}</td></tr>
+    </tbody>
+    </table>
+    </div>
+    <div class="spacer visible-xs"></div>
+    Assigned (click to remove):
+    <div class="table-responsive">
+    <table class="table table-hover">
+    <tbody>
+    <tr ng-show="selectedUser"><td ng-click="unassignUser(selectedUser)"><span><i class="fa fa-user"></i></span> {{ selectedUser.name }}</td></tr>
+    </tbody>
+    </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-primary" ng-click="ok()" ng-disabled="selectedUser.length < 1" >Assign</button>
+    <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
+  </div>
+</script>
 <script type="text/ng-template" id="evolvebox.html">
   <div class="modal-header">
   <h3 class="modal-title">Evolve your bud ? </h3>

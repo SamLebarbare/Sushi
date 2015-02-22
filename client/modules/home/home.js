@@ -16,7 +16,7 @@ angular
         breadcrumb: {
           class: 'highlight',
           text: 'Bud list',
-          stateName: 'bud.home.list'
+          stateName: 'home.budlist'
         },
         url: "/list",
         templateUrl: 'modules/home/home-list.html',
@@ -27,18 +27,29 @@ angular
         breadcrumb: {
           class: 'highlight',
           text: 'Invitations list',
-          stateName: 'bud.home.list'
+          stateName: 'home.invitations'
         },
         url: "/invitations",
         templateUrl: 'modules/home/invitations-list.html',
         controller: 'InvitationsCtrl'
+      })
+      .state('home.assignments', {
+        title: 'Assignments',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'Assignments list',
+          stateName: 'home.assignments'
+        },
+        url: "/assignments",
+        templateUrl: 'modules/home/assignments-list.html',
+        controller: 'AssignmentsCtrl'
       })
       .state('home.budgraph', {
         title: 'Bud Graph',
         breadcrumb: {
           class: 'highlight',
           text: 'Bud Graph',
-          stateName: 'bud.home.budgraph'
+          stateName: 'home.budgraph'
         },
         url: "/budgraph",
         templateUrl: 'modules/home/home-budgraph.html',

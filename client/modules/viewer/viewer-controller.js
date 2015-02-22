@@ -48,6 +48,100 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
+  $scope.isActor = function ()
+  {
+    if ($scope.bud.dataCache.actor !== undefined) {
+      if($scope.bud.dataCache.actor.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  $scope.isCreator = function ()
+  {
+    if ($scope.bud.creator !== undefined) {
+      if($scope.bud.creator.id === user.id) {
+        return true;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+
+  $scope.isActorOrCreator = function ()
+  {
+    return ($scope.isActor() || $scope.isCreator());
+  }
+
+  $scope.setActor = function ($event, newState, packData, callback)
+  {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    $scope.actionInProgress = true;
+
+    packData.actor = user;
+    packData.state = newState;
+    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type);
+    api.links.createU2B(user.id,'ACTOR',$scope.bud.id)
+    .success (function () {
+      $scope.actionInProgress = false;
+      callback ();
+    });
+  };
+
+  $scope.assignActor = function ($event, newState, packData, callback)
+  {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    $scope.actionInProgress = true;
+
+    $scope.assign (function (actor) {
+      packData.actor = actor;
+      packData.state = newState;
+      api.links.createU2B(actor.id,'ACTOR',$scope.bud.id);
+      api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
+      .success (function () {
+        $scope.actionInProgress = false;
+        callback ();
+      });
+    });
+  };
+
+  $scope.unsetActor = function ($event, newState, packData, callback)
+  {
+    if ($scope.actionInProgress)
+    {
+      $event.preventDefault();
+      return;
+    }
+
+    $scope.actionInProgress = true;
+    api.links.deleteU2B(packData.actor.id,'ASSIGNED',$scope.bud.id);
+    api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.id);
+    packData.actor = undefined;
+    packData.state = newState;
+    api.buds.budPacksData.set($scope.bud.id, packData, 'Action')
+    .success (function () {
+      $scope.actionInProgress = false;
+      callback ();
+    });
+
+  };
+
   $scope.subscribeAll = function () {
     api.buds.comments.created.subscribe($scope, function (comment) {
       // only add the comment if we don't have it already in the bud's comments list to avoid dupes
@@ -251,7 +345,7 @@ function ($scope, $state, $stateParams, $modal, api)
     $scope.actionInProgress = true;
     $scope.mailSended = false;
     $scope.mailErrored = false;
-    
+
     var modalInstance = $modal.open ({
       templateUrl: 'sendbymail.html',
       controller: 'SendByMailCtrl',
@@ -388,6 +482,36 @@ function ($scope, $state, $stateParams, $modal, api)
           console.info ('shared!');
         });
 
+      }, function () {
+        //dismiss
+      });
+    });
+  };
+
+  $scope.assign = function (callback) {
+    api.actors.list().success(function (actors)
+    {
+      var modalInstance = $modal.open({
+        templateUrl: 'assignbox.html',
+        controller: 'AssignboxCtrl',
+        size: 'lg',
+        resolve: {
+          users: function () {
+            return actors.users;
+          },
+          actor: function () {
+            return $scope.bud.dataCache.actor;
+          }
+        }
+      });
+
+      modalInstance.result.then(function (actor) {
+        if($scope.bud.dataCache.actor) {
+          api.links.deleteU2B($scope.dataCache.actor.id,'ASSIGNED',$scope.bud.id);
+        }
+        //assign actor to bud ->
+        api.links.createU2B(actor.id,'ASSIGNED',$scope.bud.id);
+        callback (actor);
       }, function () {
         //dismiss
       });
