@@ -1,5 +1,5 @@
 'use strict';
-var cytoscape = require('cytoscape');
+var cytoscape = require('cytoscape/dist/cytoscape.min.js');
 /**
  * Home module for displaying home page content.
  */

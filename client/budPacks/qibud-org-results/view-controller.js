@@ -52,6 +52,14 @@ function ($scope, $state, $stateParams, api)
   {
     $scope.packData.state = 'Failed';
     api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
+    if($scope.bud.parentBud) {
+      api.buds.budPacksData.get($scope.bud.parentBud.id, 'Action')
+      .success(function (packData) {
+        packData.state = 'Free';
+        api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Action');
+      });
+
+    }
   };
 
   $scope.isActor = function ()

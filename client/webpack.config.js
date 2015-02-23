@@ -28,7 +28,7 @@ module.exports = {
     ]
   },
   plugins: [
-    new ngminPlugin(), // or, new ngminPlugin({dynamic: true}) for dynamic mode.
+    new ngminPlugin({dynamic: true}), // or, new ngminPlugin({dynamic: true}) for dynamic mode.
     new webpack.optimize.LimitChunkCountPlugin({maxChunks: 15})
   ]
 };
