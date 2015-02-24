@@ -9,6 +9,7 @@ function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;
   $scope.packData = {
+    actor: undefined,
     state: 'Waiting',
     selectedBud: null
   };

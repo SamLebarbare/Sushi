@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Display actore assignement for current user
+ * Display actor assignement for current user
  */
 
 angular.module('qibud.home').controller('AssignmentsCtrl',

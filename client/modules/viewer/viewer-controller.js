@@ -134,7 +134,7 @@ function ($scope, $state, $stateParams, $modal, api)
     api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.id);
     packData.actor = undefined;
     packData.state = newState;
-    api.buds.budPacksData.set($scope.bud.id, packData, 'Action')
+    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
     .success (function () {
       $scope.actionInProgress = false;
       callback ();
