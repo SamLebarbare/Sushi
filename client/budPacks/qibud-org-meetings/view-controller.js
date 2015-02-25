@@ -7,11 +7,10 @@
 angular.module('qibud.org.meetings').controller('MeetingViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
-  var user       = $scope.common.user;
+  var user             = $scope.common.user;
   $scope.itemsByPage   = 10;
   $scope.displayedBuds = [];
   $scope.displayedBuds4Meeting = [];
-  $scope.users    = [];
   $scope.packData = {
     participations : [],
     buds: [],
@@ -61,6 +60,9 @@ function ($scope, $state, $stateParams, $location, api)
   };
 
   $scope.canEditMeeting = function () {
+    if (!$scope.bud)
+      return;
+
     return $scope.bud.creator.id === user.id;
   };
 
@@ -86,36 +88,36 @@ function ($scope, $state, $stateParams, $location, api)
     api.users.list().success(function (users)
     {
       $scope.users = users;
-
-      api.buds.budPacksData.get($scope.bud.id, 'Meeting')
-      .success(function (packData)
+      api.buds.list().success(function (buds)
       {
+        $scope.buds = buds;
+        _.remove($scope.buds, function(b) { return b.id === $scope.bud.id; });
+        $scope.displayedBuds = [].concat($scope.buds);
 
-        if(packData.state) {
-          $scope.packData = packData;
-          console.log('packdata found:' + packData);
-          $scope.packData.participations.forEach (function (p){
-            _.remove($scope.users, function(u) { return u.id === p.user.id; });
-          });
-          $scope.displayedBuds4Meeting = [].concat($scope.packData.buds);
-          api.buds.list().success(function (buds)
-          {
-            $scope.buds = buds;
-            _.remove($scope.buds, function(b) { return b.id === $scope.bud.id; });
+        api.buds.budPacksData.get($scope.bud.id, 'Meeting')
+        .success(function (packData)
+        {
+          if(packData.state) {
+            $scope.packData = packData;
+            console.log('packdata found:' + packData);
+            $scope.packData.participations.forEach (function (p){
+              _.remove($scope.users, function(u) { return u.id === p.user.id; });
+            });
             $scope.packData.buds.forEach (function (bud){
               _.remove($scope.buds, function(b) { return b.id === bud.id; });
             });
-            $scope.displayedBuds = [].concat($scope.buds);
-          });
-        } else {
-          api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Meeting');
-        }
-        done ();
-      })
-      .error(function ()
+            $scope.displayedBuds4Meeting = [].concat($scope.packData.buds);
+
+          } else {
+            api.buds.budPacksData.create($scope.bud.id, $scope.packData, 'Meeting');
+          }
+          done ();
+        })
+        .error(function ()
       {
         console.log('error while loading packdata');
         done ();
+      });
       });
     });
   };

@@ -52,6 +52,7 @@ exports.init = function (app) {
   app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
   app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
   app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
+  app.use(route.put ('/api/buds/:budId/packdata/:type/end', endPackData));
   app.use(route.delete ('/api/buds/:budId', deleteBud));
 };
 
@@ -717,7 +718,7 @@ function *createPackData(budId, type)
     // update bud document with the new packData
     var data = yield parse(this);
     result = yield mongo.buds.update(
-        {_id: budId,'budPacksData.type' : type},
+    {_id: budId,'budPacksData.type' : type},
         {$set: {'budPacksData.$.data': data}}
     );
 
@@ -752,6 +753,7 @@ function *setPackData(budId, type)
 {
   budId         = new ObjectID(budId);
   var packData   = yield parse(this);
+
   // update bud document with the new packData
   var result = yield mongo.buds.update(
       {_id: budId,'budPacksData.type' : type},
@@ -761,6 +763,38 @@ function *setPackData(budId, type)
   this.status = 201;
   this.body = result;
   ws.notify('buds.budPacksData.updated', budId);
+}
+
+/**
+* End packData lifecycle
+* @param budId - Bud ID.
+*/
+function *endPackData(budId, type)
+{
+  budId             = new ObjectID(budId);
+  var packData      = yield parse(this);
+
+  // update bud document with the new packData and lockit
+  var result = yield mongo.buds.update(
+  {_id: budId,'budPacksData.type' : type},
+  {$set: {
+    'budPacksData.$.data': packData,
+    'budPacksData.$.readonly': true
+    }
+  });
+
+  if (types[type].hasOwnProperty('skills')) {
+    if (types[type].skills.hasOwnProperty('actor')) {
+      if (packData.actor) {
+        yield xp.gainSkillXP (packData.actor,types[type].skills.actor, 20);
+        ws.notify('userupdate', packData.actor);
+      }
+    }     
+  }
+
+  this.status = 201;
+  this.body = result;
+  ws.notify('buds.budPacksData.ended', budId);
 }
 
 /**

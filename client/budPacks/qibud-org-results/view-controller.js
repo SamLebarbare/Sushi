@@ -7,7 +7,6 @@
 angular.module('qibud.org.results').controller('ResultViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
-  console.log("ResultViewerCtrl start...");
   var user        = $scope.common.user;
   $scope.packData = {
     state: 'Undefined',
@@ -44,7 +43,11 @@ function ($scope, $state, $stateParams, api)
         packData.state = 'Ended';
         api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Action');
       });
-
+      api.buds.budPacksData.get($scope.bud.parentBud.id, 'Issue')
+      .success(function (packData) {
+        packData.state = 'Ended';
+        api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Issue');
+      });
     }
   };
 
@@ -55,56 +58,22 @@ function ($scope, $state, $stateParams, api)
     if($scope.bud.parentBud) {
       api.buds.budPacksData.get($scope.bud.parentBud.id, 'Action')
       .success(function (packData) {
+        api.links.deleteU2B(packData.actor.id,'ASSIGNED',$scope.bud.parentBud.id);
+        api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.parentBud.id);
+        packData.actor = undefined;
         packData.state = 'Free';
         api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Action');
       });
+      api.buds.budPacksData.get($scope.bud.parentBud.id, 'Issue')
+      .success(function (packData) {
+        api.links.deleteU2B(packData.actor.id,'ASSIGNED',$scope.bud.parentBud.id);
+        api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.parentBud.id);
+        packData.actor = undefined;
+        packData.state = 'Free';
+        api.buds.budPacksData.set($scope.bud.parentBud.id, packData, 'Issue');
+      });
 
     }
-  };
-
-  $scope.isActor = function ()
-  {
-    if ($scope.packData.actor !== undefined) {
-      if($scope.packData.actor.id === user.id) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  $scope.isCreator = function ()
-  {
-    if ($scope.bud.creator !== undefined) {
-      if($scope.bud.creator.id === user.id) {
-        return true;
-      } else {
-        return false;
-      }
-    } else {
-      return false;
-    }
-  }
-
-  $scope.isActorOrCreator = function ()
-  {
-    return ($scope.isActor() || $scope.isCreator());
-  }
-
-  $scope.setActor = function ()
-  {
-    $scope.packData.actor = user;
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
-    api.links.createU2B(user.id,'ACTOR',$scope.bud.id);
-  };
-
-  $scope.unsetActor = function ()
-  {
-    $scope.packData.actor = undefined;
-    api.buds.budPacksData.set($scope.bud.id, $scope.packData, 'Result');
-    api.links.deleteU2B(user.id,'ACTOR',$scope.bud.id);
   };
 
 });

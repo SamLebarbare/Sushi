@@ -123,8 +123,12 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
       set: function (budId, packData, type) {
         return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
       },
+      end: function (budId, packData, type) {
+        return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/packdata/' + type + '/end', data: packData, headers: headers});
+      },
       created: event(),
-      updated: event()
+      updated: event(),
+      ended: event()
     },
     comments: {
       create: function (budId, comment) {

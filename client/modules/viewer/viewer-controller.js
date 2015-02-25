@@ -23,6 +23,32 @@ function ($scope, $state, $stateParams, $modal, api)
 
   // Helpers for bud packs
 
+  $scope.endPackData = function (packData, callback)
+  {
+    api.buds.budPacksData.end($scope.bud.id, packData, $scope.bud.type)
+    .success (callback);
+  };
+
+  $scope.savePackData = function (packData, callback)
+  {
+    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
+    .success (callback);
+  };
+
+  $scope.getPackData = function (callback)
+  {
+    api.buds.budPacksData.get($scope.bud.id, $scope.bud.type)
+    .success (function (packData) {
+      callback (packData);
+    });
+  };
+
+  $scope.createPackData = function (packData, callback)
+  {
+    api.buds.budPacksData.create($scope.bud.id, packData, $scope.bud.type)
+    .success (callback);
+  };
+
   $scope.startParentIfNeeded = function (type) {
     if($scope.bud.parentBud !== undefined) {
       var parentBudId = $scope.bud.parentBud.id;
@@ -48,6 +74,8 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   };
 
+
+
   $scope.isActor = function ()
   {
     if ($scope.bud.dataCache.actor !== undefined) {
@@ -59,7 +87,7 @@ function ($scope, $state, $stateParams, $modal, api)
     } else {
       return false;
     }
-  }
+  };
 
   $scope.isCreator = function ()
   {
@@ -72,12 +100,12 @@ function ($scope, $state, $stateParams, $modal, api)
     } else {
       return false;
     }
-  }
+  };
 
   $scope.isActorOrCreator = function ()
   {
     return ($scope.isActor() || $scope.isCreator());
-  }
+  };
 
   $scope.setActor = function ($event, newState, packData, callback)
   {
@@ -91,11 +119,12 @@ function ($scope, $state, $stateParams, $modal, api)
 
     packData.actor = user;
     packData.state = newState;
-    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type);
-    api.links.createU2B(user.id,'ACTOR',$scope.bud.id)
-    .success (function () {
-      $scope.actionInProgress = false;
-      callback ();
+    $scope.savePackData (packData, function () {
+      api.links.createU2B(user.id,'ACTOR',$scope.bud.id)
+      .success (function () {
+        $scope.actionInProgress = false;
+        callback ();
+      });
     });
   };
 
@@ -112,9 +141,8 @@ function ($scope, $state, $stateParams, $modal, api)
     $scope.assign (function (actor) {
       packData.actor = actor;
       packData.state = newState;
-      api.links.createU2B(actor.id,'ACTOR',$scope.bud.id);
-      api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
-      .success (function () {
+      api.links.createU2B(actor.id,'ACTOR', $scope.bud.id);
+      $scope.savePackData (packData, function () {
         $scope.actionInProgress = false;
         callback ();
       });
@@ -134,12 +162,10 @@ function ($scope, $state, $stateParams, $modal, api)
     api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.id);
     packData.actor = undefined;
     packData.state = newState;
-    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
-    .success (function () {
+    $scope.savePackData (packData, function () {
       $scope.actionInProgress = false;
       callback ();
     });
-
   };
 
   $scope.subscribeAll = function () {
@@ -314,11 +340,14 @@ function ($scope, $state, $stateParams, $modal, api)
       console.info ('loaded!');
 
       if (callback) {
+        console.info ('calling budpack...')
         callback(function () {
           $scope.actionInProgress = false;
+          console.info ('Budpack loaded!');
         });
       } else {
         $scope.actionInProgress = false;
+        console.info ('Budpack loaded!');
       }
 
     });

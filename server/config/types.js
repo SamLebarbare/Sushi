@@ -13,7 +13,8 @@ module.exports = {
     defaultChilds: [],
     icon: 'mdi-image-wb-incandescent',
     skills: {
-      creator: 'Creativity'
+      creator: 'Creativity',
+      actor: 'Realisator'
     },
     evolve: true
   },
@@ -33,7 +34,8 @@ module.exports = {
     defaultChilds: ['Result'],
     icon: 'mdi-image-flash-auto',
     skills: {
-      creator: 'Organisation'
+      creator: 'Organisation',
+      actor: 'Realisation'
     },
     evolve: true
   },
@@ -43,7 +45,8 @@ module.exports = {
     defaultChilds: ['Result', 'Action'],
     icon: 'mdi-alert-warning',
     skills: {
-      creator: 'Problem finder'
+      creator: 'Problem finding',
+      actor: 'Problem solving'
     },
     evolve: true
   },
@@ -60,7 +63,8 @@ module.exports = {
     defaultChilds: ['Info', 'Idea', 'Action'],
     icon: 'mdi-action-assignment',
     skills: {
-      creator: 'Organisation'
+      creator: 'Organisation',
+      actor: 'Realisation'
     },
     evolve: true
   },
