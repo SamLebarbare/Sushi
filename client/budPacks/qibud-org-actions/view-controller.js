@@ -26,6 +26,8 @@ function ($scope, $state, $stateParams, api)
         console.log('packdata found:' + packData);
         if($scope.packData.state === 'Ended') {
           $scope.endPackData ($scope.packData, done);
+        } else {
+          done ();
         }
       } else {
         $scope.createPackData ($scope.packData, done);

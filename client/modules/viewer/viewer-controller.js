@@ -26,13 +26,21 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.endPackData = function (packData, callback)
   {
     api.buds.budPacksData.end($scope.bud.id, packData, $scope.bud.type)
-    .success (callback);
+    .success (function () {
+      if(callback) {
+        callback();
+      }
+    });
   };
 
   $scope.savePackData = function (packData, callback)
   {
     api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
-    .success (callback);
+    .success (function () {
+      if(callback) {
+        callback();
+      }
+    });
   };
 
   $scope.getPackData = function (callback)
@@ -46,7 +54,11 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.createPackData = function (packData, callback)
   {
     api.buds.budPacksData.create($scope.bud.id, packData, $scope.bud.type)
-    .success (callback);
+    .success (function () {
+      if(callback) {
+        callback();
+      }
+    });
   };
 
   $scope.startParentIfNeeded = function (type) {
