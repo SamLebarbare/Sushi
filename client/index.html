@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body ng-controller="DashboardCtrl" style="background-color: white;">
+<body ng-controller="DashboardCtrl" style="background: #fff;">
   <growl-notifications ng-cloak></growl-notifications>
   <growl-notification ng-cloak class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
     <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
@@ -31,7 +31,7 @@
 
   <!-- Sidebar -->
 
-  <div ng-cloak class="shadow-z-5" id="sidebar-wrapper">
+  <div ng-cloak class="shadow-z-2" id="sidebar-wrapper">
     <ul class="sidebar">
       <li class="sidebar-main">
         <a ng-click="toggleSidebar()">
@@ -48,13 +48,16 @@
       </li>
       <li class="sidebar-title"><span>DASHBOARDS</span></li>
       <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.mybuds">My buds<span class="menu-icon mdi-action-account-circle"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.assignments">Assignments <span class="menu-icon mdi-action-assignment-return"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
+        <a ui-sref="home.invitations">Invitations <span class="menu-icon fa fa-glass"></span></a>
+      </li>
+      <li class="sidebar-list" ui-sref-active="active">
         <a ui-sref="home.budlist">Bud list <span class="menu-icon fa fa-list-alt"></span></a>
-      </li>
-      <li class="sidebar-list" ui-sref-active="active">
-        <a ui-sref="home.assignments">Bud assignments <span class="menu-icon mdi-action-assignment-return"></span></a>
-      </li>
-      <li class="sidebar-list" ui-sref-active="active">
-        <a ui-sref="home.invitations">Bud invitations <span class="menu-icon fa fa-glass"></span></a>
       </li>
       <li class="sidebar-title separator"><span>Actions</span></li>
       <li class="sidebar-list" ui-sref-active="active">
@@ -83,7 +86,7 @@
   <!-- End Sidebar -->
 
   <div id="content-wrapper" ng-cloak>
-    <div class="page-content" style="background-color: white;">
+    <div class="page-content" style="background-color: #fff;">
 
       <!-- Header Bar -->
 
@@ -215,6 +218,8 @@
         $.material.init();
     });
 </script>
+<script src="./bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
+<script src="./bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
 <script src="./bower_components/tinymce/tinymce.min.js"></script>
 <script src="/res/qibud-css.js" charset="utf-8"></script>
 <script src="/res/qibud-ext.js" charset="utf-8"></script>

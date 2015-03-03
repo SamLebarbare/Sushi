@@ -14,6 +14,7 @@ require('./home/home.js');
 require('./home/home-controller.js');
 require('./home/invitations-controller.js');
 require('./home/assignments-controller.js');
+require('./home/mybuds-controller.js');
 require('./home/budgraph-factory.js');
 require('./home/budgraph-controller.js');
 require('./home/socialgraph-factory.js');

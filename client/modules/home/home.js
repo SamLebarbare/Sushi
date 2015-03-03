@@ -22,6 +22,17 @@ angular
         templateUrl: 'modules/home/home-list.html',
         controller: 'HomeCtrl'
       })
+      .state('home.mybuds', {
+        title: 'My Buds',
+        breadcrumb: {
+          class: 'highlight',
+          text: 'My buds',
+          stateName: 'home.mybuds'
+        },
+        url: "/mybuds",
+        templateUrl: 'modules/home/mybuds-list.html',
+        controller: 'MyBudsCtrl'
+      })
       .state('home.invitations', {
         title: 'Invitations',
         breadcrumb: {

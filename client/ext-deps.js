@@ -1,5 +1,3 @@
-require('./bower_components/bootstrap-material-design/dist/js/ripples.min.js');
-require('./bower_components/bootstrap-material-design/dist/js/material.min.js');
 require('angular/angular.min.js');
 require('angular-module-sanitize');
 require('angular-cookies/angular-cookies.min.js');

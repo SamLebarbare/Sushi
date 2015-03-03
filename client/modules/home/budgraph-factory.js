@@ -34,7 +34,7 @@ angular
               size: 100,
               picture: 'url(/images/'+ bud.type + '.svg)',
               name: info,
-              faveColor: '#30426a',
+              faveColor: '#b3e5fc',
               faveShape: 'roundrectangle'
             }
           });
