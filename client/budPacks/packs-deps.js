@@ -24,3 +24,12 @@ require('./qibud-org-infos/view-controller.js');
 
 require('./qibud-org-meetings/pack.js');
 require('./qibud-org-meetings/view-controller.js');
+
+require('./qibud-org-regions/pack.js');
+require('./qibud-org-regions/view-controller.js');
+
+require('./qibud-org-customers/pack.js');
+require('./qibud-org-customers/view-controller.js');
+
+require('./qibud-org-products/pack.js');
+require('./qibud-org-products/view-controller.js');

@@ -91,5 +91,26 @@ module.exports = {
     defaultChilds: ['Info', 'Idea'],
     icon: 'mdi-social-people',
     evolve: false
-  }
+  },
+  Product : {
+    id:'Product',
+    desc:'Attach product to buds',
+    defaultChilds: ['Product'],
+    icon: 'mdi-social-pages',
+    evolve: false
+  },
+  Region : {
+    id:'Region',
+    desc:'Attach region to buds',
+    defaultChilds: ['Region','Customer'],
+    icon: 'mdi-social-public',
+    evolve: false
+  },
+  Customer : {
+    id:'Customer',
+    desc:'Attach customer to buds',
+    defaultChilds: [],
+    icon: 'mdi-communication-contacts',
+    evolve: false
+  },
 };
