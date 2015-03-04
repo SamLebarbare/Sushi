@@ -21,7 +21,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body ng-controller="DashboardCtrl" style="background: #fff;">
+<body ng-controller="DashboardCtrl" style="background: #fef2f;" ng-cloak>
   <growl-notifications ng-cloak></growl-notifications>
   <growl-notification ng-cloak class="alert alert-dismissable alert-success fading shadow-z-2"  ttl="10000">
     <button type="button" class="close" data-dismiss="alert" ng-click="$growlNotification.remove()">×</button>
@@ -86,11 +86,10 @@
   <!-- End Sidebar -->
 
   <div id="content-wrapper" ng-cloak>
-    <div class="page-content" style="background-color: #fff;">
-
+    <div class="page-content" >
       <!-- Header Bar -->
 
-      <div class="row header">
+      <div class="row header shadow-z-2">
         <div class="col-xs-2">
           <div class="meta" breadcrumbs>
             <div class="breadcrumb-links" ng-repeat="breadcrumb in breadcrumbs">
@@ -189,7 +188,7 @@
         <!-- End Header Bar -->
 
         <!-- Main Content -->
-        <div ng-cloak style="z-index: 1000;" class="jumbotron" ng-show="results.length > 0 && visible">
+        <div ng-cloak style="z-index: 1000;" class="jumbotron shadow-z-3" ng-show="results.length > 0 && visible">
           <button type="button" class="close"  ng-click="hide()"> close ×</button>
           <h2>Search results:</h2>
 

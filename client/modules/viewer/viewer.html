@@ -108,8 +108,57 @@
           </li>
         </ul>
       </div>
-      <div ng-if="bud.type != 'Bud'" ui-view="summary"></div>
-      <div ng-bind-html="bud.content"></div>
+      <section ng-if="bud.type != 'Bud'" ui-view="summary"></section>
+      <section ng-bind-html="bud.content"></section>
+      <div class="row">
+        <div class="col-md-8">
+          <section>
+            <h3>Feeback</h3>
+            <div class="form-control-wrapper">
+              <input class="form-control input-lg"
+              ng-model="bud.commentBox.message"
+              ng-keypress="createComment($event, bud)"
+              ng-disabled="bud.commentBox.disabled"
+              autofocus />
+              <div class="floating-label">Your feedback:</div>
+              <span class="material-input"></span>
+            </div>
+            <br>
+          </section>
+          <section class="comment-list">
+            <article class="row" ng-repeat="comment in bud.comments | orderBy:'_id':true ">
+              <div class="col-md-2 col-sm-2 hidden-xs" ng-if="$index %2 == 0">
+                <figure class="thumbnail">
+                  <img class="img-responsive" src="{{comment.from.picture}}" />
+                  <figcaption class="text-center orange">level {{comment.from.lvl}}</figcaption>
+                </figure>
+              </div>
+              <div class="col-md-10 col-sm-10">
+                <div class="panel panel-default arrow" ng-class-even="'right'" ng-class-odd="'left'">
+                  <div class="panel-body">
+                    <header ng-class-even="'text-right'" ng-class-odd="'text-left'">
+                      <div class="comment-user"><i class="fa fa-user"></i>{{comment.from.name}}</div>
+                      <time class="comment-date" datetime="{{comment.createdTime | date:'short'}}"><i class="fa fa-clock-o"></i> {{comment.createdTime | date:'short'}}</time>
+                    </header>
+                    <div class="comment-post">
+                      <p>
+                        {{comment.message}}
+                      </p>
+                    </div>
+                    <p class="text-right"><a ui-sref="bud.editor({budId: null, parentBudId: bud.id,content:comment.message})" class="btn btn-default btn-sm"><i class="fa fa-reply"></i> create bud</a></p>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-2 col-sm-2 hidden-xs" ng-if="$index %2 != 0">
+                <figure class="thumbnail">
+                  <img class="img-responsive" src="{{comment.from.picture}}" />
+                  <figcaption class="text-center orange">level {{comment.from.lvl}}</figcaption>
+                </figure>
+              </div>
+            </article>
+          </section>
+        </div>
+      </div>
     </div>
 
     <div class="jumbotron" ng-show="supportersCount > 0">
@@ -129,6 +178,7 @@
       </div>
     </div>
 
+    <!--
     <div class="jumbotron">
       <h3>Feeback</h3>
       <div class="form-control-wrapper">
@@ -157,7 +207,7 @@
           </div>
         </li>
       </ul>
-    </div>
+    </div> -->
   </section>
 </div>
 <script type="text/ng-template" id="sharebox.html">
@@ -267,86 +317,3 @@
   <button class="btn btn-warning" ng-click="cancel()">Cancel</button>
 </div>
 </script>
-
-
-
-<style type="text/css">
-  /* Layout */
-
-  .posts li {
-    border-top: solid 1px #E9E9E9;
-  }
-
-  .post {
-    margin-top: 0;
-    padding-bottom: 18px;
-    padding-top: 18px;
-  }
-
-  .post img {
-    height: 50px;
-    width: 50px;
-  }
-
-  .post-body h5 {
-    margin: 0;
-  }
-
-  .post-tools {
-    color: grey;
-    display: block;
-  }
-
-  .post-comments li {
-    background-color: #edeff4;
-    border: none;
-  }
-
-  .post-comments li:first-child {
-    background: none;
-    line-height: 5px;
-  }
-
-  .post-comments li:nth-child(2) {
-    margin-top: 0;
-  }
-
-  .post-comments li:nth-child(n + 3) {
-    margin-top: 1px;
-  }
-
-  .post-comment {
-    line-height: 13px;
-    padding: 5px 5px 4px 5px;
-  }
-
-  .post-comment img {
-    height: 32px;
-    width: 32px;
-  }
-
-  .post-comment > .pull-left {
-    margin-right: 8px;
-  }
-
-  .post-comment .comment-box {
-  }
-
-  .post-comment-body textarea {
-    resize: vertical;
-    height: 20px;
-    width: 75%;
-    margin: 0;
-    padding-top: 1px;
-    padding-bottom: 0;
-    font-size: 12px;
-    border-radius: 2px;
-  }
-
-  .post-comment-tools {
-    color: gray;
-    display: block;
-    line-height: 16px;
-    padding-top: 2px;
-  }
-</style>
