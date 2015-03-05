@@ -1,26 +1,25 @@
-<div class="container-fluid">
-  <section>
-    <div class="jumbotron">
-      <div class="widget-icon pull-right">
-        <h1 class="green">Level <i class="circle">{{user.lvl}}</i></h1>
-      </div>
-
+<div class="container">
+  <div class="fb-profile">
+    <img align="left" class="fb-image-lg" src="/images/profile.png" alt="Profile image"/>
+    <img align="left" class="fb-image-profile thumbnail" src="{{user.picture}}" alt="Profile image example"/>
+    <div class="fb-profile-text">
       <h1>{{user.name}}</h1>
-      
-      <h3>Main Qi Experience</h3>
-      <h4>Level {{user.lvl}} ({{user.xp}} / {{user.neededXp}} XP)
-      <div class="progress">
-        <div class="progress-bar progress-bar-success" style="width: {{user.progress}}%"></div>
-      </div>
-
-      <div ng-repeat="skill in user.skills">
-        <h3>{{skill.type}} </h3>
-        <h4></4>
-        <h4>Level {{skill.lvl}} ({{skill.xp}} / {{skill.neededXp}} XP)
-          <div class="progress">
-            <div class="progress-bar progress-bar-success" style="width: {{skill.progress}}%"></div>
-          </div>
-      </div>
     </div>
-  </section>
+  </div>
+</div>
+<div class="container">
+  <div class="progress">
+    <div class="progress-bar progress-bar-success" style="width: {{user.progress}}%"></div>
+    <span class="progress-type">QI Level {{user.lvl}} ({{user.xp}} / {{user.neededXp}} XP)</span>
+    <span class="progress-completed"> {{user.progress}}%</span>
+  </div>
+  <div ng-repeat="skill in user.skills">
+    <div class="progress">
+      <div class="progress-bar progress-bar-success" role="progressbar" aria-valuenow="{{skill.progress}}" aria-valuemin="0" aria-valuemax="100" style="width: {{skill.progress}}%">
+        <span class="sr-only">{{skill.progress}}% Complete</span>
+      </div>
+      <span class="progress-type">{{skill.type}} Level {{skill.lvl}}  ({{skill.xp}} / {{skill.neededXp}} XP)</span>
+      <span class="progress-completed">{{skill.progress}}%</span>
+    </div>
+  </div>
 </div>
