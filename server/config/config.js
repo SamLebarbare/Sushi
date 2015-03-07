@@ -68,8 +68,7 @@ var platformConfig = {
       url: 'http://localhost:7474/'
     },
   },
-
-  production: {
+  heroku: {
     app: {
       port: process.env.PORT || 3000,
       cacheTime: 7 * 24 * 60 * 60 * 1000 /* default caching time (7 days) for static files, calculated in milliseconds */
@@ -91,6 +90,42 @@ var platformConfig = {
       disableWebhook: false,
       logFile: '/dev/null',
       logLevel: 'info',
+      smtpOptions: {},
+      SMTPBanner: 'Qibud Email Service'
+    },
+    postmark: {
+      apiKey: process.env.POSTMARK_API_KEY
+    },
+    oauth: {
+      linkedin: {
+        clientId: '77u90yjt9shkkx',
+        clientSecret: 'cy4SSvLboSiEDg6S',
+        callbackUrl: 'http://qibud.loup.io/signin/linkedin/callback',
+        scope : 'r_basicprofile%20r_emailaddress%20r_network'
+      }
+    }
+  },
+  production: {
+    app: {
+      port: 3000,
+      cacheTime: 1 * 24 * 60 * 60 * 1000 /* default caching time (7 days) for static files, calculated in milliseconds */
+    },
+    mongo: {
+      url: 'mongodb://localhost:27017/qibud-prod'
+    },
+    neo4j: {
+      url: 'http://localhost:7474'
+    },
+    es: {
+      host: 'http://localhost:9200',
+      log: 'trace'
+    },
+    mailin: {
+      port: 2500,
+      webhook: 'http://localhost:3000/api/mailboxes/incoming',
+      disableWebhook: false,
+      logFile: '/dev/null',
+      logLevel: 'warn',
       smtpOptions: {},
       SMTPBanner: 'Qibud Email Service'
     },
