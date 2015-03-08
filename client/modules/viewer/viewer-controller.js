@@ -270,6 +270,15 @@ function ($scope, $state, $stateParams, $modal, api)
     });
   };
 
+  $scope.$watch('files', function () {
+    $scope.upload ($scope.files);
+  });
+
+  $scope.upload = function (files)
+  {
+    api.buds.upload($scope.bud.id, files);
+  };
+
   //Init view
   $scope.init = function (bud) {
     bud.commentBox = {message: '', disabled: false};

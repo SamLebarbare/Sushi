@@ -16,7 +16,6 @@ var config = require('./server/config/config'),
 
 
 module.exports = app;
-
 app.init = co(function *() {
   // initialize mongodb and populate the database with seed data
   yield mongo.connect();

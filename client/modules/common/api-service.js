@@ -4,7 +4,7 @@
  * Service for providing access the backend API via HTTP and WebSockets.
  */
 
-angular.module('qibud.common').factory('api', function ($rootScope, $http, $window) {
+angular.module('qibud.common').factory('api', function ($rootScope, $http, $window, $upload) {
 
   var apiBase = 'api' /* base /api uri */,
       token = ($window.sessionStorage.token || $window.localStorage.token),
@@ -138,6 +138,18 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     },
     sendByMail: function (budId, to) {
       return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/mailto/' + to, headers: headers});
+    },
+    upload: function (budId, files) {
+      if (files && files.length) {
+        for (var i = 0; i < files.length; i++) {
+          var file = files[i];
+          $upload.upload({
+            url: apiBase + '/buds/' + budId + '/upload',
+            file: files,
+            headers: headers
+          });
+        }
+      }
     }
   };
 

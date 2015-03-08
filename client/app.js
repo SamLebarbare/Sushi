@@ -29,6 +29,7 @@ angular
       'qibud.org.customers',
       'qibud.org.products',
       'smart-table',
+      'angularFileUpload',
       'growlNotifications'
     ])
 

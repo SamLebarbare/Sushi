@@ -4,8 +4,10 @@
  * Buds controller.
  */
 
-var route = require('koa-route'),
+var fs    = require('fs'),
+    route = require('koa-route'),
     parse = require('co-body'),
+    formidable = require('koa-formidable'),
     mongo = require('../config/mongo'),
     createBudInGraph  = require('../graph-entities/userCreateBud'),
     createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
@@ -25,9 +27,9 @@ var route = require('koa-route'),
     search            = require('../indexer/searchBud'),
     types             = require('../config/types'),
     emails            = require('../services/emails/index.js'),
-    ws = require('../config/ws'),
-    foreach = require('generator-foreach'),
-    ObjectID = mongo.ObjectID;
+    ws                = require('../config/ws'),
+    foreach           = require('generator-foreach'),
+    ObjectID          = mongo.ObjectID;
 
 // register koa routes
 exports.init = function (app) {
@@ -47,6 +49,7 @@ exports.init = function (app) {
   app.use(route.put ('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:parentBudId', createSubBud));
+  app.use(route.post('/api/buds/:budId/upload', upload));
   app.use(route.post('/api/buds/:budId/comments', createComment));
   app.use(route.post('/api/buds/:budId/mailto/:to', sendBudByMail));
   app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
@@ -704,6 +707,29 @@ function *createComment(budId)
   ws.notify('userupdate', this.user);
 }
 
+/**
+* Add files to bud
+* @param budId - Bud ID.
+*/
+function *upload(budId)
+{
+  var path = require('path');
+  var os   = require('os');
+  budId = new ObjectID(budId);
+  // multipart upload
+  var uploads = [];
+  var form = yield formidable.parse(this);
+  var result = yield mongo.buds.update(
+    {_id: budId},
+    {$push: {files: form.files.file}}
+  );
+  var bud = bud = yield mongo.buds.findOne({_id : budId});
+  bud.id = bud._id;
+  delete bud._id;
+  this.status = 201;
+  ws.notify('buds.updated', bud);
+}
+
 
 /**
  * Create a new packData for a given typed bud.
@@ -789,7 +815,7 @@ function *endPackData(budId, type)
         yield xp.gainSkillXP (packData.actor,types[type].skills.actor, 20);
         ws.notify('userupdate', packData.actor);
       }
-    }     
+    }
   }
 
   this.status = 201;

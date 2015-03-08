@@ -108,10 +108,31 @@
           </li>
         </ul>
       </div>
-      <section ng-if="bud.type != 'Bud'" ui-view="summary"></section>
-      <section ng-bind-html="bud.content"></section>
       <div class="row">
-        <div class="col-md-8">
+        <div class="col-lg-9">
+          <section class="well">
+            <div ng-if="bud.type != 'Bud'" ui-view="summary"></div>
+            <div ng-bind-html="bud.content"></div>
+          </section>
+        </div>
+        <div class="col-lg-3">
+          <section class="well">
+            <h3>Attachments</h3>
+            <div ng-show="bud.files" class="bs-component">
+              <ul ng-repeat="f in bud.files" class="breadcrumb">
+                <li>{{f.name}} ({{f.size}}kb)</li>
+              </ul>
+            </div>
+            <button class="btn btn-primary" accept=".jpg,.png,.pdf" ng-file-select ng-file-change="upload($files)">Add attachment</button>
+            <div ng-file-drop ng-model="files" class="drop-box"
+            drag-over-class="dragover"
+            accept=".jpg,.png,.pdf">Drop Attachment</div>
+            <div ng-no-file-drop>File Drag/Drop is not supported for this browser</div>
+          </section>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-lg-12">
           <section>
             <h3>Feeback</h3>
             <div class="form-control-wrapper">
