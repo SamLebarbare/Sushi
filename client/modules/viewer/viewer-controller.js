@@ -279,6 +279,11 @@ function ($scope, $state, $stateParams, $modal, api)
     api.buds.upload($scope.bud.id, files);
   };
 
+  $scope.removeAttachment = function (file)
+  {
+    api.buds.unload($scope.bud.id, file.name);
+  };
+
   //Init view
   $scope.init = function (bud) {
     bud.commentBox = {message: '', disabled: false};

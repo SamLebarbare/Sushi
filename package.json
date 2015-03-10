@@ -40,7 +40,6 @@
     "koa-livereload": "~0",
     "koa-logger": "~1",
     "koa-route": "~2",
-    "koa-send": "~1",
     "lodash": "~2",
     "mailin": "^1.0.0",
     "ng-file-upload": "^3.1.2",

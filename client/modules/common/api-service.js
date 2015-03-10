@@ -139,12 +139,15 @@ angular.module('qibud.common').factory('api', function ($rootScope, $http, $wind
     sendByMail: function (budId, to) {
       return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/mailto/' + to, headers: headers});
     },
+    unload: function (budId, fileId) {
+      return $http({method: 'DELETE', url: apiBase + '/buds/' + budId + '/attachments/' + fileId, headers: headers});
+    },
     upload: function (budId, files) {
       if (files && files.length) {
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
           $upload.upload({
-            url: apiBase + '/buds/' + budId + '/upload',
+            url: apiBase + '/buds/' + budId + '/attachments',
             file: files,
             headers: headers
           });

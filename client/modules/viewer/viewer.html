@@ -117,10 +117,19 @@
         </div>
         <div class="col-lg-3">
           <section class="well">
-            <h3>Attachments</h3>
+            <h3><i class="mdi-editor-attach-file"></i> Attachments</h3>
             <div ng-show="bud.files" class="bs-component">
               <ul ng-repeat="f in bud.files" class="breadcrumb">
-                <li>{{f.name}} ({{f.size}}kb)</li>
+                <li>
+                  <div class="btn-group btn-group-sm">
+                    <a class="btn orange" ng-href="{{f.path}}" download="{{f.name}}">
+                      <i class="mdi-file-file-download"></i> {{f.name}}
+                    </a>
+                    <button class="btn btn-danger" ng-click="removeAttachment(f)">
+                      <i class="mdi-content-clear"></i>
+                    </button>
+                  </div>
+                </li>
               </ul>
             </div>
             <button class="btn btn-primary" accept=".jpg,.png,.pdf" ng-file-select ng-file-change="upload($files)">Add attachment</button>

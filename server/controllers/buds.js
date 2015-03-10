@@ -49,8 +49,8 @@ exports.init = function (app) {
   app.use(route.put ('/api/buds/:budId/unsupport', unsupportBud));
   app.use(route.post('/api/buds', createBud));
   app.use(route.post('/api/buds/:parentBudId', createSubBud));
-  app.use(route.post('/api/buds/:budId/upload', upload));
-  app.use(route.post('/api/buds/:budId/comments', createComment));
+  app.use(route.post('/api/buds/:budId/attachments', uploadFile));
+  app.use(route.delete ('/api/buds/:budId/attachments/:fileId', removeFile));
   app.use(route.post('/api/buds/:budId/mailto/:to', sendBudByMail));
   app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
   app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
@@ -711,17 +711,23 @@ function *createComment(budId)
 * Add files to bud
 * @param budId - Bud ID.
 */
-function *upload(budId)
+function *uploadFile(budId)
 {
   var path = require('path');
-  var os   = require('os');
   budId = new ObjectID(budId);
   // multipart upload
   var uploads = [];
-  var form = yield formidable.parse(this);
+  var form = yield formidable.parse({uploadDir: '/tmp/qibud/'},this);
+  console.log (JSON.stringify(form));
+  var fileData = {
+    path: form.files.file.path,
+    type: form.files.file.type,
+    name: form.files.file.name,
+    size: form.files.file.size
+  };
   var result = yield mongo.buds.update(
     {_id: budId},
-    {$push: {files: form.files.file}}
+    {$push: {files: fileData}}
   );
   var bud = bud = yield mongo.buds.findOne({_id : budId});
   bud.id = bud._id;
@@ -730,6 +736,56 @@ function *upload(budId)
   ws.notify('buds.updated', bud);
 }
 
+/**
+*
+*/
+function *getFile(budId, fileId)
+{
+  var path = require ('path');
+  var os = require ('os');
+  budId = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+  var targetFile = null;
+  var targetType = null
+  bud.files.forEach (function (file) {
+    if(file.name === fileId)
+    {
+      targetFile = file.path;
+      targetType = file.type;
+      return;
+    }
+  });
+  if(targetFile !== null) {
+    yield send(this, targetFile);
+  }
+}
+
+/**
+*
+*/
+function *removeFile(budId, fileId)
+{
+  budId = new ObjectID(budId);
+  var bud = yield mongo.buds.findOne({_id : budId});
+  var targetFile = null;
+  bud.files.forEach (function (file) {
+    if(file.name === fileId)
+    {
+      fs.unlinkSync(file.path);
+      targetFile = file;
+      return;
+    }
+  });
+  var result = yield mongo.buds.update(
+    {_id: budId},
+    {$pull: {files: targetFile}}
+  );
+  var bud = yield mongo.buds.findOne({_id : budId});
+  bud.id = bud._id;
+  delete bud._id;
+  this.status = 201;
+  ws.notify('buds.updated', bud);
+}
 
 /**
  * Create a new packData for a given typed bud.
