@@ -125,7 +125,7 @@
                     <a class="btn orange" ng-href="{{f.path}}" download="{{f.name}}">
                       <i class="mdi-file-file-download"></i> {{f.name}}
                     </a>
-                    <button class="btn btn-danger" ng-click="removeAttachment(f)">
+                    <button ng-if="canEdit()" class="btn btn-danger" ng-click="removeAttachment(f)">
                       <i class="mdi-content-clear"></i>
                     </button>
                   </div>
