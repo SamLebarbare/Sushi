@@ -9,7 +9,7 @@ exports.sendBud = function *(fromUser, to, bud) {
   var content = '<h1>' + bud.title + '</h1><br>';
   content    += bud.content;
   content    += '<hr>';
-  content    += '<a href="http://qibud.loup.io/">qibud.loup.io</a>';
+  content    += '<a href="http://sushi.loup.io/">sushi.loup.io</a>';
   postmark.send({
     From: 'sam@loup.io',
     To: to,
@@ -27,7 +27,7 @@ exports.sendBud = function *(fromUser, to, bud) {
 }
 
 exports.init = function () {
-  console.log('[QIBUD] EMAILS SERVICE START...');
+  console.log('[sushi] EMAILS SERVICE START...');
   mailin.start(config.mailin);
 
   /* Access simplesmtp server instance. */

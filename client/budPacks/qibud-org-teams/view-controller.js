@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.teams').controller('TeamViewerCtrl',
+angular.module('sushi.org.teams').controller('TeamViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;

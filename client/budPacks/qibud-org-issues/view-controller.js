@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.issues').controller('IssueViewerCtrl',
+angular.module('sushi.org.issues').controller('IssueViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   console.log("IssueViewerCtrl start...");

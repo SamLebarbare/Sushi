@@ -2,7 +2,7 @@
 
 /* https://github.com/angular/protractor/blob/master/docs/getting-started.md */
 
-/*describe('QIBUD app', function() {
+/*describe('sushi app', function() {
 
   browser.get('index.html');
 

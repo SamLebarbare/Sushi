@@ -4,7 +4,7 @@
  * Display actor assignement for current user
  */
 
-angular.module('qibud.home').controller('AssignmentsCtrl',
+angular.module('sushi.home').controller('AssignmentsCtrl',
 function ($scope, $state, $filter, api)
 {
   var user             = $scope.common.user;

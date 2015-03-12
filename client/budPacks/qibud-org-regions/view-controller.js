@@ -4,7 +4,7 @@
  * __
  */
 
- angular.module('qibud.org.regions').controller('RegionViewerCtrl',
+ angular.module('sushi.org.regions').controller('RegionViewerCtrl',
  function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;

@@ -13,7 +13,7 @@ var qs = require('querystring'),
     createUserInGraph = require('../graph-entities/userNode'),
     mongo = require('../config/mongo');
 
-// register qibud routes
+// register sushi routes
 exports.init = function (app) {
   app.use(route.post('/signin', signin));
   app.use(route.get('/signin/linkedin', linkedinsignin));

@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.actions').controller('ActionViewerCtrl',
+angular.module('sushi.org.actions').controller('ActionViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   console.log("ActionViewerCtrl start...");

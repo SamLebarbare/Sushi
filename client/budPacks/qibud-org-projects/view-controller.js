@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.projects').controller('ProjectViewerCtrl',
+angular.module('sushi.org.projects').controller('ProjectViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   console.log("ProjectViewerCtrl start...");

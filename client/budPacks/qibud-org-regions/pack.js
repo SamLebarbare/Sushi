@@ -4,10 +4,10 @@
  */
 
 angular
-    .module('qibud.org.regions', [
+    .module('sushi.org.regions', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
@@ -15,7 +15,7 @@ angular
             url: '/region',
             views: {
               'summary':{
-                templateUrl: 'budPacks/qibud-org-regions/view.html',
+                templateUrl: 'budPacks/sushi-org-regions/view.html',
                 controller: 'RegionViewerCtrl'
               }
             },

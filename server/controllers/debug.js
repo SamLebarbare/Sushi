@@ -6,7 +6,7 @@
 
 var route = require('koa-route'),
     config = require('../config/config'),
-    qibudSeed = require('../config/qibud-seed');
+    sushiSeed = require('../config/sushi-seed');
 
 // register koa routes
 exports.init = function (app) {
@@ -15,6 +15,6 @@ exports.init = function (app) {
 
 function *clearDatabase() {
   // todo: check user role === 'admin' when role system is ready
-  yield qibudSeed(true);
+  yield sushiSeed(true);
   this.status = 200;
 }

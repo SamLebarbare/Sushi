@@ -4,7 +4,7 @@
  * Display created buds
  */
 
-angular.module('qibud.home').controller('MyBudsCtrl',
+angular.module('sushi.home').controller('MyBudsCtrl',
 function ($scope, $state, $filter, api)
 {
   var user             = $scope.common.user;

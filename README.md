@@ -1,11 +1,3 @@
-[![QIBUD](http://static.tumblr.com/9o93btp/N51liyrau/qibud_100.png)](http://qibud.com/)
-
-[![Build Status](https://travis-ci.org/Loupio/qibud.svg?branch=master)](https://travis-ci.org/Loupio/qibud)
-
-
-## Qibud
-
-
 ### Heroku Deployment
 Before you start make sure you have <a href="https://toolbelt.heroku.com/">heroku toolbelt</a> installed.
 

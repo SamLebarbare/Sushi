@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('qibud.viewer').controller('ShareboxCtrl', function ($scope, $modalInstance, shares, users, teams) {
+angular.module('sushi.viewer').controller('ShareboxCtrl', function ($scope, $modalInstance, shares, users, teams) {
 
   $scope.users = users;
   $scope.teams = teams;

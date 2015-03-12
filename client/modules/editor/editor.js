@@ -5,14 +5,14 @@
  */
 
 angular
-    .module('qibud.editor', [
+    .module('sushi.editor', [
       'ui.router',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
           .state('bud.editor', {
-            title: 'Qibud Editor',
+            title: 'sushi Editor',
             url: "/editor/:budId/:parentBudId/:content",
             breadcrumb: {
               class: 'highlight',

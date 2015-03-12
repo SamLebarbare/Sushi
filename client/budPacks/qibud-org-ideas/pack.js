@@ -4,10 +4,10 @@
  */
 
 angular
-    .module('qibud.org.ideas', [
+    .module('sushi.org.ideas', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
@@ -15,7 +15,7 @@ angular
             url: '/idea',
             views: {
               'summary':{
-                templateUrl: 'budPacks/qibud-org-ideas/view.html',
+                templateUrl: 'budPacks/sushi-org-ideas/view.html',
                 controller: 'IdeaViewerCtrl'
               }
             },
@@ -30,7 +30,7 @@ angular
             views: {
               'summary':{
                 controller: 'IdeaEditorCtrl',
-                templateUrl: 'budPacks/qibud-org-ideas/edit.html',
+                templateUrl: 'budPacks/sushi-org-ideas/edit.html',
               }
             },
             breadcrumb: {

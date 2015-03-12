@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.infos').controller('InfoViewerCtrl',
+angular.module('sushi.org.infos').controller('InfoViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;

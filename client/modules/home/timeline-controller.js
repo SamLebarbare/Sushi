@@ -4,7 +4,7 @@
  *
  */
 
-angular.module('qibud.home').controller('TimelineCtrl',
+angular.module('sushi.home').controller('TimelineCtrl',
 function ($scope, $state, api, budGraph)
 {
   var user       = $scope.common.user;

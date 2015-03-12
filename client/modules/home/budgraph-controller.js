@@ -4,7 +4,7 @@
  * Home controller simply lists all the buds from everyone on the front page.
  */
 
-angular.module('qibud.home').controller('BudgraphCtrl',
+angular.module('sushi.home').controller('BudgraphCtrl',
 function ($scope, $state, api, budGraph)
 {
   var user       = $scope.common.user;

@@ -5,10 +5,10 @@
  */
 
 angular
-    .module('qibud.viewer', [
+    .module('sushi.viewer', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
 

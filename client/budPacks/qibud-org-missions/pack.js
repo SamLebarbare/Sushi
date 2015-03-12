@@ -5,10 +5,10 @@
  */
 
 angular
-    .module('qibud.org.missions', [
+    .module('sushi.org.missions', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
@@ -16,7 +16,7 @@ angular
             url: '/mission',
             views: {
               'summary':{
-                templateUrl: 'budPacks/qibud-org-missions/view.html',
+                templateUrl: 'budPacks/sushi-org-missions/view.html',
                 controller: 'MissionViewerCtrl'
               }
             },
@@ -31,7 +31,7 @@ angular
             views: {
               'summary':{
                 controller: 'MissionViewerCtrl',
-                templateUrl: 'budPacks/qibud-org-missions/view.html',
+                templateUrl: 'budPacks/sushi-org-missions/view.html',
               }
             },
             breadcrumb: {

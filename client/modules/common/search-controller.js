@@ -1,5 +1,5 @@
 
-angular.module('qibud.common').controller('SearchCtrl',
+angular.module('sushi.common').controller('SearchCtrl',
 function ($scope, api) {
   $scope.results = [];
   $scope.displayedBuds = [];

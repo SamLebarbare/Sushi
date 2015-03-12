@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.meetings').controller('MeetingViewerCtrl',
+angular.module('sushi.org.meetings').controller('MeetingViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
   var user             = $scope.common.user;

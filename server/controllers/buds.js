@@ -717,7 +717,7 @@ function *uploadFile(budId)
   budId = new ObjectID(budId);
   // multipart upload
   var uploads = [];
-  var form = yield formidable.parse({uploadDir: '/tmp/qibud/'},this);
+  var form = yield formidable.parse({uploadDir: '/tmp/sushi/'},this);
   console.log (JSON.stringify(form));
   var fileData = {
     path: form.files.file.path,

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('qibud.viewer').controller('SendByMailCtrl', function ($scope, $modalInstance) {
+angular.module('sushi.viewer').controller('SendByMailCtrl', function ($scope, $modalInstance) {
 
   $scope.to = null;
 

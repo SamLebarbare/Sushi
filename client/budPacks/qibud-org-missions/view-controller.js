@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.missions').controller('MissionViewerCtrl',
+angular.module('sushi.org.missions').controller('MissionViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   console.log("MissionViewerCtrl start...");

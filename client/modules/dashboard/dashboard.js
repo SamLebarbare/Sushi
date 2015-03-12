@@ -1,4 +1,4 @@
-angular.module('qibud.dashboard',[]).controller('DashboardCtrl', ['$scope', '$cookieStore', DashboardCtrl]);
+angular.module('sushi.dashboard',[]).controller('DashboardCtrl', ['$scope', '$cookieStore', DashboardCtrl]);
 function DashboardCtrl($scope, $cookieStore) {
     /**
      * Sidebar Toggle & Cookie Control

@@ -5,9 +5,9 @@
  */
 
 angular
-    .module('qibud.home', [
+    .module('sushi.home', [
       'ui.router',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider

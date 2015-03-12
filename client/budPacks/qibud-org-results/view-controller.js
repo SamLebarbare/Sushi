@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.results').controller('ResultViewerCtrl',
+angular.module('sushi.org.results').controller('ResultViewerCtrl',
 function ($scope, $state, $stateParams, api)
 {
   var user        = $scope.common.user;

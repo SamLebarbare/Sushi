@@ -1,13 +1,13 @@
 'use strict';
 
 /**
- * Entry point for QIBUD app. Initiates database connection and starts listening for requests on configured port.
+ * Entry point for sushi app. Initiates database connection and starts listening for requests on configured port.
  */
 
 var config = require('./server/config/config'),
     mail  = require('./server/services/emails'),
     mongo = require('./server/config/mongo'),
-    qibudSeed = require('./server/config/qibud-seed'),
+    sushiSeed = require('./server/config/sushi-seed'),
     koaConfig = require('./server/config/koa'),
     ws = require('./server/config/ws'),
     co = require('co'),
@@ -19,7 +19,7 @@ module.exports = app;
 app.init = co(function *() {
   // initialize mongodb and populate the database with seed data
   yield mongo.connect();
-  yield qibudSeed();
+  yield sushiSeed();
 
   // koa config
   koaConfig(app);
@@ -28,7 +28,7 @@ app.init = co(function *() {
   app.server = app.listen(config.app.port);
   ws.listen(app.server);
   if (config.app.env !== 'test') {
-    console.log('Qibud listening on port ' + config.app.port);
+    console.log('sushi listening on port ' + config.app.port);
   }
   //dont use mailin in prod
   if (config.app.env !== 'production') {

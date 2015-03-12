@@ -1,10 +1,10 @@
 {
-  "name": "qibud",
+  "name": "sushi",
   "version": "1.0.0",
   "description": "Collaborative information management",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Loupio/qibud.git"
+    "url": "https://github.com/Loupio/sushi.git"
   },
   "engines": {
     "node": "0.11.12"

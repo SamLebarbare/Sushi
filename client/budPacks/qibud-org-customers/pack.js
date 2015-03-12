@@ -4,10 +4,10 @@
  */
 
 angular
-    .module('qibud.org.customers', [
+    .module('sushi.org.customers', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
@@ -15,7 +15,7 @@ angular
             url: '/customer',
             views: {
               'summary':{
-                templateUrl: 'budPacks/qibud-org-customers/view.html',
+                templateUrl: 'budPacks/sushi-org-customers/view.html',
                 controller: 'CustomerViewerCtrl'
               }
             },

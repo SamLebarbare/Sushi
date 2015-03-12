@@ -4,7 +4,7 @@
  * Editor controller provide a good way to edit/write buds
  */
 
-angular.module('qibud.editor').controller('EditorCtrl',
+angular.module('sushi.editor').controller('EditorCtrl',
 function ($scope, $state, $stateParams, $modal, $location, api)
 {
   var user       = $scope.common.user;

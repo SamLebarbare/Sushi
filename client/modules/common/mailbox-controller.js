@@ -1,5 +1,5 @@
 
-angular.module('qibud.common').controller('MailboxCtrl',
+angular.module('sushi.common').controller('MailboxCtrl',
 function ($scope, $modal, api)
 {
   $scope.emails = {};

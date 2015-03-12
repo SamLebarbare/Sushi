@@ -4,7 +4,7 @@
  * Service for providing access the backend API via HTTP and WebSockets.
  */
 
-angular.module('qibud.common').factory('api', function ($rootScope, $http, $window, $upload) {
+angular.module('sushi.common').factory('api', function ($rootScope, $http, $window, $upload) {
 
   var apiBase = 'api' /* base /api uri */,
       token = ($window.sessionStorage.token || $window.localStorage.token),

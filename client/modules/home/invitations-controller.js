@@ -4,7 +4,7 @@
  * Display meeting invitations for user
  */
 
-angular.module('qibud.home').controller('InvitationsCtrl',
+angular.module('sushi.home').controller('InvitationsCtrl',
 function ($scope, $state, $filter, api)
 {
   var user             = $scope.common.user;

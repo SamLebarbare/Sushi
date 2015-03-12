@@ -1,8 +1,8 @@
 <!doctype html>
-<html lang="en" ng-app="qibud">
+<html lang="en" ng-app="sushi">
 <head>
   <meta charset="utf-8">
-  <meta name="description" content="QIBUD - Collaborative information management">
+  <meta name="description" content="sushi - Collaborative information management">
   <script>
     // if user logs in with oauth, user token will be in query string so look for it. otherwise, check browser storage for token
     var tokenParamMatch = RegExp('[?&]user=([^&]*)').exec(window.location.search),
@@ -17,7 +17,7 @@
       if (!user || user.exp < Math.round(new Date().getTime() / 1000)) window.location.replace('/signin.html');
     }
   </script>
-  <title ng-bind="common.title">QIBUD</title>
+  <title ng-bind="common.title">sushi</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -35,7 +35,7 @@
     <ul class="sidebar">
       <li class="sidebar-main">
         <a ng-click="toggleSidebar()">
-          QiBud Menu
+          sushi Menu
           <span class="menu-icon glyphicon glyphicon-transfer"></span>
         </a>
       </li>
@@ -66,7 +66,7 @@
     </ul>
     <div class="sidebar-footer">
       <div class="col-xs-4">
-        <a href="https://github.com/Loupio/qibud" target="_blank">
+        <a href="https://github.com/Loupio/sushi" target="_blank">
           Github
         </a>
       </div>
@@ -76,7 +76,7 @@
         </a>
       </div>
       <div class="col-xs-4">
-        <a href="http://www.qibud.com">
+        <a href="http://www.sushi.com">
           Support
         </a>
       </div>
@@ -221,10 +221,10 @@
 <script src="./bower_components/bootstrap-material-design/dist/js/ripples.min.js"></script>
 <script src="./bower_components/bootstrap-material-design/dist/js/material.min.js"></script>
 <script src="./bower_components/tinymce/tinymce.min.js"></script>
-<script src="/res/qibud-css.js" charset="utf-8"></script>
-<script src="/res/qibud-ext.js" charset="utf-8"></script>
-<script src="/res/qibud-mods.js" charset="utf-8"></script>
-<script src="/res/qibud-packs.js" charset="utf-8"></script>
+<script src="/res/sushi-css.js" charset="utf-8"></script>
+<script src="/res/sushi-ext.js" charset="utf-8"></script>
+<script src="/res/sushi-mods.js" charset="utf-8"></script>
+<script src="/res/sushi-packs.js" charset="utf-8"></script>
 <script src="/app.js"></script>
 </body>
 </html>

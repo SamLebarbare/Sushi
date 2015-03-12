@@ -4,7 +4,7 @@
  * __
  */
 
-angular.module('qibud.org.ideas').controller('IdeaViewerCtrl',
+angular.module('sushi.org.ideas').controller('IdeaViewerCtrl',
 function ($scope, $state, $stateParams, $location, api)
 {
   var user       = $scope.common.user;

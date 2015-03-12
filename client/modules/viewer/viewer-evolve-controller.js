@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('qibud.viewer').controller('EvolveCtrl', function ($scope, $modalInstance, availableTypes) {
+angular.module('sushi.viewer').controller('EvolveCtrl', function ($scope, $modalInstance, availableTypes) {
 
   $scope.availableTypes = availableTypes;
   $scope.selectedType = 'Bud';

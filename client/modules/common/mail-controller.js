@@ -1,5 +1,5 @@
 
-angular.module('qibud.common').controller('MailConverterCtrl',
+angular.module('sushi.common').controller('MailConverterCtrl',
 function ($scope, $modalInstance, email) {
 
   $scope.email = email;

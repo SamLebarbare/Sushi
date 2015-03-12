@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('qibud.viewer').controller('AssignboxCtrl', function ($scope, $modalInstance, users, actor) {
+angular.module('sushi.viewer').controller('AssignboxCtrl', function ($scope, $modalInstance, users, actor) {
 
   $scope.users = users;
   $scope.selectedUser = actor;

@@ -55,7 +55,7 @@ module.exports = function *(overwrite)
     yield createIndexes();
 
 
-    console.log('QIBUD SEED INSTALLED');
+    console.log('sushi SEED INSTALLED');
   }
 };
 
@@ -63,9 +63,9 @@ module.exports = function *(overwrite)
 var users = [
   {
     _id: 1,
-    email: 'admin@qibud.com',
+    email: 'admin@sushi.com',
     password: 'admin',
-    name: 'Qibud Admin',
+    name: 'sushi Admin',
     xp: 0,
     lvl: 1,
     skills: [],
@@ -73,7 +73,7 @@ var users = [
   },
   {
     _id: 2,
-    email: 'chuck@qibud.com',
+    email: 'chuck@sushi.com',
     password: 'chuck',
     name: 'Chuck Norris',
     xp: 0,
@@ -83,7 +83,7 @@ var users = [
   },
   {
     _id: 3,
-    email: 'austin@qibud.com',
+    email: 'austin@sushi.com',
     password: 'austin',
     name: 'Austin Powers',
     xp: 0,
@@ -93,7 +93,7 @@ var users = [
   },
   {
     _id: 4,
-    email: 'bruce@qibud.com',
+    email: 'bruce@sushi.com',
     password: 'bruce',
     name: 'Bruce Willis',
     xp: 0,

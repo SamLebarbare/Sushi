@@ -5,10 +5,10 @@
  */
 
 angular
-    .module('qibud.org.teams', [
+    .module('sushi.org.teams', [
       'ui.router',
       'ui.bootstrap',
-      'qibud.common'
+      'sushi.common'
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
@@ -16,7 +16,7 @@ angular
             url: '/team',
             views: {
               'summary':{
-                templateUrl: 'budPacks/qibud-org-teams/view.html',
+                templateUrl: 'budPacks/sushi-org-teams/view.html',
                 controller: 'TeamViewerCtrl'
               }
             },

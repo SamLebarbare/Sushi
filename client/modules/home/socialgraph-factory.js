@@ -5,7 +5,7 @@ var cytoscape = require('cytoscape');
  */
 
 angular
-    .module('qibud.home')
+    .module('sushi.home')
     .factory('socialGraph', [ '$q', function( $q ) {
       var cy;
 

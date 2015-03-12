@@ -5,7 +5,7 @@ var cytoscape = require('cytoscape/dist/cytoscape.min.js');
  */
 
 angular
-    .module('qibud.home')
+    .module('sushi.home')
     .factory('budGraph', [ '$q', function( $q ) {
       var cy;
 

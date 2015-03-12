@@ -4,7 +4,7 @@
  * Viewer controller provide a good way to read buds
  */
 
-angular.module('qibud.viewer').controller('ViewerCtrl',
+angular.module('sushi.viewer').controller('ViewerCtrl',
 function ($scope, $state, $stateParams, $modal, api)
 {
 

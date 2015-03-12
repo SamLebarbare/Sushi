@@ -1,7 +1,7 @@
 'use strict';
 
 var config = require('../../server/config/config'),
-    qibudSeed = require('../../server/config/qibud-seed'),
+    sushiSeed = require('../../server/config/sushi-seed'),
     app = require('../../app'),
     jwt = require('koa-jwt'),
     baseUrl = 'http://localhost:' + config.app.port + '/api',
@@ -9,19 +9,19 @@ var config = require('../../server/config/config'),
     request = supertest(baseUrl);
 
 // create a valid jwt token to be sent with every request
-var token = jwt.sign({id: 2, name: 'Chuck Norris', mail: 'chuck@qibud.com'}, config.app.secret);
+var token = jwt.sign({id: 2, name: 'Chuck Norris', mail: 'chuck@sushi.com'}, config.app.secret);
 token = 'Bearer ' + token;
 
 // make request and token objects available
 exports.request = request;
 exports.token = token;
 
-// initiate QIBUD server before each test is run
+// initiate sushi server before each test is run
 // also drop and re-seed the test database before each run
 console.log('Mocha starting to run server tests on port ' + config.app.port);
 beforeEach(function (done) {
   this.timeout(5000); // sometimes travis ci takes too long here
-  qibudSeed(true);
+  sushiSeed(true);
   app.init(done);
 });
 

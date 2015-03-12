@@ -11,7 +11,7 @@ module.exports = {
   },
   output: {
       path: path.join(__dirname, 'res'),
-      filename: "qibud-[name].js",
+      filename: "sushi-[name].js",
       publicPath: './res/'
   },
   resolve: {
