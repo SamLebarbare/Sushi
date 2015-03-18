@@ -36,9 +36,9 @@ angular
     .config(function ($stateProvider, $urlRouterProvider) {
       $urlRouterProvider.otherwise("/home/stickers");
       $stateProvider
-          .state('bud', {
+          .state('sushi', {
             abstract: true,
-            url: '/buds',
+            url: '/sushis',
             template: '<div data-ui-view></div>'});
       $stateProvider
             .state('home', { abstract: true, url: '/home', template: '<div data-ui-view></div>'});

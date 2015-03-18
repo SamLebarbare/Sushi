@@ -5,7 +5,7 @@ module.exports = function *()
 {
 
   yield client.indices.create({
-    index: 'bud'
+    index: 'sushi'
   });
 
 };

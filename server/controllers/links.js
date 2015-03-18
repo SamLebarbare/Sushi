@@ -1,18 +1,18 @@
 'use strict';
 
 /**
- * Bud linking controller.
+ * Sushi linking controller.
  */
 
 var route = require('koa-route'),
     parse = require('co-body'),
     mongo = require('../config/mongo'),
-    createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
-    createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
-    createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
-    removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
-    findUser2BudIds   = require('../graph-entities/findUser2BudIds'),
-    packdata          = require('../bud-entities/packdata'),
+    createUser2SushiRel = require('../graph-entities/addUser2SushiRelation'),
+    createSushi2UserRel = require('../graph-entities/addSushi2UserRelation'),
+    createSushi2SushiRel  = require('../graph-entities/addSushi2SushiRelation'),
+    removeUser2SushiRel = require('../graph-entities/delUser2SushiRelation'),
+    findUser2SushiIds   = require('../graph-entities/findUser2SushiIds'),
+    packdata          = require('../sushi-entities/packdata'),
     types             = require('../config/types'),
     ws = require('../config/ws'),
     foreach = require('generator-foreach'),
@@ -20,73 +20,73 @@ var route = require('koa-route'),
 
 // register koa routes
 exports.init = function (app) {
-  app.use(route.post  ('/api/links/b2b/:budId/:type/:budId2', createB2B));
-  app.use(route.post  ('/api/links/b2u/:budId/:type/:userId', createB2U));
-  app.use(route.post  ('/api/links/u2b/:userId/:type/:budId', createU2B));
-  app.use(route.delete('/api/links/u2b/:userId/:type/:budId', deleteU2B));
+  app.use(route.post  ('/api/links/b2b/:sushiId/:type/:sushiId2', createB2B));
+  app.use(route.post  ('/api/links/b2u/:sushiId/:type/:userId', createB2U));
+  app.use(route.post  ('/api/links/u2b/:userId/:type/:sushiId', createU2B));
+  app.use(route.delete('/api/links/u2b/:userId/:type/:sushiId', deleteU2B));
   app.use(route.get   ('/api/links/u2b/:userId/:type', findU2B));
 };
 
 
 /**
-* findU2B buds
+* findU2B sushis
 */
 function *findU2B(userId, type)
 {
-  var budIds = yield findUser2BudIds (userId, type);
-  var buds   = yield mongo.buds.find(
-                  {_id: { $in: budIds }}).toArray();
+  var sushiIds = yield findUser2SushiIds (userId, type);
+  var sushis   = yield mongo.sushis.find(
+                  {_id: { $in: sushiIds }}).toArray();
   var scope = this;
-  yield * foreach(buds, function * (bud) {
-    bud.id = bud._id;
-    delete bud._id;
-    bud.dataCache = packdata.getPack (bud, bud.type);
-    bud.typeInfo = types[bud.type];
+  yield * foreach(sushis, function * (sushi) {
+    sushi.id = sushi._id;
+    delete sushi._id;
+    sushi.dataCache = packdata.getPack (sushi, sushi.type);
+    sushi.typeInfo = types[sushi.type];
   });
   this.status = 200;
-  this.body   = buds;
+  this.body   = sushis;
 }
 
 /**
- * Create Bud2Bud relation
+ * Create Sushi2Sushi relation
  */
-function *createB2B(budId, type, budId2)
+function *createB2B(sushiId, type, sushiId2)
 {
-  //get first bud
-  budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  if(bud === null)
+  //get first sushi
+  sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  if(sushi === null)
   {
-    this.throw(404, 'Unable to find first bud');
+    this.throw(404, 'Unable to find first sushi');
   }
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
-  budId2 = new ObjectID(budId2);
-  var bud2 = yield mongo.buds.findOne({_id : budId2});
-  if(bud2 === null)
+  sushiId2 = new ObjectID(sushiId2);
+  var sushi2 = yield mongo.sushis.findOne({_id : sushiId2});
+  if(sushi2 === null)
   {
-    this.throw(404, 'Unable to find second bud');
+    this.throw(404, 'Unable to find second sushi');
   }
-  bud2.id = bud2._id;
-  delete bud2._id;
+  sushi2.id = sushi2._id;
+  delete sushi2._id;
 
   this.status = 201;
-  this.body = yield createBud2BudRel  (bud, bud2, type);
+  this.body = yield createSushi2SushiRel  (sushi, sushi2, type);
 
 }
 
 /**
- * Create Bud2User relation
+ * Create Sushi2User relation
  */
-function *createB2U(budId, type, userId)
+function *createB2U(sushiId, type, userId)
 {
-  //get first bud
-  budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  if(bud === null)
+  //get first sushi
+  sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  if(sushi === null)
   {
-    this.throw(404, 'Unable to find first bud');
+    this.throw(404, 'Unable to find first sushi');
   }
 
   userId = parseInt(userId);
@@ -99,24 +99,24 @@ function *createB2U(budId, type, userId)
   delete user._id;
 
   this.status = 201;
-  this.body = yield createBud2UserRel  (bud, user, type);
+  this.body = yield createSushi2UserRel  (sushi, user, type);
 }
 
 /**
- * Create User2Bud relation
+ * Create User2Sushi relation
  */
-function *createU2B(userId, type, budId)
+function *createU2B(userId, type, sushiId)
 {
 
-  //get first bud
-  budId   = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  if(bud === null)
+  //get first sushi
+  sushiId   = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  if(sushi === null)
   {
-    this.throw(404, 'Unable to find first bud');
+    this.throw(404, 'Unable to find first sushi');
   }
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   userId = parseInt(userId);
   var user = yield mongo.users.findOne({_id : userId});
@@ -128,23 +128,23 @@ function *createU2B(userId, type, budId)
   delete user._id;
 
   this.status = 201;
-  this.body = yield createUser2BudRel  (user, bud, type);
+  this.body = yield createUser2SushiRel  (user, sushi, type);
 }
 
 /**
- * Delete User2Bud relation
+ * Delete User2Sushi relation
  */
-function *deleteU2B(userId, type, budId)
+function *deleteU2B(userId, type, sushiId)
 {
-  //get first bud
-  budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  if(bud === null)
+  //get first sushi
+  sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  if(sushi === null)
   {
-    this.throw(404, 'Unable to find first bud');
+    this.throw(404, 'Unable to find first sushi');
   }
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   userId = parseInt(userId);
   var user = yield mongo.users.findOne({_id : userId});
@@ -156,5 +156,5 @@ function *deleteU2B(userId, type, budId)
   delete user._id;
 
   this.status = 201;
-  this.body = yield removeUser2BudRel  (user, bud, type);
+  this.body = yield removeUser2SushiRel  (user, sushi, type);
 }

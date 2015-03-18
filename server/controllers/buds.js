@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Buds controller.
+ * Sushis controller.
  */
 
 var fs    = require('fs'),
@@ -9,22 +9,22 @@ var fs    = require('fs'),
     parse = require('co-body'),
     formidable = require('koa-formidable'),
     mongo = require('../config/mongo'),
-    createBudInGraph  = require('../graph-entities/userCreateBud'),
-    createUser2BudRel = require('../graph-entities/addUser2BudRelation'),
-    createBud2UserRel = require('../graph-entities/addBud2UserRelation'),
-    createBud2BudRel  = require('../graph-entities/addBud2BudRelation'),
-    removeUser2BudRel = require('../graph-entities/delUser2BudRelation'),
-    getUserBuds       = require('../graph-entities/getUserBuds'),
-    getRelatedChilds  = require('../graph-entities/getRelatedChildBuds'),
-    getRelatedParents = require('../graph-entities/getRelatedParentBuds'),
-    updateQi          = require('../graph-entities/updateQiOnBud'),
-    setType           = require('../graph-entities/setTypeOnBud'),
-    clearBud          = require('../graph-entities/clearBud'),
-    packdata          = require('../bud-entities/packdata'),
+    createSushiInGraph  = require('../graph-entities/userCreateSushi'),
+    createUser2SushiRel = require('../graph-entities/addUser2SushiRelation'),
+    createSushi2UserRel = require('../graph-entities/addSushi2UserRelation'),
+    createSushi2SushiRel  = require('../graph-entities/addSushi2SushiRelation'),
+    removeUser2SushiRel = require('../graph-entities/delUser2SushiRelation'),
+    getUserSushis       = require('../graph-entities/getUserSushis'),
+    getRelatedChilds  = require('../graph-entities/getRelatedChildSushis'),
+    getRelatedParents = require('../graph-entities/getRelatedParentSushis'),
+    updateQi          = require('../graph-entities/updateQiOnSushi'),
+    setType           = require('../graph-entities/setTypeOnSushi'),
+    clearSushi          = require('../graph-entities/clearSushi'),
+    packdata          = require('../sushi-entities/packdata'),
     xp                = require('../user-entities/xp'),
-    indexer           = require('../indexer/addBud'),
-    unindexer         = require('../indexer/removeBud'),
-    search            = require('../indexer/searchBud'),
+    indexer           = require('../indexer/addSushi'),
+    unindexer         = require('../indexer/removeSushi'),
+    search            = require('../indexer/searchSushi'),
     types             = require('../config/types'),
     emails            = require('../services/emails/index.js'),
     ws                = require('../config/ws'),
@@ -33,177 +33,177 @@ var fs    = require('fs'),
 
 // register koa routes
 exports.init = function (app) {
-  app.use(route.get ('/api/buds/search/:query', searchBuds));
-  app.use(route.get ('/api/buds', listBuds));
-  app.use(route.get ('/api/buds/:budId/view', viewBud));
-  app.use(route.get ('/api/buds/:budId/child/:type', relatedChilds));
-  app.use(route.get ('/api/buds/:budId/parent/:type', relatedParent));
-  app.use(route.put ('/api/buds/:budId/update', updateBud));
-  app.use(route.put ('/api/buds/:budId/share', shareBud));
-  app.use(route.put ('/api/buds/:budId/follow', followBud));
-  app.use(route.put ('/api/buds/:budId/unfollow', unfollowBud));
-  app.use(route.put ('/api/buds/:budId/sponsor', sponsorBud));
-  app.use(route.put ('/api/buds/:budId/unsponsor', unsponsorBud));
-  app.use(route.put ('/api/buds/:budId/support', supportBud));
-  app.use(route.put ('/api/buds/:budId/evolve/:type', evolveBud));
-  app.use(route.put ('/api/buds/:budId/unsupport', unsupportBud));
-  app.use(route.post('/api/buds', createBud));
-  app.use(route.post('/api/buds/:parentBudId', createSubBud));
-  app.use(route.post('/api/buds/:budId/attachments', uploadFile));
-  app.use(route.delete ('/api/buds/:budId/attachments/:fileId', removeFile));
-  app.use(route.post('/api/buds/:budId/mailto/:to', sendBudByMail));
-  app.use(route.post('/api/buds/:budId/packdata/:type', createPackData));
-  app.use(route.get ('/api/buds/:budId/packdata/:type', getPackData));
-  app.use(route.put ('/api/buds/:budId/packdata/:type', setPackData));
-  app.use(route.put ('/api/buds/:budId/packdata/:type/end', endPackData));
-  app.use(route.delete ('/api/buds/:budId', deleteBud));
+  app.use(route.get ('/api/sushis/search/:query', searchSushis));
+  app.use(route.get ('/api/sushis', listSushis));
+  app.use(route.get ('/api/sushis/:sushiId/view', viewSushi));
+  app.use(route.get ('/api/sushis/:sushiId/child/:type', relatedChilds));
+  app.use(route.get ('/api/sushis/:sushiId/parent/:type', relatedParent));
+  app.use(route.put ('/api/sushis/:sushiId/update', updateSushi));
+  app.use(route.put ('/api/sushis/:sushiId/share', shareSushi));
+  app.use(route.put ('/api/sushis/:sushiId/follow', followSushi));
+  app.use(route.put ('/api/sushis/:sushiId/unfollow', unfollowSushi));
+  app.use(route.put ('/api/sushis/:sushiId/sponsor', sponsorSushi));
+  app.use(route.put ('/api/sushis/:sushiId/unsponsor', unsponsorSushi));
+  app.use(route.put ('/api/sushis/:sushiId/support', supportSushi));
+  app.use(route.put ('/api/sushis/:sushiId/evolve/:type', evolveSushi));
+  app.use(route.put ('/api/sushis/:sushiId/unsupport', unsupportSushi));
+  app.use(route.post('/api/sushis', createSushi));
+  app.use(route.post('/api/sushis/:parentSushiId', createSubSushi));
+  app.use(route.post('/api/sushis/:sushiId/attachments', uploadFile));
+  app.use(route.delete ('/api/sushis/:sushiId/attachments/:fileId', removeFile));
+  app.use(route.post('/api/sushis/:sushiId/mailto/:to', sendSushiByMail));
+  app.use(route.post('/api/sushis/:sushiId/packdata/:type', createPackData));
+  app.use(route.get ('/api/sushis/:sushiId/packdata/:type', getPackData));
+  app.use(route.put ('/api/sushis/:sushiId/packdata/:type', setPackData));
+  app.use(route.put ('/api/sushis/:sushiId/packdata/:type/end', endPackData));
+  app.use(route.delete ('/api/sushis/:sushiId', deleteSushi));
 };
 
-function *searchBuds(query)
+function *searchSushis(query)
 {
   var results = yield search(query);
   this.body = results;
 }
 
-function *sendBudByMail(budId, to)
+function *sendSushiByMail(sushiId, to)
 {
-  budId   = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  yield emails.sendBud (this.user, to, bud);
+  sushiId   = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  yield emails.sendSushi (this.user, to, sushi);
   this.status = 200;
   this.body   = 'ok';
 }
 
 /**
-* Find related labeled buds following neo4j CHILD relationships
+* Find related labeled sushis following neo4j CHILD relationships
 */
-function *relatedChilds(budId, type)
+function *relatedChilds(sushiId, type)
 {
-  var relatedBudsIds = yield getRelatedChilds(budId,type);
-  var buds = yield mongo.buds.find(
-      {_id: { $in: relatedBudsIds }}).toArray();
+  var relatedSushisIds = yield getRelatedChilds(sushiId,type);
+  var sushis = yield mongo.sushis.find(
+      {_id: { $in: relatedSushisIds }}).toArray();
   var scope = this;
-  yield * foreach(buds, function * (bud) {
-        bud.id = bud._id;
-        delete bud._id;
-        bud.dataCache = packdata.getPack (bud, bud.type);
-        bud.typeInfo = types[bud.type];
-        bud.qi = yield updateQi(scope.user, bud, 0);
+  yield * foreach(sushis, function * (sushi) {
+        sushi.id = sushi._id;
+        delete sushi._id;
+        sushi.dataCache = packdata.getPack (sushi, sushi.type);
+        sushi.typeInfo = types[sushi.type];
+        sushi.qi = yield updateQi(scope.user, sushi, 0);
       });
-  this.body = buds;
+  this.body = sushis;
 }
 
 /**
-* Find related labeled buds following neo4j CHILD relationships
+* Find related labeled sushis following neo4j CHILD relationships
 */
-function *relatedParent(budId, type)
+function *relatedParent(sushiId, type)
 {
-  var relatedBudsIds = yield getRelatedParents(budId,type);
-  var buds = yield mongo.buds.find(
-  {_id: { $in: relatedBudsIds }}).toArray();
+  var relatedSushisIds = yield getRelatedParents(sushiId,type);
+  var sushis = yield mongo.sushis.find(
+  {_id: { $in: relatedSushisIds }}).toArray();
   var scope = this;
-  yield * foreach(buds, function * (bud) {
-    bud.id = bud._id;
-    delete bud._id;
-    bud.dataCache = packdata.getPack (bud, bud.type);
-    bud.typeInfo = types[bud.type];
-    bud.qi = yield updateQi(scope.user, bud, 0);
+  yield * foreach(sushis, function * (sushi) {
+    sushi.id = sushi._id;
+    delete sushi._id;
+    sushi.dataCache = packdata.getPack (sushi, sushi.type);
+    sushi.typeInfo = types[sushi.type];
+    sushi.qi = yield updateQi(scope.user, sushi, 0);
   });
-  this.body = buds;
+  this.body = sushis;
 }
 
 /**
- * Lists all user buds
+ * Lists all user sushis
  */
-function *listBuds()
+function *listSushis()
 {
-  var userBudsIds = yield getUserBuds(this.user);
-  var buds = yield mongo.buds.find(
-      {_id: { $in: userBudsIds }}).toArray();
+  var userSushisIds = yield getUserSushis(this.user);
+  var sushis = yield mongo.sushis.find(
+      {_id: { $in: userSushisIds }}).toArray();
 
   var scope = this;
-  yield * foreach(buds, function * (bud) {
-    bud.id = bud._id;
-    delete bud._id;
-    bud.dataCache = packdata.getPack (bud, bud.type);
-    bud.typeInfo = types[bud.type];
-    bud.qi = yield updateQi(scope.user, bud, 0);
+  yield * foreach(sushis, function * (sushi) {
+    sushi.id = sushi._id;
+    delete sushi._id;
+    sushi.dataCache = packdata.getPack (sushi, sushi.type);
+    sushi.typeInfo = types[sushi.type];
+    sushi.qi = yield updateQi(scope.user, sushi, 0);
   });
 
-  this.body = buds;
+  this.body = sushis;
 }
 
 /**
- * Get one bud by id
+ * Get one sushi by id
  */
-function *viewBud(budId)
+function *viewSushi(sushiId)
 {
-  budId   = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
+  sushiId   = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  if(bud)
+  if(sushi)
   {
-    bud.id = bud._id;
-    delete bud._id;
-    bud.dataCache = packdata.getPack (bud, bud.type);
-    bud.typeInfo  = types[bud.type];
-    this.body = bud;
+    sushi.id = sushi._id;
+    delete sushi._id;
+    sushi.dataCache = packdata.getPack (sushi, sushi.type);
+    sushi.typeInfo  = types[sushi.type];
+    this.body = sushi;
 
-    bud.qi  = yield updateQi(this.user, bud, 0);
-    var result = yield mongo.buds.update(
-        {_id: budId},
-        {$set: {qi: bud.qi}}
+    sushi.qi  = yield updateQi(this.user, sushi, 0);
+    var result = yield mongo.sushis.update(
+        {_id: sushiId},
+        {$set: {qi: sushi.qi}}
     );
   }
   else
   {
-    this.throw(404, 'Bud not found');
+    this.throw(404, 'Sushi not found');
   }
 
 }
 
 
 /**
- * Saves a new bud in the database after proper validations.
+ * Saves a new sushi in the database after proper validations.
  */
-function *createBud()
+function *createSushi()
 {
-  // it is best to validate bud body with something like node-validator here, before saving it in the database..
-  var bud  = yield parse(this);
-  bud.creator = this.user;
-  bud.createdTime = new Date();
-  bud.qi = 0;
+  // it is best to validate sushi body with something like node-validator here, before saving it in the database..
+  var sushi  = yield parse(this);
+  sushi.creator = this.user;
+  sushi.createdTime = new Date();
+  sushi.qi = 0;
 
-  var results = yield mongo.buds.insert(bud);
+  var results = yield mongo.sushis.insert(sushi);
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
-  //add bud in graph
-  yield createBudInGraph (this.user, bud);
-  yield createUser2BudRel (this.user, bud, 'CREATED');
-  bud.qi = yield updateQi(this.user, bud, 0);
+  //add sushi in graph
+  yield createSushiInGraph (this.user, sushi);
+  yield createUser2SushiRel (this.user, sushi, 'CREATED');
+  sushi.qi = yield updateQi(this.user, sushi, 0);
   this.status = 201;
   this.body = results[0].id.toString(); // we need .toString() here to return text/plain response
-  yield indexer(bud);
+  yield indexer(sushi);
 
-  // now notify everyone about this new bud
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.created', bud);
-  if(bud.type) {
+  // now notify everyone about this new sushi
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.created', sushi);
+  if(sushi.type) {
     var packData = {
-      type : bud.type,
+      type : sushi.type,
       data : {}
     };
 
-    var result = yield mongo.buds.update(
-        {_id: bud.id},
-        {$push: {types: bud.type, budPacksData: packData}}
+    var result = yield mongo.sushis.update(
+        {_id: sushi.id},
+        {$push: {types: sushi.type, sushiPacksData: packData}}
     );
 
-    yield setType(this.user, bud, bud.type);
+    yield setType(this.user, sushi, sushi.type);
 
-    ws.notify('buds.evolved', bud);
+    ws.notify('sushis.evolved', sushi);
   }
 
   yield xp.gainMainXP (this.user, 50);
@@ -211,73 +211,73 @@ function *createBud()
 }
 
 /**
- * Saves a new bud linked to a parent bud
+ * Saves a new sushi linked to a parent sushi
  */
-function *createSubBud(parentBudId)
+function *createSubSushi(parentSushiId)
 {
   //get parent
-  parentBudId = new ObjectID(parentBudId);
-  var parentBud = yield mongo.buds.findOne({_id : parentBudId});
-  if(parentBud === null)
+  parentSushiId = new ObjectID(parentSushiId);
+  var parentSushi = yield mongo.sushis.findOne({_id : parentSushiId});
+  if(parentSushi === null)
   {
-    this.throw(404, 'Unable to find parent bud from id');
+    this.throw(404, 'Unable to find parent sushi from id');
   }
 
-  parentBud.id = parentBud._id;
-  delete parentBud._id;
+  parentSushi.id = parentSushi._id;
+  delete parentSushi._id;
 
-  //create bud
-  var bud  = yield parse(this);
-  bud.creator = this.user;
-  bud.createdTime = new Date();
-  bud.qi = 0;
-  bud.parentBud = parentBud;
+  //create sushi
+  var sushi  = yield parse(this);
+  sushi.creator = this.user;
+  sushi.createdTime = new Date();
+  sushi.qi = 0;
+  sushi.parentSushi = parentSushi;
 
-  var results = yield mongo.buds.insert(bud);
+  var results = yield mongo.sushis.insert(sushi);
 
-  //embbed sub bud in document
-  yield mongo.buds.update(
-      {_id: parentBudId},
-      {$push: {subBuds: {id: bud._id, title: bud.title} } }
+  //embbed sub sushi in document
+  yield mongo.sushis.update(
+      {_id: parentSushiId},
+      {$push: {subSushis: {id: sushi._id, title: sushi.title} } }
   );
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
   this.status = 201;
-  this.body = bud.id; // we need .toString() here to return text/plain response
-  yield indexer(bud);
+  this.body = sushi.id; // we need .toString() here to return text/plain response
+  yield indexer(sushi);
 
-  //add bud in graph
-  yield createBudInGraph  (this.user, bud);
-  yield createUser2BudRel (this.user, bud, 'CREATED');
-  yield createBud2BudRel  (bud, parentBud, 'PARENT');
-  yield createBud2BudRel  (parentBud, bud, 'CHILD');
+  //add sushi in graph
+  yield createSushiInGraph  (this.user, sushi);
+  yield createUser2SushiRel (this.user, sushi, 'CREATED');
+  yield createSushi2SushiRel  (sushi, parentSushi, 'PARENT');
+  yield createSushi2SushiRel  (parentSushi, sushi, 'CHILD');
   //update parentqi
-  parentBud.qi = yield updateQi (this.user, parentBud, 1);
-  var result = yield mongo.buds.update(
-      {_id: parentBud.id},
-      {$set: {qi: parentBud.qi}}
+  parentSushi.qi = yield updateQi (this.user, parentSushi, 1);
+  var result = yield mongo.sushis.update(
+      {_id: parentSushi.id},
+      {$set: {qi: parentSushi.qi}}
   );
 
-  // now notify everyone about this new bud
-  ws.notify('qi.updated', bud);
-  ws.notify('qi.updated', parentBud);
-  ws.notify('buds.created', bud);
-  ws.notify('buds.updated', parentBud);
-  if(bud.type) {
+  // now notify everyone about this new sushi
+  ws.notify('qi.updated', sushi);
+  ws.notify('qi.updated', parentSushi);
+  ws.notify('sushis.created', sushi);
+  ws.notify('sushis.updated', parentSushi);
+  if(sushi.type) {
     var packData = {
-      type : bud.type,
+      type : sushi.type,
       data : {}
     };
 
-    var result = yield mongo.buds.update(
-        {_id: bud.id},
-        {$push: {types: bud.type, budPacksData: packData}}
+    var result = yield mongo.sushis.update(
+        {_id: sushi.id},
+        {$push: {types: sushi.type, sushiPacksData: packData}}
     );
 
-    yield setType(this.user, bud, bud.type);
+    yield setType(this.user, sushi, sushi.type);
 
-    ws.notify('buds.evolved', bud);
+    ws.notify('sushis.evolved', sushi);
 
   }
 
@@ -286,97 +286,97 @@ function *createSubBud(parentBudId)
 }
 
 /**
- * Update a bud in the database after proper validations.
+ * Update a sushi in the database after proper validations.
  */
-function *updateBud()
+function *updateSushi()
 {
-  var bud  = yield parse(this);
-  if(bud.creator.id !== this.user.id)
+  var sushi  = yield parse(this);
+  if(sushi.creator.id !== this.user.id)
   {
-    this.throw(403, 'You are not the creator of this bud');
+    this.throw(403, 'You are not the creator of this sushi');
   }
 
-  bud.lastUpdate = new Date();
-  if(bud.revision)
+  sushi.lastUpdate = new Date();
+  if(sushi.revision)
   {
-    bud.revision++;
+    sushi.revision++;
   }
   else
   {
-    bud.revision = 1
+    sushi.revision = 1
   }
 
 
 
-  bud._id = new ObjectID(bud.id);
-  var results = yield mongo.buds.update(
-    {_id: bud._id},
+  sushi._id = new ObjectID(sushi.id);
+  var results = yield mongo.sushis.update(
+    {_id: sushi._id},
     {$set: {
-      title: bud.title,
-      content: bud.content,
-      privacy: bud.privacy,
-      type: bud.type,
-      revision: bud.revision,
-      lastUpdate: bud.lastUpdate
+      title: sushi.title,
+      content: sushi.content,
+      privacy: sushi.privacy,
+      type: sushi.type,
+      revision: sushi.revision,
+      lastUpdate: sushi.lastUpdate
     }});
 
-  if(bud.parentBud)
+  if(sushi.parentSushi)
   {
-    var parentBudId = new ObjectID(bud.parentBud.id);
-    var r=yield mongo.buds.update(
-        {_id: parentBudId, 'subBuds.id' : bud._id},
-        {$set: {'subBuds.$.title': bud.title } }
+    var parentSushiId = new ObjectID(sushi.parentSushi.id);
+    var r=yield mongo.sushis.update(
+        {_id: parentSushiId, 'subSushis.id' : sushi._id},
+        {$set: {'subSushis.$.title': sushi.title } }
     );
   }
 
-  if(bud.subBuds)
+  if(sushi.subSushis)
   {
-    yield * foreach(bud.subBuds, function * (sBud) {
-      var sBudId = new ObjectID(sBud.id);
-      var r=yield mongo.buds.update(
-          {_id: sBudId},
-          {$set: {'parentBud.title': bud.title } });
+    yield * foreach(sushi.subSushis, function * (sSushi) {
+      var sSushiId = new ObjectID(sSushi.id);
+      var r=yield mongo.sushis.update(
+          {_id: sSushiId},
+          {$set: {'parentSushi.title': sushi.title } });
     });
   }
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
-  yield indexer(bud);
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
+  yield indexer(sushi);
 
-  ws.notify('buds.updated', bud);
+  ws.notify('sushis.updated', sushi);
 }
 
 
 /**
- * Add Type to bud
+ * Add Type to sushi
  */
-function *evolveBud(budId, type)
+function *evolveSushi(sushiId, type)
 {
   if(!type)
   {
     this.throw(403, 'type is not valid');
   }
 
-  var budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  bud.id = bud._id;
-  delete bud._id;
+  var sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  sushi.id = sushi._id;
+  delete sushi._id;
 
-  if(bud.creator.id !== this.user.id)
+  if(sushi.creator.id !== this.user.id)
   {
-    this.throw(403, 'You are not the creator of this bud');
+    this.throw(403, 'You are not the creator of this sushi');
   }
 
   var evolveNeeded = true;
-  if(bud.types)
+  if(sushi.types)
   {
-    if(bud.types.indexOf(type) !== -1)
+    if(sushi.types.indexOf(type) !== -1)
     {
-      var result = yield mongo.buds.update(
-          {_id: budId},
+      var result = yield mongo.sushis.update(
+          {_id: sushiId},
           {$set: {type: type}});
       console.log('restored in '+ type);
       evolveNeeded = false;
@@ -390,18 +390,18 @@ function *evolveBud(budId, type)
       data : {}
     };
 
-    var result = yield mongo.buds.update(
-        {_id: budId},
-        {$push: {types: type, budPacksData: packData}}
+    var result = yield mongo.sushis.update(
+        {_id: sushiId},
+        {$push: {types: type, sushiPacksData: packData}}
     );
 
-    result = yield mongo.buds.update(
-        {_id: budId},
+    result = yield mongo.sushis.update(
+        {_id: sushiId},
         {$set: {type: type}});
     console.log('evolved in '+ type);
-    yield setType(this.user, bud, type);
+    yield setType(this.user, sushi, type);
 
-    yield indexer(bud);
+    yield indexer(sushi);
 
     if (types[type].hasOwnProperty('skills')) {
       yield xp.gainSkillXP (this.user,types[type].skills.creator, 20);
@@ -411,281 +411,281 @@ function *evolveBud(budId, type)
 
   }
 
-  bud.qi       = yield updateQi (this.user, bud, 0);
+  sushi.qi       = yield updateQi (this.user, sushi, 0);
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('buds.evolved', {id: budId, type: type});
+  ws.notify('sushis.evolved', {id: sushiId, type: type});
 
 }
 
 /**
- * Share a bud
+ * Share a sushi
  */
-function *shareBud(budId)
+function *shareSushi(sushiId)
 {
   var users   = yield parse(this);
-  budId      = new ObjectID(budId);
+  sushiId      = new ObjectID(sushiId);
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$push: {shares: users}}
   );
 
-  var bud = yield mongo.buds.findOne({_id : budId});
-  bud.id = bud._id;
-  delete bud._id;
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   yield * foreach(users, function * (user) {
-    yield createBud2UserRel(user, bud, 'SHARED_TO');
+    yield createSushi2UserRel(user, sushi, 'SHARED_TO');
 
   });
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.sharesChanged', bud);
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.sharesChanged', sushi);
 }
 
 /**
- * Sponsor a bud
+ * Sponsor a sushi
  */
-function *sponsorBud()
+function *sponsorSushi()
 {
-  var bud   = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi   = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(bud.creator.id === this.user.id)
+  if(sushi.creator.id === this.user.id)
   {
-    this.throw(403, 'You are the creator of this bud');
+    this.throw(403, 'You are the creator of this sushi');
   }
 
-  if(bud.sponsors && bud.sponsors.indexOf(this.user.id) !== -1)
+  if(sushi.sponsors && sushi.sponsors.indexOf(this.user.id) !== -1)
   {
-    this.throw(403, 'You already sponsor this bud');
+    this.throw(403, 'You already sponsor this sushi');
   }
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$push: {sponsors: this.user.id}}
   );
 
 
-  yield createUser2BudRel(this.user, bud, 'SPONSOR');
-  bud.qi = yield updateQi(this.user, bud, 0);
+  yield createUser2SushiRel(this.user, sushi, 'SPONSOR');
+  sushi.qi = yield updateQi(this.user, sushi, 0);
 
-  bud = yield mongo.buds.findOne({_id : budId});
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
 
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.sponsorsChanged', bud);
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.sponsorsChanged', sushi);
 }
 
 /**
- * Unsponsor a bud
+ * Unsponsor a sushi
  */
-function *unsponsorBud()
+function *unsponsorSushi()
 {
-  var bud  = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi  = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(!bud.sponsors || bud.sponsors.indexOf(this.user.id) === -1)
+  if(!sushi.sponsors || sushi.sponsors.indexOf(this.user.id) === -1)
   {
     this.throw(403, 'You are not sponsorer');
   }
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$pull: {sponsors: this.user.id}}
   );
 
 
-  yield removeUser2BudRel(this.user, bud, 'SPONSOR');
-  bud.qi = yield updateQi(this.user, bud, 0);
+  yield removeUser2SushiRel(this.user, sushi, 'SPONSOR');
+  sushi.qi = yield updateQi(this.user, sushi, 0);
 
-  bud = yield mongo.buds.findOne({_id : budId});
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.sponsorsChanged', bud);
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.sponsorsChanged', sushi);
 }
 
 /**
- * Add Support a bud
+ * Add Support a sushi
  */
-function *supportBud(budId)
+function *supportSushi(sushiId)
 {
-  var bud   = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi   = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(bud.creator.id === this.user.id)
+  if(sushi.creator.id === this.user.id)
   {
-    this.throw(403, 'You are the creator of this bud');
+    this.throw(403, 'You are the creator of this sushi');
   }
 
-  if(bud.supporters && bud.supporters.indexOf(this.user.id) !== -1)
+  if(sushi.supporters && sushi.supporters.indexOf(this.user.id) !== -1)
   {
-    this.throw(403, 'You have already supported this bud');
+    this.throw(403, 'You have already supported this sushi');
   }
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$push: {supporters: this.user.id}}
   );
 
 
-  yield createUser2BudRel(this.user, bud, 'SUPPORT');
-  bud.qi = yield updateQi(this.user, bud, this.user.lvl);
+  yield createUser2SushiRel(this.user, sushi, 'SUPPORT');
+  sushi.qi = yield updateQi(this.user, sushi, this.user.lvl);
 
 
-  bud = yield mongo.buds.findOne({_id : budId});
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.supportersChanged', bud);
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.supportersChanged', sushi);
 }
 
 /**
- * Unsupport a bud
+ * Unsupport a sushi
  */
-function *unsupportBud()
+function *unsupportSushi()
 {
-  var bud  = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi  = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(!bud.supporters || bud.supporters.indexOf(this.user.id) === -1)
+  if(!sushi.supporters || sushi.supporters.indexOf(this.user.id) === -1)
   {
     this.throw(403, 'You are not supporter');
   }
 
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$pull: {supporters: this.user.id}}
   );
 
 
-  yield removeUser2BudRel(this.user, bud, 'SUPPORT');
-  bud.qi = yield updateQi(this.user, bud, 0);
-  ws.notify('qi.updated', bud);
+  yield removeUser2SushiRel(this.user, sushi, 'SUPPORT');
+  sushi.qi = yield updateQi(this.user, sushi, 0);
+  ws.notify('qi.updated', sushi);
 
-  bud = yield mongo.buds.findOne({_id : budId});
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
 
-  ws.notify('buds.supportersChanged', bud);
+  ws.notify('sushis.supportersChanged', sushi);
 }
 
 /**
- * Follow a bud
+ * Follow a sushi
  */
-function *followBud()
+function *followSushi()
 {
-  var bud   = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi   = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(bud.creator.id === this.user.id)
+  if(sushi.creator.id === this.user.id)
   {
-    this.throw(403, 'You are the creator of this bud');
+    this.throw(403, 'You are the creator of this sushi');
   }
 
-  if(bud.followers && bud.followers.indexOf(this.user.id) !== -1)
+  if(sushi.followers && sushi.followers.indexOf(this.user.id) !== -1)
   {
-    this.throw(403, 'You already follow this bud');
+    this.throw(403, 'You already follow this sushi');
   }
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$push: {followers: this.user.id}}
   );
 
 
-  yield createUser2BudRel(this.user, bud, 'FOLLOW');
-  bud.qi = yield updateQi(this.user, bud, 1);
-  ws.notify('qi.updated', bud);
-  bud = yield mongo.buds.findOne({_id : budId});
+  yield createUser2SushiRel(this.user, sushi, 'FOLLOW');
+  sushi.qi = yield updateQi(this.user, sushi, 1);
+  ws.notify('qi.updated', sushi);
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
-  ws.notify('buds.followersChanged', bud);
+  ws.notify('sushis.followersChanged', sushi);
 }
 
 
 /**
- * Unfollow a bud
+ * Unfollow a sushi
  */
-function *unfollowBud()
+function *unfollowSushi()
 {
-  var bud  = yield parse(this);
-  var budId = new ObjectID(bud.id);
+  var sushi  = yield parse(this);
+  var sushiId = new ObjectID(sushi.id);
 
-  if(!bud.followers || bud.followers.indexOf(this.user.id) === -1)
+  if(!sushi.followers || sushi.followers.indexOf(this.user.id) === -1)
   {
     this.throw(403, 'You are not follower');
   }
 
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$pull: {followers: this.user.id}}
   );
 
 
-  yield removeUser2BudRel(this.user, bud, 'FOLLOW');
-  bud.qi = yield updateQi(this.user, bud, 0);
-  ws.notify('qi.updated', bud);
-  bud = yield mongo.buds.findOne({_id : budId});
+  yield removeUser2SushiRel(this.user, sushi, 'FOLLOW');
+  sushi.qi = yield updateQi(this.user, sushi, 0);
+  ws.notify('qi.updated', sushi);
+  sushi = yield mongo.sushis.findOne({_id : sushiId});
 
-  bud.id = bud._id;
-  delete bud._id;
+  sushi.id = sushi._id;
+  delete sushi._id;
 
   this.status = 201;
-  this.body = bud.id.toString(); // we need .toString() here to return text/plain response
+  this.body = sushi.id.toString(); // we need .toString() here to return text/plain response
 
 
-  ws.notify('buds.followersChanged', bud);
+  ws.notify('sushis.followersChanged', sushi);
 }
 
 /**
- * Appends a new comment to a given bud.
- * @param budId - Bud ID.
+ * Appends a new comment to a given sushi.
+ * @param sushiId - Sushi ID.
  */
-function *createComment(budId)
+function *createComment(sushiId)
 {
-  budId         = new ObjectID(budId);
+  sushiId         = new ObjectID(sushiId);
   var comment   = yield parse(this);
   var commentId = new ObjectID();
 
-  // update bud document with the new comment
+  // update sushi document with the new comment
   comment = {_id: commentId, from: this.user, createdTime: new Date(), message: comment.message};
-  var result = yield mongo.buds.update(
-      {_id: budId},
+  var result = yield mongo.sushis.update(
+      {_id: sushiId},
       {$push: {comments: comment}}
   );
 
@@ -694,27 +694,27 @@ function *createComment(budId)
   this.status = 201;
   this.body = commentId.toString(); // we need .toString() here to return text/plain response
 
-  var bud = {
-    id : budId
+  var sushi = {
+    id : sushiId
   };
   // now notify everyone about this new comment
   comment.id = comment._id;
-  comment.budId = budId;
+  comment.sushiId = sushiId;
   delete comment._id;
-  ws.notify('qi.updated', bud);
-  ws.notify('buds.comments.created', comment);
+  ws.notify('qi.updated', sushi);
+  ws.notify('sushis.comments.created', comment);
   yield xp.gainMainXP (this.user, 2);
   ws.notify('userupdate', this.user);
 }
 
 /**
-* Add files to bud
-* @param budId - Bud ID.
+* Add files to sushi
+* @param sushiId - Sushi ID.
 */
-function *uploadFile(budId)
+function *uploadFile(sushiId)
 {
   var path = require('path');
-  budId = new ObjectID(budId);
+  sushiId = new ObjectID(sushiId);
   // multipart upload
   var uploads = [];
   var form = yield formidable.parse({uploadDir: '/tmp/sushi/'},this);
@@ -725,29 +725,29 @@ function *uploadFile(budId)
     name: form.files.file.name,
     size: form.files.file.size
   };
-  var result = yield mongo.buds.update(
-    {_id: budId},
+  var result = yield mongo.sushis.update(
+    {_id: sushiId},
     {$push: {files: fileData}}
   );
-  var bud = bud = yield mongo.buds.findOne({_id : budId});
-  bud.id = bud._id;
-  delete bud._id;
+  var sushi = sushi = yield mongo.sushis.findOne({_id : sushiId});
+  sushi.id = sushi._id;
+  delete sushi._id;
   this.status = 201;
-  ws.notify('buds.updated', bud);
+  ws.notify('sushis.updated', sushi);
 }
 
 /**
 *
 */
-function *getFile(budId, fileId)
+function *getFile(sushiId, fileId)
 {
   var path = require ('path');
   var os = require ('os');
-  budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
+  sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
   var targetFile = null;
   var targetType = null
-  bud.files.forEach (function (file) {
+  sushi.files.forEach (function (file) {
     if(file.name === fileId)
     {
       targetFile = file.path;
@@ -763,12 +763,12 @@ function *getFile(budId, fileId)
 /**
 *
 */
-function *removeFile(budId, fileId)
+function *removeFile(sushiId, fileId)
 {
-  budId = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
+  sushiId = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
   var targetFile = null;
-  bud.files.forEach (function (file) {
+  sushi.files.forEach (function (file) {
     if(file.name === fileId)
     {
       fs.unlinkSync(file.path);
@@ -776,37 +776,37 @@ function *removeFile(budId, fileId)
       return;
     }
   });
-  var result = yield mongo.buds.update(
-    {_id: budId},
+  var result = yield mongo.sushis.update(
+    {_id: sushiId},
     {$pull: {files: targetFile}}
   );
-  var bud = yield mongo.buds.findOne({_id : budId});
-  bud.id = bud._id;
-  delete bud._id;
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  sushi.id = sushi._id;
+  delete sushi._id;
   this.status = 201;
-  ws.notify('buds.updated', bud);
+  ws.notify('sushis.updated', sushi);
 }
 
 /**
- * Create a new packData for a given typed bud.
- * @param budId - Bud ID.
+ * Create a new packData for a given typed sushi.
+ * @param sushiId - Sushi ID.
  */
-function *createPackData(budId, type)
+function *createPackData(sushiId, type)
 {
-  budId      = new ObjectID(budId);
+  sushiId      = new ObjectID(sushiId);
 
-  var result = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
+  var result = yield mongo.sushis.findOne({_id : sushiId,'sushiPacksData.type' : type});
   if(result) {
-    // update bud document with the new packData
+    // update sushi document with the new packData
     var data = yield parse(this);
-    result = yield mongo.buds.update(
-    {_id: budId,'budPacksData.type' : type},
-        {$set: {'budPacksData.$.data': data}}
+    result = yield mongo.sushis.update(
+    {_id: sushiId,'sushiPacksData.type' : type},
+        {$set: {'sushiPacksData.$.data': data}}
     );
 
     this.status = 201;
     this.body = result;
-    ws.notify('buds.budPacksData.updated', budId);
+    ws.notify('sushis.sushiPacksData.updated', sushiId);
   }
   else
   {
@@ -815,53 +815,53 @@ function *createPackData(budId, type)
       data: yield parse(this)
     };
     console.log('create packdata');
-    // update bud document with the new packData
-    var result = yield mongo.buds.update(
-        {_id: budId},
-        {$push: {budPacksData: packData}}
+    // update sushi document with the new packData
+    var result = yield mongo.sushis.update(
+        {_id: sushiId},
+        {$push: {sushiPacksData: packData}}
     );
 
     this.status = 201;
-    ws.notify('buds.budPacksData.created');
+    ws.notify('sushis.sushiPacksData.created');
   }
 
 }
 
 /**
- * Set packData for a given typed bud.
- * @param budId - Bud ID.
+ * Set packData for a given typed sushi.
+ * @param sushiId - Sushi ID.
  */
-function *setPackData(budId, type)
+function *setPackData(sushiId, type)
 {
-  budId         = new ObjectID(budId);
+  sushiId         = new ObjectID(sushiId);
   var packData   = yield parse(this);
 
-  // update bud document with the new packData
-  var result = yield mongo.buds.update(
-      {_id: budId,'budPacksData.type' : type},
-      {$set: {'budPacksData.$.data': packData}}
+  // update sushi document with the new packData
+  var result = yield mongo.sushis.update(
+      {_id: sushiId,'sushiPacksData.type' : type},
+      {$set: {'sushiPacksData.$.data': packData}}
   );
 
   this.status = 201;
   this.body = result;
-  ws.notify('buds.budPacksData.updated', budId);
+  ws.notify('sushis.sushiPacksData.updated', sushiId);
 }
 
 /**
 * End packData lifecycle
-* @param budId - Bud ID.
+* @param sushiId - Sushi ID.
 */
-function *endPackData(budId, type)
+function *endPackData(sushiId, type)
 {
-  budId             = new ObjectID(budId);
+  sushiId             = new ObjectID(sushiId);
   var packData      = yield parse(this);
 
-  // update bud document with the new packData and lockit
-  var result = yield mongo.buds.update(
-  {_id: budId,'budPacksData.type' : type},
+  // update sushi document with the new packData and lockit
+  var result = yield mongo.sushis.update(
+  {_id: sushiId,'sushiPacksData.type' : type},
   {$set: {
-    'budPacksData.$.data': packData,
-    'budPacksData.$.readonly': true
+    'sushiPacksData.$.data': packData,
+    'sushiPacksData.$.readonly': true
     }
   });
 
@@ -876,51 +876,51 @@ function *endPackData(budId, type)
 
   this.status = 201;
   this.body = result;
-  ws.notify('buds.budPacksData.ended', budId);
+  ws.notify('sushis.sushiPacksData.ended', sushiId);
 }
 
 /**
-* Get packData for a given typed bud.
-* @param budId - Bud ID.
+* Get packData for a given typed sushi.
+* @param sushiId - Sushi ID.
  */
-function *getPackData(budId, type)
+function *getPackData(sushiId, type)
 {
-  budId        = new ObjectID(budId);
-  var bud      = yield mongo.buds.findOne({_id : budId,'budPacksData.type' : type});
+  sushiId        = new ObjectID(sushiId);
+  var sushi      = yield mongo.sushis.findOne({_id : sushiId,'sushiPacksData.type' : type});
 
-  var packData = packdata.getPack (bud, type);
+  var packData = packdata.getPack (sushi, type);
   this.status = 200;
   this.body = packData;
 }
 
 
 /**
- * Delete bud by id
+ * Delete sushi by id
  */
-function *deleteBud(budId)
+function *deleteSushi(sushiId)
 {
-  budId   = new ObjectID(budId);
-  var bud = yield mongo.buds.findOne({_id : budId});
-  bud.id = bud._id;
-  delete bud._id;
-  if(!bud)
+  sushiId   = new ObjectID(sushiId);
+  var sushi = yield mongo.sushis.findOne({_id : sushiId});
+  sushi.id = sushi._id;
+  delete sushi._id;
+  if(!sushi)
   {
-    this.throw(403, 'Unable to find bud');
+    this.throw(403, 'Unable to find sushi');
   }
-  if(bud.creator.id !== this.user.id)
+  if(sushi.creator.id !== this.user.id)
   {
-    this.throw(403, 'You are not the creator of this bud');
+    this.throw(403, 'You are not the creator of this sushi');
   }
-  if(bud.parentBud) {
-    var parentBudId = bud.parentBud.id;
-    yield mongo.buds.update(
-        {_id: parentBudId},
-        {$pull: {subBuds: {id: bud.id, title: bud.title} } }
+  if(sushi.parentSushi) {
+    var parentSushiId = sushi.parentSushi.id;
+    yield mongo.sushis.update(
+        {_id: parentSushiId},
+        {$pull: {subSushis: {id: sushi.id, title: sushi.title} } }
     );
   }
-  yield unindexer(bud);
-  yield clearBud  (bud);
-  yield mongo.buds.remove({_id : budId});
+  yield unindexer(sushi);
+  yield clearSushi  (sushi);
+  yield mongo.sushis.remove({_id : sushiId});
   this.status = 201;
   this.body = "deleted";
 }

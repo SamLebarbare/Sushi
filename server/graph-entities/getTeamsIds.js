@@ -6,7 +6,7 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Return all bud teams
+ * Return all sushi teams
  */
 module.exports = function *()
 {
@@ -14,8 +14,8 @@ module.exports = function *()
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Team) " +
-              "RETURN bud.bid;"
+  var query = "MATCH (sushi:Team) " +
+              "RETURN sushi.bid;"
 
   transaction.write(query);
   transaction.commit();
@@ -24,7 +24,7 @@ module.exports = function *()
 
   while (data = yield teams())
   {
-    result.push(new ObjectID(data['bud.bid']));
+    result.push(new ObjectID(data['sushi.bid']));
   }
   return result;
 

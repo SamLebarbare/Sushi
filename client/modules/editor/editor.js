@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Editor module for buds
+ * Editor module for sushis
  */
 
 angular
@@ -11,13 +11,13 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('bud.editor', {
+          .state('sushi.editor', {
             title: 'sushi Editor',
-            url: "/editor/:budId/:parentBudId/:content",
+            url: "/editor/:sushiId/:parentSushiId/:content",
             breadcrumb: {
               class: 'highlight',
-              text: 'Bud Editor',
-              stateName: 'bud.editor'
+              text: 'Sushi Editor',
+              stateName: 'sushi.editor'
             },
             templateUrl: 'modules/editor/editor.html',
             controller: 'EditorCtrl'

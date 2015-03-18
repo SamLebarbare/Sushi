@@ -29,7 +29,7 @@ comongo.connect = function *()
   // export default collections
   comongo.counters = yield db.collection('counters');
   comongo.users    = yield db.collection('users');
-  comongo.buds     = yield db.collection('buds');
+  comongo.sushis     = yield db.collection('sushis');
   comongo.emails   = yield db.collection('emails');
   comongo.events   = yield db.collection('events');
 };

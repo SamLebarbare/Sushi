@@ -3,11 +3,11 @@ var mailin = require('mailin');
 var path           = require('path');
 var postmark       = require('postmark')(config.postmark.apiKey);
 
-exports.sendBud = function *(fromUser, to, bud) {
+exports.sendSushi = function *(fromUser, to, sushi) {
 
-  var subject = fromUser.name + ' want share a ' + bud.type + ' with you!';
-  var content = '<h1>' + bud.title + '</h1><br>';
-  content    += bud.content;
+  var subject = fromUser.name + ' want share a ' + sushi.type + ' with you!';
+  var content = '<h1>' + sushi.title + '</h1><br>';
+  content    += sushi.content;
   content    += '<hr>';
   content    += '<a href="http://sushi.loup.io/">sushi.loup.io</a>';
   postmark.send({

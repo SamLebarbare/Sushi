@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Viewer controller provide a good way to read buds
+ * Viewer controller provide a good way to read sushis
  */
 
 angular.module('sushi.viewer').controller('ViewerCtrl',
@@ -21,11 +21,11 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.supportValue = 0;
   $scope.shareCount = 0;
 
-  // Helpers for bud packs
+  // Helpers for sushi packs
 
   $scope.endPackData = function (packData, callback)
   {
-    api.buds.budPacksData.end($scope.bud.id, packData, $scope.bud.type)
+    api.sushis.sushiPacksData.end($scope.sushi.id, packData, $scope.sushi.type)
     .success (function () {
       if(callback) {
         callback();
@@ -35,7 +35,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.savePackData = function (packData, callback)
   {
-    api.buds.budPacksData.set($scope.bud.id, packData, $scope.bud.type)
+    api.sushis.sushiPacksData.set($scope.sushi.id, packData, $scope.sushi.type)
     .success (function () {
       if(callback) {
         callback();
@@ -45,7 +45,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.getPackData = function (callback)
   {
-    api.buds.budPacksData.get($scope.bud.id, $scope.bud.type)
+    api.sushis.sushiPacksData.get($scope.sushi.id, $scope.sushi.type)
     .success (function (packData) {
       callback (packData);
     });
@@ -53,7 +53,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.createPackData = function (packData, callback)
   {
-    api.buds.budPacksData.create($scope.bud.id, packData, $scope.bud.type)
+    api.sushis.sushiPacksData.create($scope.sushi.id, packData, $scope.sushi.type)
     .success (function () {
       if(callback) {
         callback();
@@ -62,22 +62,22 @@ function ($scope, $state, $stateParams, $modal, api)
   };
 
   $scope.startParentIfNeeded = function (type) {
-    if($scope.bud.parentBud !== undefined) {
-      var parentBudId = $scope.bud.parentBud.id;
-      api.buds.budPacksData.get($scope.bud.parentBud.id, type)
+    if($scope.sushi.parentSushi !== undefined) {
+      var parentSushiId = $scope.sushi.parentSushi.id;
+      api.sushis.sushiPacksData.get($scope.sushi.parentSushi.id, type)
       .success (function (packData) {
         if (packData.state == 'Waiting') {
           packData.state = 'Started';
-          api.buds.budPacksData.set(parentBudId, packData, type);
+          api.sushis.sushiPacksData.set(parentSushiId, packData, type);
         }
       });
     }
   };
 
   $scope.getParentPackData = function (type, callback) {
-    if($scope.bud.parentBud !== undefined) {
-      var parentBudId = $scope.bud.parentBud.id;
-      api.buds.budPacksData.get($scope.bud.parentBud.id, type)
+    if($scope.sushi.parentSushi !== undefined) {
+      var parentSushiId = $scope.sushi.parentSushi.id;
+      api.sushis.sushiPacksData.get($scope.sushi.parentSushi.id, type)
       .success (function (packData) {
         callBack (packData);
       });
@@ -90,8 +90,8 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.isActor = function ()
   {
-    if ($scope.bud.dataCache.actor !== undefined) {
-      if($scope.bud.dataCache.actor.id === user.id) {
+    if ($scope.sushi.dataCache.actor !== undefined) {
+      if($scope.sushi.dataCache.actor.id === user.id) {
         return true;
       } else {
         return false;
@@ -103,8 +103,8 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.isCreator = function ()
   {
-    if ($scope.bud.creator !== undefined) {
-      if($scope.bud.creator.id === user.id) {
+    if ($scope.sushi.creator !== undefined) {
+      if($scope.sushi.creator.id === user.id) {
         return true;
       } else {
         return false;
@@ -132,7 +132,7 @@ function ($scope, $state, $stateParams, $modal, api)
     packData.actor = user;
     packData.state = newState;
     $scope.savePackData (packData, function () {
-      api.links.createU2B(user.id,'ACTOR',$scope.bud.id)
+      api.links.createU2B(user.id,'ACTOR',$scope.sushi.id)
       .success (function () {
         $scope.actionInProgress = false;
         callback ();
@@ -153,7 +153,7 @@ function ($scope, $state, $stateParams, $modal, api)
     $scope.assign (function (actor) {
       packData.actor = actor;
       packData.state = newState;
-      api.links.createU2B(actor.id,'ACTOR', $scope.bud.id);
+      api.links.createU2B(actor.id,'ACTOR', $scope.sushi.id);
       $scope.savePackData (packData, function () {
         $scope.actionInProgress = false;
         callback ();
@@ -170,8 +170,8 @@ function ($scope, $state, $stateParams, $modal, api)
     }
 
     $scope.actionInProgress = true;
-    api.links.deleteU2B(packData.actor.id,'ASSIGNED',$scope.bud.id);
-    api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.bud.id);
+    api.links.deleteU2B(packData.actor.id,'ASSIGNED',$scope.sushi.id);
+    api.links.deleteU2B(packData.actor.id,'ACTOR',$scope.sushi.id);
     packData.actor = undefined;
     packData.state = newState;
     $scope.savePackData (packData, function () {
@@ -181,51 +181,51 @@ function ($scope, $state, $stateParams, $modal, api)
   };
 
   $scope.subscribeAll = function () {
-    api.buds.comments.created.subscribe($scope, function (comment) {
-      // only add the comment if we don't have it already in the bud's comments list to avoid dupes
-      if ($scope.bud && !_.some($scope.bud.comments, function (c)
+    api.sushis.comments.created.subscribe($scope, function (comment) {
+      // only add the comment if we don't have it already in the sushi's comments list to avoid dupes
+      if ($scope.sushi && !_.some($scope.sushi.comments, function (c)
       {
         return c.id === comment.id;
       }))
       {
-        $scope.bud.comments.push(comment);
+        $scope.sushi.comments.push(comment);
       }
     });
 
-    api.buds.updated.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.updated.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
         $scope.load ();
       }
     });
 
-    api.buds.evolved.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.evolved.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
         $scope.load ();
       }
     });
 
-    api.qi.updated.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.qi.updated.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
         $scope.load ();
       }
     });
 
-    api.buds.sharesChanged.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.sharesChanged.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
         $scope.load ();
       }
     });
 
-    api.buds.followersChanged.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.followersChanged.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
-        $scope.bud.followers = bud.followers;
-        $scope.followersCount = bud.followers.length;
-        if(bud.followers.indexOf(user.id)!== -1)
+        $scope.sushi.followers = sushi.followers;
+        $scope.followersCount = sushi.followers.length;
+        if(sushi.followers.indexOf(user.id)!== -1)
         {
           $scope.follower = true;
         }
@@ -236,13 +236,13 @@ function ($scope, $state, $stateParams, $modal, api)
       }
     });
 
-    api.buds.supportersChanged.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.supportersChanged.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
-        $scope.bud.supporters = bud.supporters;
-        $scope.supportersCount = bud.supporters.length;
+        $scope.sushi.supporters = sushi.supporters;
+        $scope.supportersCount = sushi.supporters.length;
 
-        if(bud.supporters.indexOf(user.id) !== -1)
+        if(sushi.supporters.indexOf(user.id) !== -1)
         {
           $scope.supporter = true;
         }
@@ -253,12 +253,12 @@ function ($scope, $state, $stateParams, $modal, api)
       }
     });
 
-    api.buds.sponsorsChanged.subscribe($scope, function (bud) {
-      if ($scope.bud.id === bud.id)
+    api.sushis.sponsorsChanged.subscribe($scope, function (sushi) {
+      if ($scope.sushi.id === sushi.id)
       {
-        $scope.bud.sponsors = bud.sponsors;
-        $scope.sponsorsCount = bud.sponsors.length;
-        if(bud.sponsors.indexOf(user.id) !== -1)
+        $scope.sushi.sponsors = sushi.sponsors;
+        $scope.sponsorsCount = sushi.sponsors.length;
+        if(sushi.sponsors.indexOf(user.id) !== -1)
         {
           $scope.sponsorer = true;
         }
@@ -276,24 +276,24 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.upload = function (files)
   {
-    api.buds.upload($scope.bud.id, files);
+    api.sushis.upload($scope.sushi.id, files);
   };
 
   $scope.removeAttachment = function (file)
   {
-    api.buds.unload($scope.bud.id, file.name);
+    api.sushis.unload($scope.sushi.id, file.name);
   };
 
   //Init view
-  $scope.init = function (bud) {
-    bud.commentBox = {message: '', disabled: false};
-    bud.comments   = bud.comments || [];
+  $scope.init = function (sushi) {
+    sushi.commentBox = {message: '', disabled: false};
+    sushi.comments   = sushi.comments || [];
 
-    $scope.bud = bud;
-    if(bud.followers)
+    $scope.sushi = sushi;
+    if(sushi.followers)
     {
-      $scope.followersCount = bud.followers.length;
-      if(bud.followers.indexOf(user.id)!== -1)
+      $scope.followersCount = sushi.followers.length;
+      if(sushi.followers.indexOf(user.id)!== -1)
       {
         $scope.follower = true;
       }
@@ -307,10 +307,10 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.follower = false;
     }
 
-    if(bud.sponsors)
+    if(sushi.sponsors)
     {
-      $scope.sponsorsCount = bud.sponsors.length;
-      if(bud.sponsors.indexOf(user.id)!== -1)
+      $scope.sponsorsCount = sushi.sponsors.length;
+      if(sushi.sponsors.indexOf(user.id)!== -1)
       {
         $scope.sponsorer = true;
       }
@@ -324,10 +324,10 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.sponsorer = false;
     }
 
-    if(bud.supporters)
+    if(sushi.supporters)
     {
-      $scope.supportersCount = bud.supporters.length;
-      if(bud.supporters.indexOf(user.id)!== -1)
+      $scope.supportersCount = sushi.supporters.length;
+      if(sushi.supporters.indexOf(user.id)!== -1)
       {
         $scope.supporter = true;
       }
@@ -341,53 +341,53 @@ function ($scope, $state, $stateParams, $modal, api)
       $scope.supporter = false;
     }
 
-    if(bud.shares)
+    if(sushi.shares)
     {
-      $scope.shareCount = bud.shares.length;
+      $scope.shareCount = sushi.shares.length;
     } else {
       $scope.shareCount = 0;
     }
   };
-  // retrieve one bud from server
+  // retrieve one sushi from server
   $scope.load = function (callback)
   {
     console.info ('loading...');
     $scope.actionInProgress = true;
     $scope.ready = false;
-    api.buds.view($stateParams.budId).success(function (bud)
+    api.sushis.view($stateParams.sushiId).success(function (sushi)
     {
       console.info ('init...');
-      $scope.init (bud);
+      $scope.init (sushi);
       console.info ('subscribe...');
       $scope.subscribeAll ();
       $scope.ready = true;
-      console.info ('load budpack view...');
-      $scope.showType ($scope.bud.type, false);
+      console.info ('load sushipack view...');
+      $scope.showType ($scope.sushi.type, false);
       console.info ('loaded!');
 
       if (callback) {
-        console.info ('calling budpack...')
+        console.info ('calling sushipack...')
         callback(function () {
           $scope.actionInProgress = false;
-          console.info ('Budpack loaded!');
+          console.info ('Sushipack loaded!');
         });
       } else {
         $scope.actionInProgress = false;
-        console.info ('Budpack loaded!');
+        console.info ('Sushipack loaded!');
       }
 
     });
   }
 
 
-  //Bud (re)loader
+  //Sushi (re)loader
   $scope.load();
 
   $scope.showType = function (type, reload) {
-    if (type != 'Bud') {
-      $state.go('bud.viewer.' + type, $state.params, { reload: reload });
+    if (type != 'Sushi') {
+      $state.go('sushi.viewer.' + type, $state.params, { reload: reload });
     } else {
-      $state.go('bud.viewer',$state.params, { reload: reload });
+      $state.go('sushi.viewer',$state.params, { reload: reload });
     }
   };
 
@@ -410,7 +410,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
     modalInstance.result.then(function (to) {
       //sendemail
-      api.buds.sendByMail ($scope.bud.id, to)
+      api.sushis.sendByMail ($scope.sushi.id, to)
       .success (function (){
         $scope.mailSended       = true;
         $scope.actionInProgress = false;
@@ -445,7 +445,7 @@ function ($scope, $state, $stateParams, $modal, api)
     });
 
     modalInstance.result.then(function (selectedType) {
-      api.buds.evolve($scope.bud.id, selectedType).success(function () {
+      api.sushis.evolve($scope.sushi.id, selectedType).success(function () {
         $scope.actionInProgress = false;
       })
       .error(function ()
@@ -460,11 +460,11 @@ function ($scope, $state, $stateParams, $modal, api)
 
   $scope.canEvolve = function ()
   {
-    if(!$scope.bud) {
+    if(!$scope.sushi) {
       return false;
     }
 
-    if($scope.bud.typeInfo.evolve === true && $scope.bud.creator.id === user.id) {
+    if($scope.sushi.typeInfo.evolve === true && $scope.sushi.creator.id === user.id) {
       return true;
     } else {
       return false;
@@ -472,43 +472,43 @@ function ($scope, $state, $stateParams, $modal, api)
   }
 
   $scope.edit = function () {
-    $state.go('bud.editor',{budId : $scope.bud});
+    $state.go('sushi.editor',{sushiId : $scope.sushi});
   };
 
   $scope.canEdit = function ()
   {
-    if(!$scope.bud) {
+    if(!$scope.sushi) {
       return false;
     }
 
-    if($scope.bud.creator.id === user.id) {
+    if($scope.sushi.creator.id === user.id) {
       return true;
     } else {
       return false;
     }
   }
 
-  $scope.editSubBud = function () {
-    $state.go('bud.editor',{parentBud : $scope.bud});
+  $scope.editSubSushi = function () {
+    $state.go('sushi.editor',{parentSushi : $scope.sushi});
   };
 
-  $scope.budify = function (content) {
-    $state.go('bud.editor',{parentBud : $scope.bud, content: content});
+  $scope.sushiify = function (content) {
+    $state.go('sushi.editor',{parentSushi : $scope.sushi, content: content});
   };
 
   $scope.delete = function () {
-    api.buds.delete($scope.bud.id).success(function (){
-      $state.go('home.budlist');
+    api.sushis.delete($scope.sushi.id).success(function (){
+      $state.go('home.sushilist');
     });
   };
 
   $scope.canDelete = function () {
-    if(!$scope.bud) {
+    if(!$scope.sushi) {
       return false;
     }
-    var goodUser = ($scope.bud.creator.id == $scope.common.user.id);
-    var noSubBuds = (!$scope.bud.subBuds || $scope.bud.subBuds.length == 0);
-    return goodUser && noSubBuds;
+    var goodUser = ($scope.sushi.creator.id == $scope.common.user.id);
+    var noSubSushis = (!$scope.sushi.subSushis || $scope.sushi.subSushis.length == 0);
+    return goodUser && noSubSushis;
   }
 
   $scope.share = function () {
@@ -520,7 +520,7 @@ function ($scope, $state, $stateParams, $modal, api)
         size: 'lg',
         resolve: {
           shares: function () {
-            return $scope.bud.shares;
+            return $scope.sushi.shares;
           },
           users: function () {
             return actors.users;
@@ -533,7 +533,7 @@ function ($scope, $state, $stateParams, $modal, api)
 
       modalInstance.result.then(function (actors) {
         //share to ->
-        api.buds.share($scope.bud, actors).success(function (bud) {
+        api.sushis.share($scope.sushi, actors).success(function (sushi) {
           console.info ('shared!');
         });
 
@@ -555,17 +555,17 @@ function ($scope, $state, $stateParams, $modal, api)
             return actors.users;
           },
           actor: function () {
-            return $scope.bud.dataCache.actor;
+            return $scope.sushi.dataCache.actor;
           }
         }
       });
 
       modalInstance.result.then(function (actor) {
-        if($scope.bud.dataCache.actor) {
-          api.links.deleteU2B($scope.dataCache.actor.id,'ASSIGNED',$scope.bud.id);
+        if($scope.sushi.dataCache.actor) {
+          api.links.deleteU2B($scope.dataCache.actor.id,'ASSIGNED',$scope.sushi.id);
         }
-        //assign actor to bud ->
-        api.links.createU2B(actor.id,'ASSIGNED',$scope.bud.id);
+        //assign actor to sushi ->
+        api.links.createU2B(actor.id,'ASSIGNED',$scope.sushi.id);
         callback (actor);
       }, function () {
         //dismiss
@@ -576,14 +576,14 @@ function ($scope, $state, $stateParams, $modal, api)
   $scope.canShare = function ()
   {
     var sharable = false;
-    if(!$scope.bud) {
+    if(!$scope.sushi) {
       return sharable;
     }
 
-    var creatorId = $scope.bud.creator.id;
+    var creatorId = $scope.sushi.creator.id;
 
     //TODO: Add a watch on privacy changes check actor
-    switch($scope.bud.privacy)
+    switch($scope.sushi.privacy)
     {
       case 'Private':
         if(creatorId === user.id)
@@ -606,7 +606,7 @@ function ($scope, $state, $stateParams, $modal, api)
   };
 
 
-  $scope.followBud = function ($event)
+  $scope.followSushi = function ($event)
   {
     if ($scope.actionInProgress)
     {
@@ -617,8 +617,8 @@ function ($scope, $state, $stateParams, $modal, api)
     $scope.actionInProgress = true;
     if(!$scope.follower)
     {
-      api.buds.follow($scope.bud)
-        .success(function (budId)
+      api.sushis.follow($scope.sushi)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -629,8 +629,8 @@ function ($scope, $state, $stateParams, $modal, api)
     }
     else
     {
-      api.buds.unfollow($scope.bud)
-        .success(function (budId)
+      api.sushis.unfollow($scope.sushi)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -641,7 +641,7 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   }
 
-  $scope.supportBud = function ($event)
+  $scope.supportSushi = function ($event)
   {
     if ($scope.actionInProgress)
     {
@@ -653,8 +653,8 @@ function ($scope, $state, $stateParams, $modal, api)
 
     if(!$scope.supporter)
     {
-      api.buds.support($scope.bud, $scope.supportValue)
-        .success(function (budId)
+      api.sushis.support($scope.sushi, $scope.supportValue)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -665,8 +665,8 @@ function ($scope, $state, $stateParams, $modal, api)
     }
     else
     {
-      api.buds.unsupport($scope.bud)
-        .success(function (budId)
+      api.sushis.unsupport($scope.sushi)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -677,7 +677,7 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   }
 
-  $scope.sponsorBud = function ($event)
+  $scope.sponsorSushi = function ($event)
   {
     if ($scope.actionInProgress)
     {
@@ -688,8 +688,8 @@ function ($scope, $state, $stateParams, $modal, api)
 
     if(!$scope.sponsorer)
     {
-      api.buds.sponsor($scope.bud)
-        .success(function (budId)
+      api.sushis.sponsor($scope.sushi)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -700,8 +700,8 @@ function ($scope, $state, $stateParams, $modal, api)
     }
     else
     {
-      api.buds.unsponsor($scope.bud)
-        .success(function (budId)
+      api.sushis.unsponsor($scope.sushi)
+        .success(function (sushiId)
         {
           $scope.actionInProgress = false;
         })
@@ -712,7 +712,7 @@ function ($scope, $state, $stateParams, $modal, api)
     }
   }
 
-  $scope.createComment = function ($event, bud)
+  $scope.createComment = function ($event, sushi)
   {
     // submit the message in the comment box only if user hits 'Enter (keycode 13)'
     if ($event.keyCode !== 13)
@@ -721,42 +721,42 @@ function ($scope, $state, $stateParams, $modal, api)
     }
 
     // don't let the user type in blank lines or submit empty/whitespace only comment, or type in something when comment is being created
-    if (!bud.commentBox.message.length || bud.commentBox.disabled) {
+    if (!sushi.commentBox.message.length || sushi.commentBox.disabled) {
       $event.preventDefault();
       return;
     }
 
     // disable the comment box and push the new comment to server
-    bud.commentBox.disabled = true;
-    //follow bud automaticly
+    sushi.commentBox.disabled = true;
+    //follow sushi automaticly
     if (!$scope.follower) {
       console.log ('follow');
-      $scope.followBud ();
+      $scope.followSushi ();
     }
-    api.buds.comments.create(bud.id, {message: bud.commentBox.message})
+    api.sushis.comments.create(sushi.id, {message: sushi.commentBox.message})
         .success(function (commentId)
         {
-          // only add the comment if we don't have it already in the bud's comments list to avoid dupes
-          if (!_.some(bud.comments, function (c) {
+          // only add the comment if we don't have it already in the sushi's comments list to avoid dupes
+          if (!_.some(sushi.comments, function (c) {
             return c.id === commentId;
           }))
           {
-            bud.comments.push({
+            sushi.comments.push({
               id: commentId,
               from: user,
-              message: bud.commentBox.message,
+              message: sushi.commentBox.message,
               createdTime: new Date()
             });
           }
 
           // clear the comment field and enable it
-          bud.commentBox.message  = '';
-          bud.commentBox.disabled = false;
+          sushi.commentBox.message  = '';
+          sushi.commentBox.disabled = false;
         })
         .error(function ()
         {
           // don't clear the comment box but enable it so the user can re-try
-          bud.commentBox.disabled = false;
+          sushi.commentBox.disabled = false;
         });
 
     // prevent default 'Enter' button behavior (create new line) as we want 'Enter' button to do submission

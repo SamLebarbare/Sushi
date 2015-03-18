@@ -1,39 +1,39 @@
 <div class="container-fluid">
   <section>
-    <div class="widget-icon orange pull-right"><h1> <i class="circle"> {{editedBud.qi}} </i> <img src="images/sushi.png" /></h1></div>
+    <div class="widget-icon orange pull-right"><h1> <i class="circle"> {{editedSushi.qi}} </i> <img src="images/sushi.png" /></h1></div>
     <div class="jumbotron">
-      <h1><i class="circle" ng-class="bud.typeInfo.icon"></i>{{budBox.title}}</h1>
+      <h1><i class="circle" ng-class="sushi.typeInfo.icon"></i>{{sushiBox.title}}</h1>
       <div class="bs-component">
         <ul class="breadcrumb" style="background-color: #f3f3f3;">
-          <li ng-if="parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : parentBud.id})" popover="{{parentBud.type}}" popover-trigger="mouseenter">{{parentBud.title}}</a></span></li>
+          <li ng-if="parentSushi"><span class="divider"> Derived from : <a ui-sref="sushi.viewer({sushiId : parentSushi.id})" popover="{{parentSushi.type}}" popover-trigger="mouseenter">{{parentSushi.title}}</a></span></li>
         </ul>
-        <ul ng-if="budBox.action == 'update'" class="breadcrumb" style="background-color: #f3f3f3;">
-          <li><span class="divider">Type: <a>{{editedBud.type || 'Bud'}}</a></span></li>
-          <li>Creator : <a>{{editedBud.creator.name}}</a></li>
-          <li><span class="divider">Privacy: <a>{{budBox.privacy}}</a></span></li>
-          <li ng-if="bud.parentBud"><span class="divider"> Derived from : <a ui-sref="bud.viewer({budId : editedBud.parentBud.id})" popover="{{editedBud.parentBud.type}}" popover-trigger="mouseenter">{{editedBud.parentBud.title}}</a></span></li>
-          <li ng-if="bud.subBuds" >Contains: (<a ng-repeat="b in editedBud.subBuds" ui-sref="bud.viewer({budId : b.id})" popover="{{b.type || 'Bud'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
+        <ul ng-if="sushiBox.action == 'update'" class="breadcrumb" style="background-color: #f3f3f3;">
+          <li><span class="divider">Type: <a>{{editedSushi.type || 'Sushi'}}</a></span></li>
+          <li>Creator : <a>{{editedSushi.creator.name}}</a></li>
+          <li><span class="divider">Privacy: <a>{{sushiBox.privacy}}</a></span></li>
+          <li ng-if="sushi.parentSushi"><span class="divider"> Derived from : <a ui-sref="sushi.viewer({sushiId : editedSushi.parentSushi.id})" popover="{{editedSushi.parentSushi.type}}" popover-trigger="mouseenter">{{editedSushi.parentSushi.title}}</a></span></li>
+          <li ng-if="sushi.subSushis" >Contains: (<a ng-repeat="b in editedSushi.subSushis" ui-sref="sushi.viewer({sushiId : b.id})" popover="{{b.type || 'Sushi'}}" popover-trigger="mouseenter"> [{{b.title}}] </a>)</li>
         </ul>
       </div>
       <div class="form-control-wrapper">
         <input class="form-control input-lg"
         autofocus
         type="text"
-        name="budTitle"
-        ng-disabled="budBox.disabled"
-        ng-model="budBox.title"
+        name="sushiTitle"
+        ng-disabled="sushiBox.disabled"
+        ng-model="sushiBox.title"
         required />
-        <div class="floating-label">Your bud title</div>
+        <div class="floating-label">Your sushi title</div>
         <span class="material-input"></span>
       </div>
       <div class="form-control-wrapper">
         <textarea
         ui-tinymce
-        ng-model="budBox.content"
+        ng-model="sushiBox.content"
         class="form-control"
         name="message"
-        placeholder="Type your bud here..."
-        ng-disabled="budBox.disabled">
+        placeholder="Type your sushi here..."
+        ng-disabled="sushiBox.disabled">
         </textarea>
         <span class="help-block">
           May the Qi be with you!
@@ -43,15 +43,15 @@
       <label for=""><strong>Privacy: </strong></label>
       <div class="radio radio-primary">
         <label>
-          <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private" checked>
+          <input type="radio" name="optionsRadios"  ng-model="sushiBox.privacy" value="Private" checked>
           <span class="circle"></span>
           <span class="check"></span>
-          This bud is non-sharable, only visible by the creator
+          This sushi is non-sharable, only visible by the creator
         </label>
       </div>
       <div class="radio radio-primary">
         <label>
-          <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Private2Share">
+          <input type="radio" name="optionsRadios"  ng-model="sushiBox.privacy" value="Private2Share">
           <span class="circle"></span>
           <span class="check"></span>
           Sharable for creator and current actor
@@ -59,7 +59,7 @@
       </div>
       <div class="radio radio-primary">
         <label>
-          <input type="radio" name="optionsRadios"  ng-model="budBox.privacy" value="Free2Share">
+          <input type="radio" name="optionsRadios"  ng-model="sushiBox.privacy" value="Free2Share">
           <span class="circle"></span>
           <span class="check"></span>
           Sharable for everyone
@@ -67,37 +67,37 @@
       </div>
     </div>
     <input
-    ng-if="budBox.action == 'create'"
+    ng-if="sushiBox.action == 'create'"
     class="btn btn-primary btn-success btn-xl btn-raised"
-    ng-click="createBud($event)"
-    value="Create bud"
-    ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+    ng-click="createSushi($event)"
+    value="Create sushi"
+    ng-disabled="!sushiBox.title || !sushiBox.privacy || !sushiBox.content"
     />
     <input
-    ng-if="budBox.action == 'subbud'"
+    ng-if="sushiBox.action == 'subsushi'"
     class="btn btn-primary btn-success btn-xl btn-raised"
-    ng-click="createBud($event)"
-    value="Create child bud"
-    ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+    ng-click="createSushi($event)"
+    value="Create child sushi"
+    ng-disabled="!sushiBox.title || !sushiBox.privacy || !sushiBox.content"
     />
     <input
-    ng-if="budBox.action == 'update'"
+    ng-if="sushiBox.action == 'update'"
     class="btn btn-primary btn-success btn-xl btn-raised"
-    ng-click="updateBud($event)"
-    value="Update bud"
-    ng-disabled="!budBox.title || !budBox.privacy || !budBox.content"
+    ng-click="updateSushi($event)"
+    value="Update sushi"
+    ng-disabled="!sushiBox.title || !sushiBox.privacy || !sushiBox.content"
     />
     </div>
   </section>
 </div>
 <script type="text/ng-template" id="evolvebox.html">
 <div class="modal-header">
-  <h3 class="modal-title">Evolve your bud ? </h3>
+  <h3 class="modal-title">Evolve your sushi ? </h3>
 </div>
 <div class="modal-body">
 <div class="list-group">
 <div class="list-group-item" ng-repeat="type in availableTypes">
-  <div ng-show="type.id != 'Bud'">
+  <div ng-show="type.id != 'Sushi'">
     <div class="row-picture">
       <a class="btn btn-success btn-fab btn-raised" ng-class="type.icon" ng-click="setSelected(type.id)"></a>
     </div>
@@ -111,7 +111,7 @@
 </div>
 </div>
 <div class="modal-footer">
-<button class="btn btn-primary" ng-click="ok(selectedType)" ng-show="selectedType != 'Bud'" >Evolve in {{selectedType}}</button>
+<button class="btn btn-primary" ng-click="ok(selectedType)" ng-show="selectedType != 'Sushi'" >Evolve in {{selectedType}}</button>
 <button class="btn btn-warning" ng-click="cancel()">later...</button>
 </div>
 </script>

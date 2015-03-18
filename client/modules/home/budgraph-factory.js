@@ -6,33 +6,33 @@ var cytoscape = require('cytoscape/dist/cytoscape.min.js');
 
 angular
     .module('sushi.home')
-    .factory('budGraph', [ '$q', function( $q ) {
+    .factory('sushiGraph', [ '$q', function( $q ) {
       var cy;
 
-      var budGraph = function(buds) {
+      var sushiGraph = function(sushis) {
         var deferred = $q.defer();
 
-        // put buds model in cy.js
+        // put sushis model in cy.js
         var eles = [];
-        for( var i = 0; i < buds.length; i++ ){
-          var bud = buds[i];
+        for( var i = 0; i < sushis.length; i++ ){
+          var sushi = sushis[i];
           var info;
 
 
-          if (bud.dataCache.state) {
-            info = bud.title + ' (' + bud.dataCache.state + ')';
+          if (sushi.dataCache.state) {
+            info = sushi.title + ' (' + sushi.dataCache.state + ')';
           }  else {
-            info = bud.title;
+            info = sushi.title;
           }
 
           eles.push({
             group: 'nodes',
             data: {
-              id: bud.id,
-              type: bud.typeInfo,
-              weight: bud.qi,
+              id: sushi.id,
+              type: sushi.typeInfo,
+              weight: sushi.qi,
               size: 100,
-              picture: 'url(/images/'+ bud.type + '.svg)',
+              picture: 'url(/images/'+ sushi.type + '.svg)',
               name: info,
               faveColor: '#b3e5fc',
               faveShape: 'roundrectangle'
@@ -40,14 +40,14 @@ angular
           });
         }
 
-        for( var i = 0; i < buds.length; i++ ){
-          if(buds[i].subBuds) {
-            for( var s = 0; s < buds[i].subBuds.length; s++ ) {
+        for( var i = 0; i < sushis.length; i++ ){
+          if(sushis[i].subSushis) {
+            for( var s = 0; s < sushis[i].subSushis.length; s++ ) {
               eles.push({
                 group: 'edges',
                 data: {
-                  source: buds[i].id,
-                  target: buds[i].subBuds[s].id,
+                  source: sushis[i].id,
+                  target: sushis[i].subSushis[s].id,
                   faveColor: '#30426a',
                   strength: 0.1
                 }
@@ -126,10 +126,10 @@ angular
         return deferred.promise;
       };
 
-      budGraph.listeners = {};
+      sushiGraph.listeners = {};
 
       function fire(e, args){
-        var listeners = budGraph.listeners[e];
+        var listeners = sushiGraph.listeners[e];
 
         for( var i = 0; listeners && i < listeners.length; i++ ){
           var fn = listeners[i];
@@ -139,15 +139,15 @@ angular
       }
 
       function listen(e, fn){
-        var listeners = budGraph.listeners[e] = budGraph.listeners[e] || [];
+        var listeners = sushiGraph.listeners[e] = sushiGraph.listeners[e] || [];
 
         listeners.push(fn);
       }
 
-      budGraph.onClick = function(fn){
+      sushiGraph.onClick = function(fn){
         listen('onClick', fn);
       };
 
-      return budGraph;
+      return sushiGraph;
 
     }]);

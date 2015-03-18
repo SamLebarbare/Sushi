@@ -8,7 +8,7 @@ var _           = require('lodash'),
     route       = require('koa-route'),
     parse       = require('co-body'),
     getTeamsIds = require('../graph-entities/getTeamsIds'),
-    packdata    = require('../bud-entities/packdata'),
+    packdata    = require('../sushi-entities/packdata'),
     mongo       = require('../config/mongo');
 
 // register koa routes
@@ -45,14 +45,14 @@ function *listActors(includeMe) {
 
 
   var teamsIds = yield getTeamsIds();
-  var teamBuds = yield mongo.buds.find(
+  var teamSushis = yield mongo.sushis.find(
       {_id: { $in: teamsIds }}).toArray();
 
-  teamBuds.forEach(function (bud){
-    var packData = packdata.getPack (bud, 'Team');
+  teamSushis.forEach(function (sushi){
+    var packData = packdata.getPack (sushi, 'Team');
     var team = {
-      id     : bud._id,
-      name   : bud.title,
+      id     : sushi._id,
+      name   : sushi.title,
       members: packData.members
     }
     if(!includeMe) {

@@ -5,7 +5,7 @@ module.exports = function *()
 {
 
   yield client.indices.delete({
-    index: 'bud'
+    index: 'sushi'
   });
 
 };

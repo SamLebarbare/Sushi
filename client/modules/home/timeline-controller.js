@@ -5,7 +5,7 @@
  */
 
 angular.module('sushi.home').controller('TimelineCtrl',
-function ($scope, $state, api, budGraph)
+function ($scope, $state, api, sushiGraph)
 {
   var user       = $scope.common.user;
 

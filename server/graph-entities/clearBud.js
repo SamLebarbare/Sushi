@@ -7,16 +7,16 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 /**
  * Clear neo4j graph
  */
-module.exports = function *(bud)
+module.exports = function *(sushi)
 {
   var transaction = cypher.transaction();
-  var query =                     "MATCH (n:Bud) "
-                                  + "WHERE n.bid = '" + bud.id + "' "
+  var query =                     "MATCH (n:Sushi) "
+                                  + "WHERE n.bid = '" + sushi.id + "' "
                                   + "OPTIONAL MATCH (n)-[r]-() "
                                   + "DELETE n,r;";
 
   transaction.write(query);
   transaction.commit();
-  var deleteBud = fromStream(transaction);
-  while(yield deleteBud());
+  var deleteSushi = fromStream(transaction);
+  while(yield deleteSushi());
 };

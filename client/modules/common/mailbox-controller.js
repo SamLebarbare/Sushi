@@ -19,8 +19,8 @@ function ($scope, $modal, api)
       }
     });
 
-    modalInstance.result.then(function (budId) {
-      //view bud
+    modalInstance.result.then(function (sushiId) {
+      //view sushi
 
     }, function () {
       //dismiss

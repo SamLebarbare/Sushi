@@ -1,52 +1,52 @@
 'use strict';
 
 /**
- * Home controller simply lists all the buds from everyone on the front page.
+ * Home controller simply lists all the sushis from everyone on the front page.
  */
 
-angular.module('sushi.home').controller('BudgraphCtrl',
-function ($scope, $state, api, budGraph)
+angular.module('sushi.home').controller('SushigraphCtrl',
+function ($scope, $state, api, sushiGraph)
 {
   var user       = $scope.common.user;
   var cy; // maybe you want a ref to cy
   // (usually better to have the srv as intermediary)
 
-  var budsById = {};
-  // retrieve buds from server
-  api.buds.list().success(function (buds)
+  var sushisById = {};
+  // retrieve sushis from server
+  api.sushis.list().success(function (sushis)
   {
-    $scope.buds = buds;
-    for( var i = 0; i < $scope.buds.length; i++ ){
-      var p = $scope.buds[i];
+    $scope.sushis = sushis;
+    for( var i = 0; i < $scope.sushis.length; i++ ){
+      var p = $scope.sushis[i];
 
-      budsById[ p.id ] = p;
+      sushisById[ p.id ] = p;
     }
 
-    // you would probably want some ui to prevent use of budsCtrl until cy is loaded
-    budGraph( $scope.buds ).then(function( budsCy ){
-      cy = budsCy;
+    // you would probably want some ui to prevent use of sushisCtrl until cy is loaded
+    sushiGraph( $scope.sushis ).then(function( sushisCy ){
+      cy = sushisCy;
       // use this variable to hide ui until cy loaded if you want
       $scope.cyLoaded = true;
     });
   });
 
 
-  budGraph.onClick(function(id){
-    $state.go('bud.viewer',{budId : id});
+  sushiGraph.onClick(function(id){
+    $state.go('sushi.viewer',{sushiId : id});
   });
 
-  // subscribe to websocket events to receive new buds, comments, etc.
-  api.buds.created.subscribe($scope, function (bud)
+  // subscribe to websocket events to receive new sushis, comments, etc.
+  api.sushis.created.subscribe($scope, function (sushi)
   {
-    // only add the bud if we don't have it already in the buds list to avoid dupes
-    if (!_.some($scope.buds, function (b)
+    // only add the sushi if we don't have it already in the sushis list to avoid dupes
+    if (!_.some($scope.sushis, function (b)
     {
-      return b.id === bud.id;
+      return b.id === sushi.id;
     }))
     {
-      bud.comments = [];
-      bud.commentBox = {message: '', disabled: false};
-      $scope.buds.unshift(bud);
+      sushi.comments = [];
+      sushi.commentBox = {message: '', disabled: false};
+      $scope.sushis.unshift(sushi);
     }
   });
 

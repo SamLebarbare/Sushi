@@ -5,32 +5,32 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Add Qi on a bud, refresh qi value with 0, or remove qi with negative value
+ * Add Qi on a sushi, refresh qi value with 0, or remove qi with negative value
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param addedQi the value to add/remove
- * @param bud mongodb bud entity
+ * @param sushi mongodb sushi entity
  */
-module.exports = function *(user, bud, addedQi)
+module.exports = function *(user, sushi, addedQi)
 {
 
   var transaction = cypher.transaction();
   var data, result = [];
-  var query1 =  "MATCH (bud:Bud) " +
-  	          "WHERE bud.bid = '" + bud.id + "' " +
+  var query1 =  "MATCH (sushi:Sushi) " +
+  	          "WHERE sushi.bid = '" + sushi.id + "' " +
   		        "OPTIONAL MATCH " +
-              "(user:User)-[su:SUPPORT]->(bud:Bud), " +
-              "(user:User)-[fo:FOLLOW]->(bud:Bud), " +
-              "(user:User)-[sp:SPONSOR]->(bud:Bud) " +
-              "WHERE bud.bid = '" + bud.id + "' " +
-              "WITH user, bud, " +
+              "(user:User)-[su:SUPPORT]->(sushi:Sushi), " +
+              "(user:User)-[fo:FOLLOW]->(sushi:Sushi), " +
+              "(user:User)-[sp:SPONSOR]->(sushi:Sushi) " +
+              "WHERE sushi.bid = '" + sushi.id + "' " +
+              "WITH user, sushi, " +
               "count(su) AS su_qi, " +
               "count(fo) AS fo_qi, " +
               "count(sp) AS sp_qi " +
-              "SET bud.qi = bud.qi + su_qi + fo_qi + sp_qi + " + addedQi + ";";
+              "SET sushi.qi = sushi.qi + su_qi + fo_qi + sp_qi + " + addedQi + ";";
 
 
-  var query2 = "MATCH (bud:Bud) WHERE bud.bid = '" + bud.id + "' " +
-               "RETURN bud.qi";
+  var query2 = "MATCH (sushi:Sushi) WHERE sushi.bid = '" + sushi.id + "' " +
+               "RETURN sushi.qi";
 
   transaction.write(query1);
   transaction.write(query2);
@@ -40,8 +40,8 @@ module.exports = function *(user, bud, addedQi)
   var getQi = fromStream(transaction);
   while (data = yield getQi())
   {
-    console.log(data['bud.qi']);
-    result.push(data['bud.qi']);
+    console.log(data['sushi.qi']);
+    result.push(data['sushi.qi']);
   }
 
   return result[0];

@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Home controller simply lists all the buds from everyone on the front page.
+ * Home controller simply lists all the sushis from everyone on the front page.
  */
 
 angular.module('sushi.home').controller('SocialgraphCtrl',
@@ -15,9 +15,9 @@ function ($scope, $state, api, socialGraph)
   api.actors.list(true).success(function (actors)
   {
     $scope.actors = actors;
-    // you would probably want some ui to prevent use of budsCtrl until cy is loaded
-    socialGraph( $scope.actors ).then(function( budsCy ){
-      cy = budsCy;
+    // you would probably want some ui to prevent use of sushisCtrl until cy is loaded
+    socialGraph( $scope.actors ).then(function( sushisCy ){
+      cy = sushisCy;
       // use this variable to hide ui until cy loaded if you want
       $scope.cyLoaded = true;
     });

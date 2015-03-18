@@ -13,10 +13,10 @@ module.exports = function *()
   console.log(config.neo4j.url);
   // first remove all neo4j graph nodes
 
-  var budIndex = 'CREATE INDEX ON :Bud(bid);';
+  var sushiIndex = 'CREATE INDEX ON :Sushi(bid);';
   var userIndex = 'CREATE INDEX ON :User(uid);';
 
-  transaction.write(budIndex);
+  transaction.write(sushiIndex);
   transaction.write(userIndex);
   transaction.commit();
   var createIndexes = fromStream(transaction)

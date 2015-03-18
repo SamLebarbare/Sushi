@@ -54,100 +54,100 @@ angular.module('sushi.common').factory('api', function ($rootScope, $http, $wind
   api.userupdate = event();
 
   // api http endpoints and websocket events
-  api.buds = {
+  api.sushis = {
     search: function (query) {
-      return $http({method: 'GET', url: apiBase + '/buds/search/'+ query,headers: headers});
+      return $http({method: 'GET', url: apiBase + '/sushis/search/'+ query,headers: headers});
     },
-    childrenByType: function (budId,type) {
-      return $http({method: 'GET', url: apiBase + '/buds/'+ budId + '/child/' + type, headers: headers});
+    childrenByType: function (sushiId,type) {
+      return $http({method: 'GET', url: apiBase + '/sushis/'+ sushiId + '/child/' + type, headers: headers});
     },
-    parentByType: function (budId,type) {
-      return $http({method: 'GET', url: apiBase + '/buds/'+ budId + '/parent/' + type, headers: headers});
+    parentByType: function (sushiId,type) {
+      return $http({method: 'GET', url: apiBase + '/sushis/'+ sushiId + '/parent/' + type, headers: headers});
     },
     list: function () {
-      return $http({method: 'GET', url: apiBase + '/buds', headers: headers});
+      return $http({method: 'GET', url: apiBase + '/sushis', headers: headers});
     },
-    view: function (budId) {
-      return $http({method: 'GET', url: apiBase + '/buds/' + budId + '/view', headers: headers});
+    view: function (sushiId) {
+      return $http({method: 'GET', url: apiBase + '/sushis/' + sushiId + '/view', headers: headers});
     },
-    update: function (bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/update', data: bud, headers: headers});
+    update: function (sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/update', data: sushi, headers: headers});
     },
     updated: event(),
-    delete: function (budId) {
-      return $http({method: 'DELETE', url: apiBase + '/buds/' + budId, headers: headers});
+    delete: function (sushiId) {
+      return $http({method: 'DELETE', url: apiBase + '/sushis/' + sushiId, headers: headers});
     },
-    create: function (bud) {
-      return $http({method: 'POST', url: apiBase + '/buds', data: bud, headers: headers});
+    create: function (sushi) {
+      return $http({method: 'POST', url: apiBase + '/sushis', data: sushi, headers: headers});
     },
-    createSub: function (parentBudId, bud) {
-      return $http({method: 'POST', url: apiBase + '/buds/' + parentBudId, data: bud, headers: headers});
+    createSub: function (parentSushiId, sushi) {
+      return $http({method: 'POST', url: apiBase + '/sushis/' + parentSushiId, data: sushi, headers: headers});
     },
     created: event(),
-    evolve: function (budId, type) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/evolve/' + type, headers: headers});
+    evolve: function (sushiId, type) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushiId + '/evolve/' + type, headers: headers});
     },
     evolved: event(),
-    follow : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/follow', data: bud, headers: headers});
+    follow : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/follow', data: sushi, headers: headers});
     },
-    unfollow : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unfollow', data: bud, headers: headers});
+    unfollow : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/unfollow', data: sushi, headers: headers});
     },
     followersChanged: event(),
-    sponsor : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/sponsor', data: bud, headers: headers});
+    sponsor : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/sponsor', data: sushi, headers: headers});
     },
-    unsponsor : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unsponsor', data: bud, headers: headers});
+    unsponsor : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/unsponsor', data: sushi, headers: headers});
     },
     sponsorsChanged: event(),
-    support : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/support', data: bud, headers: headers});
+    support : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/support', data: sushi, headers: headers});
     },
-    unsupport : function(bud) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/unsupport', data: bud, headers: headers});
+    unsupport : function(sushi) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/unsupport', data: sushi, headers: headers});
     },
     supportersChanged: event(),
-    share : function(bud, users) {
-      return $http({method: 'PUT', url: apiBase + '/buds/' + bud.id + '/share', data: users, headers: headers});
+    share : function(sushi, users) {
+      return $http({method: 'PUT', url: apiBase + '/sushis/' + sushi.id + '/share', data: users, headers: headers});
     },
     sharesChanged: event(),
-    budPacksData: {
-      create : function (budId, packData, type) {
-        return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
+    sushiPacksData: {
+      create : function (sushiId, packData, type) {
+        return $http({method: 'POST', url: apiBase + '/sushis/' + sushiId + '/packdata/' + type, data: packData, headers: headers});
       },
-      get: function (budId, type) {
-        return $http({method: 'GET', url: apiBase + '/buds/' + budId + '/packdata/' + type, headers: headers});
+      get: function (sushiId, type) {
+        return $http({method: 'GET', url: apiBase + '/sushis/' + sushiId + '/packdata/' + type, headers: headers});
       },
-      set: function (budId, packData, type) {
-        return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/packdata/' + type, data: packData, headers: headers});
+      set: function (sushiId, packData, type) {
+        return $http({method: 'PUT', url: apiBase + '/sushis/' + sushiId + '/packdata/' + type, data: packData, headers: headers});
       },
-      end: function (budId, packData, type) {
-        return $http({method: 'PUT', url: apiBase + '/buds/' + budId + '/packdata/' + type + '/end', data: packData, headers: headers});
+      end: function (sushiId, packData, type) {
+        return $http({method: 'PUT', url: apiBase + '/sushis/' + sushiId + '/packdata/' + type + '/end', data: packData, headers: headers});
       },
       created: event(),
       updated: event(),
       ended: event()
     },
     comments: {
-      create: function (budId, comment) {
-        return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/comments', data: comment, headers: headers});
+      create: function (sushiId, comment) {
+        return $http({method: 'POST', url: apiBase + '/sushis/' + sushiId + '/comments', data: comment, headers: headers});
       },
       created: event()
     },
-    sendByMail: function (budId, to) {
-      return $http({method: 'POST', url: apiBase + '/buds/' + budId + '/mailto/' + to, headers: headers});
+    sendByMail: function (sushiId, to) {
+      return $http({method: 'POST', url: apiBase + '/sushis/' + sushiId + '/mailto/' + to, headers: headers});
     },
-    unload: function (budId, fileId) {
-      return $http({method: 'DELETE', url: apiBase + '/buds/' + budId + '/attachments/' + fileId, headers: headers});
+    unload: function (sushiId, fileId) {
+      return $http({method: 'DELETE', url: apiBase + '/sushis/' + sushiId + '/attachments/' + fileId, headers: headers});
     },
-    upload: function (budId, files) {
+    upload: function (sushiId, files) {
       if (files && files.length) {
         for (var i = 0; i < files.length; i++) {
           var file = files[i];
           $upload.upload({
-            url: apiBase + '/buds/' + budId + '/attachments',
+            url: apiBase + '/sushis/' + sushiId + '/attachments',
             file: files,
             headers: headers
           });
@@ -168,17 +168,17 @@ angular.module('sushi.common').factory('api', function ($rootScope, $http, $wind
   };
 
   api.links = {
-    createB2B : function (budId, type, budId2) {
-      return $http({method: 'POST', url: apiBase + '/links/b2b/' + budId + '/' + type + '/' + budId2, headers: headers});
+    createB2B : function (sushiId, type, sushiId2) {
+      return $http({method: 'POST', url: apiBase + '/links/b2b/' + sushiId + '/' + type + '/' + sushiId2, headers: headers});
     },
-    createB2U : function (budId, type, userId) {
-      return $http({method: 'POST', url: apiBase + '/links/b2u/' + budId + '/' + type + '/' + userId, headers: headers});
+    createB2U : function (sushiId, type, userId) {
+      return $http({method: 'POST', url: apiBase + '/links/b2u/' + sushiId + '/' + type + '/' + userId, headers: headers});
     },
-    createU2B : function (userId, type, budId) {
-      return $http({method: 'POST', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+    createU2B : function (userId, type, sushiId) {
+      return $http({method: 'POST', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + sushiId, headers: headers});
     },
-    deleteU2B : function (userId, type, budId) {
-      return $http({method: 'DELETE', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + budId, headers: headers});
+    deleteU2B : function (userId, type, sushiId) {
+      return $http({method: 'DELETE', url: apiBase + '/links/u2b/' + userId + '/' + type + '/' + sushiId, headers: headers});
     },
     findU2B : function (userId, type) {
       return $http({method: 'GET', url: apiBase + '/links/u2b/' + userId + '/' + type, headers: headers});

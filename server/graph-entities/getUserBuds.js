@@ -6,10 +6,10 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Return all viewable buds for a user
+ * Return all viewable sushis for a user
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
- * @param bud mongodb bud entity
+ * @param sushi mongodb sushi entity
  */
 module.exports = function *(user)
 {
@@ -17,33 +17,33 @@ module.exports = function *(user)
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Bud) " +
-              "WHERE bud.creatorId = " + user.id + " " +
-              "RETURN bud.bid " +
+  var query = "MATCH (sushi:Sushi) " +
+              "WHERE sushi.creatorId = " + user.id + " " +
+              "RETURN sushi.bid " +
               "UNION " +
-              "MATCH (bud:Bud)<-[:ACTOR]-(user:User) " +
+              "MATCH (sushi:Sushi)<-[:ACTOR]-(user:User) " +
               "WHERE user.uid = " + user.id + " " +
-              "RETURN bud.bid " +
+              "RETURN sushi.bid " +
               "UNION " +
-              "MATCH (bud:Bud)-[:SHARED_TO]->(user:User) " +
+              "MATCH (sushi:Sushi)-[:SHARED_TO]->(user:User) " +
               "WHERE user.uid = " + user.id + " " +
-              "RETURN bud.bid " +
+              "RETURN sushi.bid " +
               "UNION " +
-              "MATCH (bud:Bud)<-[:FOLLOW]-(user:User) " +
+              "MATCH (sushi:Sushi)<-[:FOLLOW]-(user:User) " +
               "WHERE user.uid = " + user.id + " " +
-              "RETURN bud.bid " +
+              "RETURN sushi.bid " +
               "UNION " +
-              "MATCH (bud:Bud)<-[:MEMBER]-(user:User) " +
+              "MATCH (sushi:Sushi)<-[:MEMBER]-(user:User) " +
               "WHERE user.uid = " + user.id + " " +
-              "RETURN bud.bid;";
+              "RETURN sushi.bid;";
 
   transaction.write(query);
   transaction.commit();
-  var userBuds = fromStream(transaction);
+  var userSushis = fromStream(transaction);
 
-  while (data = yield userBuds())
+  while (data = yield userSushis())
   {
-    result.push(new ObjectID(data['bud.bid']));
+    result.push(new ObjectID(data['sushi.bid']));
   }
   return result;
 

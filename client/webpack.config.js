@@ -7,7 +7,7 @@ module.exports = {
       css:   path.join(__dirname, '/css-deps.js'),
       ext:   path.join(__dirname, '/ext-deps.js'),
       mods:  path.join(__dirname, '/modules/core-deps.js'),
-      packs: path.join(__dirname, '/budPacks/packs-deps.js'),
+      packs: path.join(__dirname, '/sushiPacks/packs-deps.js'),
   },
   output: {
       path: path.join(__dirname, 'res'),

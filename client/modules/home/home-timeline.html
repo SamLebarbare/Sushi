@@ -4,18 +4,18 @@
     <div class="cbp_tmicon"><i class="fa fa-start" /></div>
     <div class="cbp_tmlabel">
       <div ng-if="event.type = 'created'">
-        <h2>New bud</h2>
+        <h2>New sushi</h2>
         <blockquote>
           <p>{{event.title}}</p>
           <small>Creator <cite title="Source Title">{{event.actor.name}}</cite></small>
         </blockquote>
-        <a ui-sref="bud.viewer({budId : event.target})" class="btn btn-info">View bud</a>
+        <a ui-sref="sushi.viewer({sushiId : event.target})" class="btn btn-info">View sushi</a>
       </div>
       <div ng-if="event.type = 'subcreated'">
-        <h2>{{event.actor.name}} created a sub bud :</h2>
+        <h2>{{event.actor.name}} created a sub sushi :</h2>
         <p>"{{event.title}}"</p>
-        <p>parend bud: "{{event.parent}}"
-        <a ui-sref="bud.viewer({budId : event.target})" class="btn btn-info">View bud</a>
+        <p>parend sushi: "{{event.parent}}"
+        <a ui-sref="sushi.viewer({sushiId : event.target})" class="btn btn-info">View sushi</a>
       </div>
     </div>
   </li>

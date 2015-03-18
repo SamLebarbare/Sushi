@@ -1,17 +1,17 @@
 'use strict';
 var client        = require('./es-client');
 
-module.exports = function *(bud)
+module.exports = function *(sushi)
 {
 
   yield client.index({
-    index: 'bud',
-    type: 'bud',
-    id: bud.id.toString(),
+    index: 'sushi',
+    type: 'sushi',
+    id: sushi.id.toString(),
     body: {
-      id: bud.id,
-      title: bud.title,
-      content: bud.content
+      id: sushi.id,
+      title: sushi.title,
+      content: sushi.content
     }
   });
 

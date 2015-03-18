@@ -5,16 +5,16 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Create Bud - *REL -> User
+ * Create Sushi - *REL -> User
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
- * @param bud mongodb bud entity
+ * @param sushi mongodb sushi entity
  */
-module.exports = function *(user, bud, rel)
+module.exports = function *(user, sushi, rel)
 {
   var transaction = cypher.transaction();
-  var query = "MATCH (b:Bud),(u:User) "
-  +"WHERE b.bid = '" + bud.id + "' AND u.uid = " + user.id
+  var query = "MATCH (b:Sushi),(u:User) "
+  +"WHERE b.bid = '" + sushi.id + "' AND u.uid = " + user.id
   +" CREATE (b)-[:" + rel + "]->(u);";
   console.log(query);
   transaction.write(query);

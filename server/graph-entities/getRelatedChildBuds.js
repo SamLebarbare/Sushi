@@ -6,29 +6,29 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Return child buds
+ * Return child sushis
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
- * @param bud mongodb bud entity
+ * @param sushi mongodb sushi entity
  */
-module.exports = function *(budId, type)
+module.exports = function *(sushiId, type)
 {
   var transaction = cypher.transaction();
   var ObjectID = mongo.ObjectID;
   var result = [];
   var data;
-  var query = "MATCH (bud:Bud)-[:CHILD]-(child:" + type +") " +
-              "WHERE bud.bid = '" + budId + "' " +
+  var query = "MATCH (sushi:Sushi)-[:CHILD]-(child:" + type +") " +
+              "WHERE sushi.bid = '" + sushiId + "' " +
               "RETURN child.bid "
 
   transaction.write(query);
   transaction.commit();
 
-  var relatedBuds = fromStream(transaction);
+  var relatedSushis = fromStream(transaction);
 
 
 
-  while (data = yield relatedBuds())
+  while (data = yield relatedSushis())
   {
     result.push(new ObjectID(data['child.bid']));
   }

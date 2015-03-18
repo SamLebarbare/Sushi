@@ -11,27 +11,27 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-      .state('home.budlist', {
-        title: 'Bud list',
+      .state('home.sushilist', {
+        title: 'Sushi list',
         breadcrumb: {
           class: 'highlight',
-          text: 'Bud list',
-          stateName: 'home.budlist'
+          text: 'Sushi list',
+          stateName: 'home.sushilist'
         },
         url: "/list",
         templateUrl: 'modules/home/home-list.html',
         controller: 'HomeCtrl'
       })
-      .state('home.mybuds', {
-        title: 'My Buds',
+      .state('home.mysushis', {
+        title: 'My Sushis',
         breadcrumb: {
           class: 'highlight',
-          text: 'My buds',
-          stateName: 'home.mybuds'
+          text: 'My sushis',
+          stateName: 'home.mysushis'
         },
-        url: "/mybuds",
-        templateUrl: 'modules/home/mybuds-list.html',
-        controller: 'MyBudsCtrl'
+        url: "/mysushis",
+        templateUrl: 'modules/home/mysushis-list.html',
+        controller: 'MySushisCtrl'
       })
       .state('home.invitations', {
         title: 'Invitations',
@@ -55,34 +55,34 @@ angular
         templateUrl: 'modules/home/assignments-list.html',
         controller: 'AssignmentsCtrl'
       })
-      .state('home.budgraph', {
-        title: 'Bud Graph',
+      .state('home.sushigraph', {
+        title: 'Sushi Graph',
         breadcrumb: {
           class: 'highlight',
-          text: 'Bud Graph',
-          stateName: 'home.budgraph'
+          text: 'Sushi Graph',
+          stateName: 'home.sushigraph'
         },
-        url: "/budgraph",
-        templateUrl: 'modules/home/home-budgraph.html',
-        controller: 'BudgraphCtrl'
+        url: "/sushigraph",
+        templateUrl: 'modules/home/home-sushigraph.html',
+        controller: 'SushigraphCtrl'
       })
       .state('home.socialgraph', {
         title: 'Social Graph',
         breadcrumb: {
           class: 'highlight',
           text: 'Social Graph',
-          stateName: 'bud.home.socialgraph'
+          stateName: 'sushi.home.socialgraph'
         },
         url: "/socialgraph",
         templateUrl: 'modules/home/home-socialgraph.html',
         controller: 'SocialgraphCtrl'
       })
       .state('home.timeline', {
-        title: 'Bud Timeline',
+        title: 'Sushi Timeline',
         breadcrumb: {
           class: 'highlight',
-          text: 'Bud Timeline',
-          stateName: 'bud.home.timeline'
+          text: 'Sushi Timeline',
+          stateName: 'sushi.home.timeline'
         },
         url: "/timeline",
         templateUrl: 'modules/home/home-timeline.html',

@@ -5,9 +5,9 @@ var mongo = require('./mongo'),
 var flushES           = require('../indexer/deleteAll');
 var createES           = require('../indexer/createIndex');
 var createUser        = require('../graph-entities/userNode');
-var createBudWithUser = require('../graph-entities/userCreateBud');
+var createSushiWithUser = require('../graph-entities/userCreateSushi');
 var clearGraph        = require('../graph-entities/clearGraph');
-var createUser2BudRel = require('../graph-entities/addUser2BudRelation');
+var createUser2SushiRel = require('../graph-entities/addUser2SushiRelation');
 var createIndexes     = require('../graph-entities/createIndexes');
 var foreach           = require('generator-foreach');
 /**
@@ -43,10 +43,10 @@ module.exports = function *(overwrite)
     // clear neo4j
     yield clearGraph();
 
-    //create ES bud index
+    //create ES sushi index
     yield createES();
 
-    // create neo4j nodes for buds
+    // create neo4j nodes for sushis
     yield * foreach(users, function * (user) {
       //clean mongo id before graph insertion
       user.id = user._id;

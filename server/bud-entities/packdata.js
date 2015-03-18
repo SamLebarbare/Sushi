@@ -1,7 +1,7 @@
-exports.getPack = function (bud, type) {
+exports.getPack = function (sushi, type) {
   var packData = {};
-  if(bud && type) {
-    bud.budPacksData.forEach(function (pack){
+  if(sushi && type) {
+    sushi.sushiPacksData.forEach(function (pack){
       if(pack.type === type) {
         packData = pack.data;
         return packData;

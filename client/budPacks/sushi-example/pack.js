@@ -11,18 +11,18 @@ angular
     ])
     .config(function ($stateProvider, $urlRouterProvider) {
       $stateProvider
-          .state('bud.viewer.Product', {
+          .state('sushi.viewer.Product', {
             url: '/product',
             views: {
               'summary':{
-                templateUrl: 'budPacks/sushi-org-products/view.html',
+                templateUrl: 'sushiPacks/sushi-org-products/view.html',
                 controller: 'ProductViewerCtrl'
               }
             },
             breadcrumb: {
               class: 'highlight',
               text: 'Product',
-              stateName: 'bud.viewer.Product'
+              stateName: 'sushi.viewer.Product'
             },
           });
     });

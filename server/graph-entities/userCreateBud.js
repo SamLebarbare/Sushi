@@ -5,30 +5,30 @@ var cypher = require('cypher-stream')(config.neo4j.url);
 
 
 /**
- * Create a bud in neo4j with CREATED rel. on creator
+ * Create a sushi in neo4j with CREATED rel. on creator
  * id property must be cleaned from mongo documents (ex. _id -> id)
  * @param user mongodb user entity
- * @param bud mongodb bud entity
+ * @param sushi mongodb sushi entity
  */
-module.exports = function *(user, bud)
+module.exports = function *(user, sushi)
 {
-  // create neo4j nodes for buds
+  // create neo4j nodes for sushis
   var transaction = cypher.transaction();
   var params = { data :
     {
-      bid : bud.id,
-      qi: bud.qi,
+      bid : sushi.id,
+      qi: sushi.qi,
       creatorId : user.id,
-      privacy : bud.privacy
+      privacy : sushi.privacy
     }
   };
 
-  var query = 'CREATE (b:Bud { data } );';
+  var query = 'CREATE (b:Sushi { data } );';
 
   transaction.write({statement: query, parameters: params});
   transaction.commit();
 
-  var createBud = fromStream(transaction);
-  while(yield createBud());
+  var createSushi = fromStream(transaction);
+  while(yield createSushi());
   console.log('BUD CREATED');
 };

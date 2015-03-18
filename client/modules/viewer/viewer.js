@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Editor module for buds
+ * Editor module for sushis
  */
 
 angular
@@ -23,14 +23,14 @@ angular
 
 
       states.push({
-        name: 'bud.viewer',
+        name: 'sushi.viewer',
         sticky: true,
-        url: '/viewer/:budId',
+        url: '/viewer/:sushiId',
         views: availableViews,
         breadcrumb: {
           class: 'highlight',
-          text: 'Bud Viewer',
-          stateName: 'bud.viewer'
+          text: 'Sushi Viewer',
+          stateName: 'sushi.viewer'
         } });
 
       angular.forEach(states, function(state) { $stateProvider.state(state); });

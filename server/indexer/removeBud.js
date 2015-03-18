@@ -1,12 +1,12 @@
 'use strict';
 var client        = require('./es-client');
 
-module.exports = function *(bud)
+module.exports = function *(sushi)
 {
 
   yield client.deleteByQuery({
-    index: 'bud',
-    q: 'id:' + bud.id.toString()
+    index: 'sushi',
+    q: 'id:' + sushi.id.toString()
   });
 
 };

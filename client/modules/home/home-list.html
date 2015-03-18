@@ -1,7 +1,7 @@
-<div ng-show="buds">
+<div ng-show="sushis">
   <div class="jumbotron">
-    <table st-table="displayedBuds" st-safe-src="buds" class="table table-striped table-hover ">
-      <h2>Bud List</h2>
+    <table st-table="displayedSushis" st-safe-src="sushis" class="table table-striped table-hover ">
+      <h2>Sushi List</h2>
       <thead>
         <tr>
           <th st-sort="qi">Qi</th>
@@ -13,20 +13,20 @@
         </tr>
       </thead>
       <tbody>
-        <tr ng-repeat="bud in displayedBuds" class="active" ui-sref="bud.viewer({budId : bud.id})">
-          <td>{{bud.qi}}</td>
-          <td><i class="glyphicon glyphicon-leaf" ng-class="bud.typeInfo.icon"></i> {{bud.type}}</td>
-          <td>{{bud.title}}</td>
-          <td>{{bud.creator.name}}</td>
-          <td>{{bud.dataCache.actor.name}}</td>
-          <td><b>{{bud.dataCache.state}}</b></td>
+        <tr ng-repeat="sushi in displayedSushis" class="active" ui-sref="sushi.viewer({sushiId : sushi.id})">
+          <td>{{sushi.qi}}</td>
+          <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+          <td>{{sushi.title}}</td>
+          <td>{{sushi.creator.name}}</td>
+          <td>{{sushi.dataCache.actor.name}}</td>
+          <td><b>{{sushi.dataCache.state}}</b></td>
         </tr>
     </tbody>
     <tfoot>
       <td st-pagination="" st-items-by-page="10" colspan="4" />
     </tfoot>
   </table>
-  <small>TIPS: You can filter buds by clicking column headers</small>
+  <small>TIPS: You can filter sushis by clicking column headers</small>
   </div>
 </div>
 <style>

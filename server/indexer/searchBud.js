@@ -5,7 +5,7 @@ module.exports = function *(query)
 {
 
   var result = yield client.search({
-    index: 'bud',
+    index: 'sushi',
     q: query
   });
 

@@ -1,6 +1,6 @@
 module.exports = {
-  Bud : {
-    id:'Bud',
+  Sushi : {
+    id:'Sushi',
     desc:'Evolve me!',
     defaultChilds: [],
     icon: 'fa fa-leaf',
@@ -70,7 +70,7 @@ module.exports = {
   },
   Meeting : {
     id:'Meeting',
-    desc:'Meeting tool for reviewing bud',
+    desc:'Meeting tool for reviewing sushi',
     defaultChilds: ['Info', 'Idea'],
     icon: 'mdi-av-movie',
     evolve: false
@@ -87,28 +87,28 @@ module.exports = {
   },
   Team : {
     id:'Team',
-    desc:'Create team for your organisation, team can be used to share bud to team members',
+    desc:'Create team for your organisation, team can be used to share sushi to team members',
     defaultChilds: ['Info', 'Idea'],
     icon: 'mdi-social-people',
     evolve: false
   },
   Product : {
     id:'Product',
-    desc:'Attach product to buds',
+    desc:'Attach product to sushis',
     defaultChilds: ['Product'],
     icon: 'mdi-social-pages',
     evolve: false
   },
   Region : {
     id:'Region',
-    desc:'Attach region to buds',
+    desc:'Attach region to sushis',
     defaultChilds: ['Region','Customer'],
     icon: 'mdi-social-public',
     evolve: false
   },
   Customer : {
     id:'Customer',
-    desc:'Attach customer to buds',
+    desc:'Attach customer to sushis',
     defaultChilds: [],
     icon: 'mdi-communication-contacts',
     evolve: false
