@@ -1,0 +1,148 @@
+
+  <tabset class="shadow-z-1" vertical="true" type="pills" justified="true">
+    <tab heading="Created sushis" ng-show="sushis">
+      <div class="jumbotron">
+        <table st-table="displayedSushis" st-safe-src="sushis" class="table table-striped table-hover ">
+          <thead>
+            <tr>
+              <th st-sort="qi">Qi</th>
+              <th st-sort="type">Type</th>
+              <th st-sort="title">Title</th>
+              <th st-sort="dataCache.actor.name">Actor</th>
+              <th st-sort="dataCache.state">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sushi in displayedSushis" ui-sref="sushi.viewer({sushiId : sushi.id})">
+              <td>{{sushi.qi}}</td>
+              <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+              <td>{{sushi.title}}</td>
+              <td>{{sushi.dataCache.actor.name}}</td>
+              <td><b>{{sushi.dataCache.state}}</b></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td st-pagination="" st-items-by-page="10" colspan="4" />
+          </tfoot>
+        </table>
+      </div>
+    </tab>
+    <tab heading="My missions" ng-show="missions">
+      <div class="jumbotron">
+        <table st-table="displayedMissions" st-safe-src="missions" class="table table-striped table-hover ">
+          <thead>
+            <tr>
+              <th st-sort="qi">Qi</th>
+              <th st-sort="type">Type</th>
+              <th st-sort="title">Title</th>
+              <th st-sort="dataCache.actor.name">Actor</th>
+              <th st-sort="dataCache.state">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sushi in displayedMissions" class="active" ui-sref="sushi.viewer({sushiId : sushi.id})">
+              <td>{{sushi.qi}}</td>
+              <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+              <td>{{sushi.title}}</td>
+              <td>{{sushi.dataCache.actor.name}}</td>
+              <td><b>{{sushi.dataCache.state}}</b></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td st-pagination="" st-items-by-page="10" colspan="4" />
+          </tfoot>
+        </table>
+      </div>
+    </tab>
+    <tab  heading="My projects" ng-show="projects">
+      <div class="jumbotron">
+        <table st-table="displayedProjects" st-safe-src="projects" class="table table-striped table-hover ">
+          <thead>
+            <tr>
+              <th st-sort="qi">Qi</th>
+              <th st-sort="type">Type</th>
+              <th st-sort="title">Title</th>
+              <th st-sort="dataCache.actor.name">Actor</th>
+              <th st-sort="dataCache.state">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sushi in displayedProjects" class="active" ui-sref="sushi.viewer({sushiId : sushi.id})">
+              <td>{{sushi.qi}}</td>
+              <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+              <td>{{sushi.title}}</td>
+              <td>{{sushi.dataCache.actor.name}}</td>
+              <td><b>{{sushi.dataCache.state}}</b></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td st-pagination="" st-items-by-page="10" colspan="4" />
+          </tfoot>
+        </table>
+      </div>
+    </tab>
+    <tab heading="My Actions" ng-show="actions">
+      <div class="jumbotron">
+        <table st-table="displayedActions" st-safe-src="actions" class="table table-striped table-hover ">
+          <thead>
+            <tr>
+              <th st-sort="qi">Qi</th>
+              <th st-sort="type">Type</th>
+              <th st-sort="title">Title</th>
+              <th st-sort="dataCache.actor.name">Actor</th>
+              <th st-sort="dataCache.state">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sushi in displayedActions" class="active" ui-sref="sushi.viewer({sushiId : sushi.id})">
+              <td>{{sushi.qi}}</td>
+              <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+              <td>{{sushi.title}}</td>
+              <td>{{sushi.dataCache.actor.name}}</td>
+              <td><b>{{sushi.dataCache.state}}</b></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td st-pagination="" st-items-by-page="10" colspan="4" />
+          </tfoot>
+        </table>
+      </div>
+    </tab>
+    <tab heading="Followed sushis" ng-show="follows">
+      <div class="jumbotron">
+        <table st-table="displayedFollows" st-safe-src="follows" class="table table-striped table-hover ">
+          <thead>
+            <tr>
+              <th st-sort="qi">Qi</th>
+              <th st-sort="type">Type</th>
+              <th st-sort="title">Title</th>
+              <th st-sort="dataCache.actor.name">Actor</th>
+              <th st-sort="dataCache.state">State</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sushi in displayedFollows" class="active" ui-sref="sushi.viewer({sushiId : sushi.id})">
+              <td>{{sushi.qi}}</td>
+              <td><i class="glyphicon glyphicon-leaf" ng-class="sushi.typeInfo.icon"></i> {{sushi.type}}</td>
+              <td>{{sushi.title}}</td>
+              <td>{{sushi.dataCache.actor.name}}</td>
+              <td><b>{{sushi.dataCache.state}}</b></td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <td st-pagination="" st-items-by-page="10" colspan="4" />
+          </tfoot>
+        </table>
+      </div>
+    </tab>
+  </tabset>
+</div>
+<style>
+.st-sort-ascent:before{
+  content: '\25B2';
+}
+
+.st-sort-descent:before{
+  content: '\25BC';
+}
+</style>
