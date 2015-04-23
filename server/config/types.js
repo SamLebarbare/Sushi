@@ -7,9 +7,9 @@ module.exports = {
     xp: 20,
     evolve: true
   },
-  Idea : {
-    id:'Idea',
-    desc:'Starting point for innovation, can be primed',
+  Nigiri : {
+    id:'Nigiri',
+    desc:'Nigiri',
     defaultChilds: [],
     icon: 'mdi-image-wb-incandescent',
     skills: {

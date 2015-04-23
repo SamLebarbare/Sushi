@@ -55,7 +55,7 @@ module.exports = function *(overwrite)
     yield createIndexes();
 
 
-    console.log('sushi SEED INSTALLED');
+    console.log('SUSHI SEED INSTALLED');
   }
 };
 
